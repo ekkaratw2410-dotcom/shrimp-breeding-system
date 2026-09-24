@@ -268,6 +268,696 @@ async function enterApp(user){
 }
 sbClient.auth.onAuthStateChange(async(_event,session)=>{if(session?.user)await enterApp(session.user);else{currentUser=null;currentProfile=null;document.querySelector(".app").style.visibility="hidden";authGate.style.display="flex"}});
 (async()=>{const {data}=await sbClient.auth.getSession();if(data.session?.user)await enterApp(data.session.user)})();
+  /* ===== Persistent Recent Activity / Audit Trail ===== */
+
+async function logActivity(action, entityType, entityId, beforeData, afterData) {
+  if (!currentUser) return;
+
+  const { error } = await sbClient.from("activity_log").insert({
+    actor_id: currentUser.id,
+    action: action,
+    entity_type: entityType || "system",
+    entity_id: entityId == null ? null : String(entityId),
+    before_data: beforeData == null ? null : beforeData,
+    after_data: afterData == null ? null : afterData
+  });
+
+  if (error) {
+    console.warn("Activity log error:", error.message);
+  }
+}
+
+function activityText(x) {
+  const actions = {
+    login: "เข้าสู่ระบบ",
+    create: "เพิ่มข้อมูล",
+    update: "แก้ไขข้อมูล",
+    delete: "ลบข้อมูล",
+    import: "นำเข้า Excel",
+    export: "ส่งออก Excel",
+    backup: "สำรองข้อมูล",
+    save_all: "บันทึกข้อมูลทั้งหมด",
+    role_change: "เปลี่ยนสิทธิ์ผู้ใช้"
+  };
+
+  const entities = {
+    individual: "Individual",
+    family: "Family",
+    experiment: "Experiment",
+    water_quality: "Water Quality",
+    role: "User Role",
+    system: "System"
+  };
+
+  return (actions[x.action] || x.action) +
+    " • " +
+    (entities[x.entity_type] || x.entity_type || "System");
+}
+
+function activityIcon(action) {
+  return {
+    login: "🔐",
+    create: "➕",
+    update: "✏️",
+    delete: "🗑️",
+    import: "📥",
+    export: "📤",
+    backup: "💾",
+    save_all: "☁️",
+    role_change: "👤"
+  }[action] || "📌";
+}
+
+
+/* ===== Load last 15 activities from Supabase ===== */
+
+async function renderRecentActivity() {
+
+  const box = document.getElementById("recentActivity");
+
+  if (!box) return;
+
+  box.innerHTML =
+    "<div class='empty'>กำลังโหลดกิจกรรม...</div>";
+
+  const since =
+    new Date(
+      Date.now() - 30 * 24 * 60 * 60 * 1000
+    ).toISOString();
+
+  const { data, error } = await sbClient
+    .from("activity_log")
+    .select(
+      "id,actor_id,action,entity_type,entity_id,created_at"
+    )
+    .gte("created_at", since)
+    .order("created_at", { ascending: false })
+    .limit(15);
+
+  if (error) {
+
+    box.innerHTML =
+      "<div class='notice'>" +
+      "ไม่สามารถโหลด Recent Activity: " +
+      esc(error.message) +
+      "</div>";
+
+    return;
+  }
+
+  if (!data || !data.length) {
+
+    box.innerHTML =
+      "<div class='empty'>" +
+      "ยังไม่มีกิจกรรมในช่วง 30 วันที่ผ่านมา" +
+      "</div>";
+
+    return;
+  }
+
+  box.innerHTML = data.map(function (x) {
+
+    const actor =
+      x.actor_id === currentUser?.id
+        ? "คุณ"
+        : "ผู้ใช้";
+
+    const target =
+      x.entity_id
+        ? " • " + esc(x.entity_id)
+        : "";
+
+    const time =
+      new Date(x.created_at)
+        .toLocaleString("th-TH");
+
+    return `
+      <div style="
+        display:flex;
+        gap:10px;
+        align-items:flex-start;
+        padding:11px 0;
+        border-bottom:1px solid var(--line);
+      ">
+
+        <div style="
+          font-size:18px;
+          width:26px;
+        ">
+          ${activityIcon(x.action)}
+        </div>
+
+        <div style="flex:1">
+
+          <b>
+            ${esc(activityText(x))}
+          </b>
+
+          <div class="small">
+            ${actor}${target} • ${time}
+          </div>
+
+        </div>
+
+      </div>
+    `;
+
+  }).join("");
+}
+
+
+/* ===== Refresh Recent Activity whenever Dashboard opens ===== */
+
+const _originalRenderDashboard =
+  renderDashboard;
+
+renderDashboard = async function () {
+
+  _originalRenderDashboard();
+
+  await renderRecentActivity();
+
+};
+
+
+/* ===== Individual: Add / Edit ===== */
+
+const _originalSaveRecord =
+  saveRecord;
+
+saveRecord = function () {
+
+  if (!requireEdit()) return;
+
+  const g = indGen.value;
+  const idx = editIndex;
+
+  const before =
+    idx >= 0
+      ? JSON.parse(
+          JSON.stringify(records(g)[idx])
+        )
+      : null;
+
+  const beforeLength =
+    records(g).length;
+
+  _originalSaveRecord();
+
+  const a = records(g);
+
+  const changed =
+    a.length !== beforeLength ||
+    (
+      idx >= 0 &&
+      JSON.stringify(before) !==
+      JSON.stringify(a[idx])
+    );
+
+  if (!changed) return;
+
+  const row =
+    idx >= 0
+      ? a[idx]
+      : a[a.length - 1];
+
+  logActivity(
+    idx >= 0 ? "update" : "create",
+    "individual",
+    row?.["Individual ID"] ||
+    row?.["Family ID"] ||
+    null,
+    before,
+    row || null
+  ).then(renderRecentActivity);
+
+};
+
+
+/* ===== Individual: Delete ===== */
+
+const _originalDeleteRecord =
+  deleteRecord;
+
+deleteRecord = function (i, g) {
+
+  if (!requireDelete()) return;
+
+  const before =
+    JSON.parse(
+      JSON.stringify(records(g)[i])
+    );
+
+  _originalDeleteRecord(i, g);
+
+  logActivity(
+    "delete",
+    "individual",
+    before?.["Individual ID"] ||
+    before?.["Family ID"] ||
+    null,
+    before,
+    null
+  ).then(renderRecentActivity);
+
+};
+
+
+/* ===== Import Excel ===== */
+
+const _originalImportExcel =
+  importExcel;
+
+importExcel = function (ev) {
+
+  const file =
+    ev.target.files?.[0];
+
+  if (!file) return;
+
+  const beforeCount =
+    records(indGen.value).length;
+
+  _originalImportExcel(ev);
+
+  setTimeout(function () {
+
+    const afterCount =
+      records(indGen.value).length;
+
+    logActivity(
+      "import",
+      "individual",
+      indGen.value,
+      null,
+      {
+        file_name: file.name,
+        generation: indGen.value,
+        before_count: beforeCount,
+        after_count: afterCount
+      }
+    ).then(renderRecentActivity);
+
+  }, 500);
+
+};
+
+
+/* ===== Export Excel ===== */
+
+const _originalExportCurrent =
+  exportCurrent;
+
+exportCurrent = function () {
+
+  if (!canExport()) {
+    alert("สิทธิ์นี้ไม่สามารถ Export ได้");
+    return;
+  }
+
+  _originalExportCurrent();
+
+  logActivity(
+    "export",
+    "individual",
+    indGen.value,
+    null,
+    {
+      generation: indGen.value,
+      record_count:
+        records(indGen.value).length
+    }
+  ).then(renderRecentActivity);
+
+};
+
+
+/* ===== Family: Add / Edit ===== */
+
+const _originalSaveFamily =
+  saveFamily;
+
+saveFamily = function () {
+
+  if (!requireEdit()) return;
+
+  const g = famGen.value;
+  const idx = familyEditIndex;
+
+  const before =
+    idx >= 0
+      ? JSON.parse(
+          JSON.stringify(families(g)[idx])
+        )
+      : null;
+
+  const beforeLength =
+    families(g).length;
+
+  _originalSaveFamily();
+
+  const a = families(g);
+
+  const changed =
+    a.length !== beforeLength ||
+    (
+      idx >= 0 &&
+      JSON.stringify(before) !==
+      JSON.stringify(a[idx])
+    );
+
+  if (!changed) return;
+
+  const row =
+    idx >= 0
+      ? a[idx]
+      : a[a.length - 1];
+
+  logActivity(
+    idx >= 0 ? "update" : "create",
+    "family",
+    row?.id || null,
+    before,
+    row || null
+  ).then(renderRecentActivity);
+
+};
+
+
+/* ===== Family: Delete ===== */
+
+const _originalDeleteFamily =
+  deleteFamily;
+
+deleteFamily = function (i, g) {
+
+  if (!requireDelete()) return;
+
+  const before =
+    JSON.parse(
+      JSON.stringify(families(g)[i])
+    );
+
+  _originalDeleteFamily(i, g);
+
+  logActivity(
+    "delete",
+    "family",
+    before?.id || null,
+    before,
+    null
+  ).then(renderRecentActivity);
+
+};
+
+
+/* ===== Experiment: Add / Edit ===== */
+
+const _originalSaveExperiment =
+  saveExperiment;
+
+saveExperiment = function () {
+
+  if (!requireEdit()) return;
+
+  const idx =
+    experimentEditIndex;
+
+  const before =
+    idx >= 0
+      ? JSON.parse(
+          JSON.stringify(experiments()[idx])
+        )
+      : null;
+
+  const beforeLength =
+    experiments().length;
+
+  _originalSaveExperiment();
+
+  const a = experiments();
+
+  const changed =
+    a.length !== beforeLength ||
+    (
+      idx >= 0 &&
+      JSON.stringify(before) !==
+      JSON.stringify(a[idx])
+    );
+
+  if (!changed) return;
+
+  const row =
+    idx >= 0
+      ? a[idx]
+      : a[a.length - 1];
+
+  logActivity(
+    idx >= 0 ? "update" : "create",
+    "experiment",
+    row?.name || null,
+    before,
+    row || null
+  ).then(renderRecentActivity);
+
+};
+
+
+/* ===== Experiment: Delete ===== */
+
+const _originalDeleteExperiment =
+  deleteExperiment;
+
+deleteExperiment = function (i) {
+
+  if (!requireDelete()) return;
+
+  const before =
+    JSON.parse(
+      JSON.stringify(experiments()[i])
+    );
+
+  _originalDeleteExperiment(i);
+
+  logActivity(
+    "delete",
+    "experiment",
+    before?.name || null,
+    before,
+    null
+  ).then(renderRecentActivity);
+
+};
+
+
+/* ===== Water Quality: Add / Edit ===== */
+
+const _originalSaveWater =
+  saveWater;
+
+saveWater = function () {
+
+  if (!requireEdit()) return;
+
+  const idx =
+    waterEditIndex;
+
+  const before =
+    idx >= 0
+      ? JSON.parse(
+          JSON.stringify(water()[idx])
+        )
+      : null;
+
+  const beforeLength =
+    water().length;
+
+  _originalSaveWater();
+
+  const a = water();
+
+  const changed =
+    a.length !== beforeLength ||
+    (
+      idx >= 0 &&
+      JSON.stringify(before) !==
+      JSON.stringify(a[idx])
+    );
+
+  if (!changed) return;
+
+  const row =
+    idx >= 0
+      ? a[idx]
+      : a[a.length - 1];
+
+  logActivity(
+    idx >= 0 ? "update" : "create",
+    "water_quality",
+    row?.date || null,
+    before,
+    row || null
+  ).then(renderRecentActivity);
+
+};
+
+
+/* ===== Water Quality: Delete ===== */
+
+const _originalDeleteWater =
+  deleteWater;
+
+deleteWater = function (i) {
+
+  if (!requireDelete()) return;
+
+  const before =
+    JSON.parse(
+      JSON.stringify(water()[i])
+    );
+
+  _originalDeleteWater(i);
+
+  logActivity(
+    "delete",
+    "water_quality",
+    before?.date || null,
+    before,
+    null
+  ).then(renderRecentActivity);
+
+};
+
+
+/* ===== Save All Data ===== */
+
+const _originalSaveAllData =
+  saveAllData;
+
+saveAllData = function () {
+
+  if (!requireEdit()) return;
+
+  _originalSaveAllData();
+
+  logActivity(
+    "save_all",
+    "system",
+    "app_state",
+    null,
+    {
+      saved_at:
+        new Date().toISOString()
+    }
+  ).then(renderRecentActivity);
+
+};
+
+
+/* ===== Backup ===== */
+
+const _originalDownloadBackup =
+  downloadBackup;
+
+downloadBackup = function () {
+
+  _originalDownloadBackup();
+
+  logActivity(
+    "backup",
+    "system",
+    "local_backup",
+    null,
+    {
+      created_at:
+        new Date().toISOString()
+    }
+  ).then(renderRecentActivity);
+
+};
+
+
+/* ===== Change User Role ===== */
+
+const _originalChangeRole =
+  changeRole;
+
+changeRole = async function (id) {
+
+  if (currentProfile?.role !== "admin")
+    return;
+
+  const select =
+    document.getElementById("role_" + id);
+
+  const oldRole =
+    select?.value || null;
+
+  await _originalChangeRole(id);
+
+  const newSelect =
+    document.getElementById("role_" + id);
+
+  const newRole =
+    newSelect?.value || null;
+
+  if (oldRole !== newRole) {
+
+    await logActivity(
+      "role_change",
+      "role",
+      id,
+      { role: oldRole },
+      { role: newRole }
+    );
+
+  }
+
+  await renderRecentActivity();
+
+};
+
+
+/* ===== Login ===== */
+
+const _originalEnterApp =
+  enterApp;
+
+enterApp = async function (user) {
+
+  await _originalEnterApp(user);
+
+  if (!currentUser?.id) return;
+
+  const key =
+    "sbs_activity_login_" +
+    currentUser.id;
+
+  if (
+    !sessionStorage.getItem(key)
+  ) {
+
+    sessionStorage.setItem(
+      key,
+      "1"
+    );
+
+    await logActivity(
+      "login",
+      "system",
+      currentUser.id,
+      null,
+      {
+        email:
+          currentUser.email || null
+      }
+    );
+
+    await renderRecentActivity();
+
+  }
+
+};
 </script>
 </body>
 </html>
