@@ -958,6 +958,1398 @@ enterApp = async function (user) {
   }
 
 };
+  /* ===== Future Activities V2 ===== */
+
+(function(){
+
+  const style = document.createElement("style");
+  style.textContent = `
+    .fa-toolbar{
+      display:flex;
+      flex-wrap:wrap;
+      gap:9px;
+      margin-bottom:15px
+    }
+
+    .fa-toolbar input,
+    .fa-toolbar select{
+      border:1px solid #ccd8e3;
+      border-radius:9px;
+      padding:9px 10px;
+      background:#fff
+    }
+
+    .fa-toolbar input{
+      min-width:240px
+    }
+
+    .fa-grid{
+      display:grid;
+      grid-template-columns:repeat(2,1fr);
+      gap:14px
+    }
+
+    .fa-card{
+      background:#fff;
+      border:1px solid var(--line);
+      border-radius:14px;
+      padding:17px;
+      box-shadow:var(--shadow)
+    }
+
+    .fa-card h3{
+      margin:9px 0 6px;
+      font-size:18px
+    }
+
+    .fa-meta{
+      display:flex;
+      flex-wrap:wrap;
+      gap:6px;
+      margin:10px 0
+    }
+
+    .fa-date{
+      font-size:12px;
+      color:var(--muted)
+    }
+
+    .fa-desc{
+      font-size:13px;
+      line-height:1.55;
+      color:#456070
+    }
+
+    .fa-footer{
+      display:flex;
+      justify-content:space-between;
+      gap:10px;
+      align-items:center;
+      margin-top:14px;
+      padding-top:11px;
+      border-top:1px solid var(--line)
+    }
+
+    .fa-code{
+      font-size:10px;
+      color:#8092a2;
+      font-family:ui-monospace,SFMono-Regular,Menlo,monospace
+    }
+
+    .fa-high{
+      background:#ffebe8;
+      color:#a82f23
+    }
+
+    .fa-medium{
+      background:#fff4db;
+      color:#8b6100
+    }
+
+    .fa-low{
+      background:#e8f7ee;
+      color:#17733e
+    }
+
+    .fa-planned{
+      background:#e8f4f7;
+      color:#126371
+    }
+
+    .fa-progress{
+      background:#fff4db;
+      color:#8b6100
+    }
+
+    .fa-completed{
+      background:#e8f7ee;
+      color:#17733e
+    }
+
+    .fa-delayed{
+      background:#ffebe8;
+      color:#a82f23
+    }
+
+    .fa-cancelled{
+      background:#eef0f2;
+      color:#647381
+    }
+
+    @media(max-width:800px){
+      .fa-grid{
+        grid-template-columns:1fr
+      }
+    }
+  `;
+
+  document.head.appendChild(style);
+
+
+  let futureActivitiesCache = [];
+  let futureActivityEditId = null;
+
+
+  function faStatusClass(status){
+
+    return {
+      "Planned":"fa-planned",
+      "In Progress":"fa-progress",
+      "Completed":"fa-completed",
+      "Delayed":"fa-delayed",
+      "Cancelled":"fa-cancelled"
+    }[status] || "fa-planned";
+
+  }
+
+
+  function faStatusIcon(status){
+
+    return {
+      "Planned":"🔵",
+      "In Progress":"🟡",
+      "Completed":"🟢",
+      "Delayed":"🔴",
+      "Cancelled":"⚪"
+    }[status] || "🔵";
+
+  }
+
+
+  function faPriorityClass(priority){
+
+    return "fa-" +
+      String(priority || "Medium").toLowerCase();
+
+  }
+
+
+  function faCanEdit(){
+
+    return [
+      "admin",
+      "researcher",
+      "editor"
+    ].includes(currentProfile?.role);
+
+  }
+
+
+  function faCanDelete(){
+
+    return [
+      "admin",
+      "researcher"
+    ].includes(currentProfile?.role);
+
+  }
+
+
+  /* ================================
+     FUTURE ACTIVITIES LIST
+  ================================= */
+
+  renderActivities = async function(){
+
+    const box =
+      document.getElementById("activityList");
+
+    if(!box) return;
+
+
+    const result =
+      await sbClient
+        .from("future_activities")
+        .select("*")
+        .order(
+          "start_date",
+          {ascending:true,nullsFirst:false}
+        )
+        .order(
+          "created_at",
+          {ascending:false}
+        );
+
+
+    if(result.error){
+
+      box.innerHTML =
+        "<div class='notice'>" +
+        "ไม่สามารถโหลด Future Activities: " +
+        esc(result.error.message) +
+        "</div>";
+
+      return;
+
+    }
+
+
+    futureActivitiesCache =
+      result.data || [];
+
+
+    /*
+      สร้าง Toolbar
+    */
+
+    box.innerHTML = `
+
+      <div class="fa-toolbar">
+
+        <input
+          id="faSearch"
+          placeholder="🔎 ค้นหากิจกรรม / รายละเอียด / ผู้รับผิดชอบ..."
+        >
+
+        <select id="faStatus">
+          <option value="all">
+            ทุกสถานะ
+          </option>
+          <option value="Planned">
+            Planned
+          </option>
+          <option value="In Progress">
+            In Progress
+          </option>
+          <option value="Completed">
+            Completed
+          </option>
+          <option value="Delayed">
+            Delayed
+          </option>
+          <option value="Cancelled">
+            Cancelled
+          </option>
+        </select>
+
+        <select id="faPriority">
+          <option value="all">
+            ทุกความสำคัญ
+          </option>
+          <option value="High">High</option>
+          <option value="Medium">Medium</option>
+          <option value="Low">Low</option>
+        </select>
+
+        <select id="faGeneration">
+          <option value="all">
+            ทุกรุ่น
+          </option>
+        </select>
+
+        <select id="faType">
+          <option value="all">
+            ทุกประเภท
+          </option>
+          <option value="Breeding">
+            Breeding
+          </option>
+          <option value="Experiment">
+            Experiment
+          </option>
+          <option value="Data Collection">
+            Data Collection
+          </option>
+          <option value="Production">
+            Production
+          </option>
+          <option value="Analysis">
+            Analysis
+          </option>
+          <option value="Other">
+            Other
+          </option>
+        </select>
+
+        ${
+          faCanEdit()
+          ?
+          `<button
+            class="btn primary"
+            id="faAddBtn"
+          >
+            ＋ เพิ่มกิจกรรม
+          </button>`
+          :
+          ""
+        }
+
+      </div>
+
+      <div id="faCards"></div>
+    `;
+
+
+    const generations =
+      [
+        ...new Set(
+          futureActivitiesCache
+            .map(x => x.generation)
+            .filter(Boolean)
+        )
+      ].sort();
+
+
+    const genSelect =
+      document.getElementById("faGeneration");
+
+
+    generations.forEach(g => {
+
+      const option =
+        document.createElement("option");
+
+      option.value = g;
+      option.textContent = g;
+
+      genSelect.appendChild(option);
+
+    });
+
+
+    document
+      .getElementById("faSearch")
+      .addEventListener(
+        "input",
+        renderFutureCards
+      );
+
+
+    document
+      .getElementById("faStatus")
+      .addEventListener(
+        "change",
+        renderFutureCards
+      );
+
+
+    document
+      .getElementById("faPriority")
+      .addEventListener(
+        "change",
+        renderFutureCards
+      );
+
+
+    document
+      .getElementById("faGeneration")
+      .addEventListener(
+        "change",
+        renderFutureCards
+      );
+
+
+    document
+      .getElementById("faType")
+      .addEventListener(
+        "change",
+        renderFutureCards
+      );
+
+
+    if(faCanEdit()){
+
+      document
+        .getElementById("faAddBtn")
+        .onclick =
+        function(){
+
+          openFutureActivityModal();
+
+        };
+
+    }
+
+
+    renderFutureCards();
+
+  };
+
+
+  function renderFutureCards(){
+
+    const target =
+      document.getElementById("faCards");
+
+    if(!target) return;
+
+
+    const q =
+      (
+        document
+          .getElementById("faSearch")
+          ?.value || ""
+      )
+      .trim()
+      .toLowerCase();
+
+
+    const status =
+      document
+        .getElementById("faStatus")
+        ?.value || "all";
+
+
+    const priority =
+      document
+        .getElementById("faPriority")
+        ?.value || "all";
+
+
+    const generation =
+      document
+        .getElementById("faGeneration")
+        ?.value || "all";
+
+
+    const type =
+      document
+        .getElementById("faType")
+        ?.value || "all";
+
+
+    const rows =
+      futureActivitiesCache.filter(x => {
+
+        const text = [
+
+          x.activity,
+          x.description,
+          x.responsible,
+          x.location,
+          x.notes,
+          x.activity_code,
+          x.generation,
+          x.activity_type
+
+        ]
+        .join(" ")
+        .toLowerCase();
+
+
+        return (
+
+          (!q || text.includes(q)) &&
+
+          (
+            status === "all" ||
+            x.status === status
+          ) &&
+
+          (
+            priority === "all" ||
+            x.priority === priority
+          ) &&
+
+          (
+            generation === "all" ||
+            x.generation === generation
+          ) &&
+
+          (
+            type === "all" ||
+            x.activity_type === type
+          )
+
+        );
+
+      });
+
+
+    if(!rows.length){
+
+      target.innerHTML =
+        "<div class='card empty'>" +
+        "ยังไม่มีกิจกรรมที่ตรงกับเงื่อนไข" +
+        "</div>";
+
+      return;
+
+    }
+
+
+    target.innerHTML =
+      '<div class="fa-grid">' +
+
+      rows.map(x => {
+
+        let dateText =
+          "ยังไม่กำหนดวันที่";
+
+
+        if(
+          x.start_date &&
+          x.due_date
+        ){
+
+          dateText =
+            new Date(
+              x.start_date +
+              "T00:00:00"
+            ).toLocaleDateString("th-TH")
+            +
+            " → " +
+            new Date(
+              x.due_date +
+              "T00:00:00"
+            ).toLocaleDateString("th-TH");
+
+        }
+        else if(x.start_date){
+
+          dateText =
+            new Date(
+              x.start_date +
+              "T00:00:00"
+            ).toLocaleDateString("th-TH");
+
+        }
+
+
+        const editButton =
+          faCanEdit()
+          ?
+          `<button
+            class="btn"
+            onclick="openFutureActivityModal(${x.id})"
+          >
+            แก้ไข
+          </button>`
+          :
+          "";
+
+
+        const deleteButton =
+          faCanDelete()
+          ?
+          `<button
+            class="btn danger"
+            onclick="deleteFutureActivity(${x.id})"
+          >
+            ลบ
+          </button>`
+          :
+          "";
+
+
+        return `
+
+          <div class="fa-card">
+
+            <div style="
+              display:flex;
+              justify-content:space-between;
+              gap:10px;
+              align-items:flex-start
+            ">
+
+              <span class="pill ${faStatusClass(x.status)}">
+                ${faStatusIcon(x.status)}
+                ${esc(x.status)}
+              </span>
+
+              <span class="pill ${faPriorityClass(x.priority)}">
+                Priority: ${esc(x.priority)}
+              </span>
+
+            </div>
+
+
+            <h3>
+              ${esc(x.activity)}
+            </h3>
+
+
+            <div class="fa-date">
+              📅 ${dateText}
+            </div>
+
+
+            <div class="fa-meta">
+
+              ${
+                x.generation
+                ?
+                `<span class="pill info">
+                  🧬 ${esc(x.generation)}
+                </span>`
+                :
+                ""
+              }
+
+
+              <span class="pill info">
+                🏷️ ${esc(x.activity_type)}
+              </span>
+
+
+              ${
+                x.responsible
+                ?
+                `<span class="pill info">
+                  👤 ${esc(x.responsible)}
+                </span>`
+                :
+                ""
+              }
+
+
+              ${
+                x.location
+                ?
+                `<span class="pill info">
+                  📍 ${esc(x.location)}
+                </span>`
+                :
+                ""
+              }
+
+            </div>
+
+
+            ${
+              x.description
+              ?
+              `<div class="fa-desc">
+                ${esc(x.description)}
+              </div>`
+              :
+              ""
+            }
+
+
+            ${
+              x.notes
+              ?
+              `<div
+                class="small"
+                style="margin-top:8px"
+              >
+                📝 ${esc(x.notes)}
+              </div>`
+              :
+              ""
+            }
+
+
+            <div class="fa-footer">
+
+              <span class="fa-code">
+                ${esc(x.activity_code)}
+              </span>
+
+              <div class="row-actions">
+                ${editButton}
+                ${deleteButton}
+              </div>
+
+            </div>
+
+          </div>
+
+        `;
+
+      }).join("") +
+
+      "</div>";
+
+  }
+
+
+  /* ================================
+     MODAL
+  ================================= */
+
+  function createFutureActivityModal(){
+
+    if(
+      document.getElementById(
+        "futureActivityModal"
+      )
+    ) return;
+
+
+    const div =
+      document.createElement("div");
+
+
+    div.id =
+      "futureActivityModal";
+
+
+    div.className =
+      "modal";
+
+
+    div.innerHTML = `
+
+      <div class="modalbox">
+
+        <div class="modalhead">
+
+          <h2 id="futureActivityModalTitle">
+            เพิ่มกิจกรรม
+          </h2>
+
+          <button
+            class="close"
+            onclick="closeFutureActivityModal()"
+          >
+            ×
+          </button>
+
+        </div>
+
+
+        <div class="formgrid">
+
+          <div class="field full">
+            <label>
+              Activity / กิจกรรม *
+            </label>
+
+            <input
+              id="faActivity"
+              placeholder="เช่น G5 Growth Test Harvest"
+            >
+          </div>
+
+
+          <div class="field full">
+            <label>
+              Description / รายละเอียด
+            </label>
+
+            <textarea
+              id="faDescription"
+              rows="3"
+              placeholder="รายละเอียดของกิจกรรม"
+            ></textarea>
+          </div>
+
+
+          <div class="field">
+            <label>
+              Start Date / วันที่เริ่ม
+            </label>
+
+            <input
+              id="faStartDate"
+              type="date"
+            >
+          </div>
+
+
+          <div class="field">
+            <label>
+              Due Date / วันที่สิ้นสุด
+            </label>
+
+            <input
+              id="faDueDate"
+              type="date"
+            >
+          </div>
+
+
+          <div class="field">
+            <label>
+              Status / สถานะ
+            </label>
+
+            <select id="faFormStatus">
+
+              <option>Planned</option>
+              <option>In Progress</option>
+              <option>Completed</option>
+              <option>Delayed</option>
+              <option>Cancelled</option>
+
+            </select>
+
+          </div>
+
+
+          <div class="field">
+
+            <label>
+              Priority / ความสำคัญ
+            </label>
+
+            <select id="faFormPriority">
+
+              <option>High</option>
+              <option selected>
+                Medium
+              </option>
+              <option>Low</option>
+
+            </select>
+
+          </div>
+
+
+          <div class="field">
+
+            <label>
+              Generation / รุ่น
+            </label>
+
+            <input
+              id="faGenerationForm"
+              placeholder="G5"
+            >
+
+          </div>
+
+
+          <div class="field">
+
+            <label>
+              Activity Type / ประเภทงาน
+            </label>
+
+            <select id="faFormType">
+
+              <option>Breeding</option>
+              <option>Experiment</option>
+              <option>Data Collection</option>
+              <option>Production</option>
+              <option>Analysis</option>
+              <option selected>Other</option>
+
+            </select>
+
+          </div>
+
+
+          <div class="field">
+
+            <label>
+              Responsible / ผู้รับผิดชอบ
+            </label>
+
+            <input
+              id="faResponsible"
+              placeholder="ชื่อผู้รับผิดชอบ"
+            >
+
+          </div>
+
+
+          <div class="field">
+
+            <label>
+              Location / สถานที่
+            </label>
+
+            <input
+              id="faLocation"
+              placeholder="เช่น NBC Trang"
+            >
+
+          </div>
+
+
+          <div class="field full">
+
+            <label>
+              Notes / หมายเหตุ
+            </label>
+
+            <textarea
+              id="faNotes"
+              rows="3"
+              placeholder="หมายเหตุเพิ่มเติม"
+            ></textarea>
+
+          </div>
+
+        </div>
+
+
+        <div class="actions">
+
+          <button
+            class="btn"
+            onclick="closeFutureActivityModal()"
+          >
+            ยกเลิก
+          </button>
+
+          <button
+            class="btn primary"
+            onclick="saveFutureActivity()"
+          >
+            💾 บันทึกกิจกรรม
+          </button>
+
+        </div>
+
+      </div>
+
+    `;
+
+
+    document.body.appendChild(div);
+
+  }
+
+
+  window.openFutureActivityModal =
+    function(id=null){
+
+      if(!requireEdit()) return;
+
+
+      createFutureActivityModal();
+
+
+      futureActivityEditId =
+        id;
+
+
+      const row =
+        id == null
+        ?
+        {}
+        :
+        futureActivitiesCache.find(
+          x => x.id === id
+        );
+
+
+      if(id != null && !row){
+
+        alert("ไม่พบกิจกรรมนี้");
+
+        return;
+
+      }
+
+
+      document
+        .getElementById(
+          "futureActivityModalTitle"
+        )
+        .textContent =
+          id == null
+          ?
+          "เพิ่มกิจกรรม"
+          :
+          "แก้ไขกิจกรรม";
+
+
+      document
+        .getElementById("faActivity")
+        .value =
+          row?.activity || "";
+
+
+      document
+        .getElementById("faDescription")
+        .value =
+          row?.description || "";
+
+
+      document
+        .getElementById("faStartDate")
+        .value =
+          row?.start_date || "";
+
+
+      document
+        .getElementById("faDueDate")
+        .value =
+          row?.due_date || "";
+
+
+      document
+        .getElementById("faFormStatus")
+        .value =
+          row?.status || "Planned";
+
+
+      document
+        .getElementById("faFormPriority")
+        .value =
+          row?.priority || "Medium";
+
+
+      document
+        .getElementById("faGenerationForm")
+        .value =
+          row?.generation || "";
+
+
+      document
+        .getElementById("faFormType")
+        .value =
+          row?.activity_type || "Other";
+
+
+      document
+        .getElementById("faResponsible")
+        .value =
+          row?.responsible ||
+          currentProfile?.display_name ||
+          "";
+
+
+      document
+        .getElementById("faLocation")
+        .value =
+          row?.location || "";
+
+
+      document
+        .getElementById("faNotes")
+        .value =
+          row?.notes || "";
+
+
+      document
+        .getElementById(
+          "futureActivityModal"
+        )
+        .classList.add("show");
+
+    };
+
+
+  window.closeFutureActivityModal =
+    function(){
+
+      const modal =
+        document.getElementById(
+          "futureActivityModal"
+        );
+
+      if(modal)
+        modal.classList.remove("show");
+
+    };
+
+
+  window.saveFutureActivity =
+    async function(){
+
+      if(!requireEdit()) return;
+
+
+      const activity =
+        document
+          .getElementById("faActivity")
+          .value
+          .trim();
+
+
+      if(!activity){
+
+        alert(
+          "กรุณากรอกชื่อกิจกรรม"
+        );
+
+        return;
+
+      }
+
+
+      const startDate =
+        document
+          .getElementById("faStartDate")
+          .value;
+
+
+      const dueDate =
+        document
+          .getElementById("faDueDate")
+          .value;
+
+
+      if(
+        startDate &&
+        dueDate &&
+        dueDate < startDate
+      ){
+
+        alert(
+          "Due Date ต้องไม่ก่อน Start Date"
+        );
+
+        return;
+
+      }
+
+
+      const payload = {
+
+        activity,
+
+        description:
+          document
+            .getElementById(
+              "faDescription"
+            )
+            .value
+            .trim() || null,
+
+        start_date:
+          startDate || null,
+
+        due_date:
+          dueDate || null,
+
+        status:
+          document
+            .getElementById(
+              "faFormStatus"
+            )
+            .value,
+
+        priority:
+          document
+            .getElementById(
+              "faFormPriority"
+            )
+            .value,
+
+        generation:
+          document
+            .getElementById(
+              "faGenerationForm"
+            )
+            .value
+            .trim() || null,
+
+        activity_type:
+          document
+            .getElementById(
+              "faFormType"
+            )
+            .value,
+
+        responsible:
+          document
+            .getElementById(
+              "faResponsible"
+            )
+            .value
+            .trim() || null,
+
+        location:
+          document
+            .getElementById(
+              "faLocation"
+            )
+            .value
+            .trim() || null,
+
+        notes:
+          document
+            .getElementById(
+              "faNotes"
+            )
+            .value
+            .trim() || null
+
+      };
+
+
+      let result;
+      let before = null;
+      let action = "create";
+
+
+      if(
+        futureActivityEditId == null
+      ){
+
+        result =
+          await sbClient
+            .from(
+              "future_activities"
+            )
+            .insert({
+              ...payload,
+              created_by:
+                currentUser.id
+            })
+            .select()
+            .single();
+
+      }
+      else{
+
+        before =
+          futureActivitiesCache.find(
+            x =>
+              x.id ===
+              futureActivityEditId
+          ) || null;
+
+
+        result =
+          await sbClient
+            .from(
+              "future_activities"
+            )
+            .update(payload)
+            .eq(
+              "id",
+              futureActivityEditId
+            )
+            .select()
+            .single();
+
+
+        action = "update";
+
+      }
+
+
+      if(result.error){
+
+        alert(
+          "บันทึกกิจกรรมไม่สำเร็จ: " +
+          result.error.message
+        );
+
+        return;
+
+      }
+
+
+      closeFutureActivityModal();
+
+
+      await logActivity(
+        action,
+        "future_activity",
+        result.data?.activity_code ||
+        result.data?.id,
+        before,
+        result.data
+      );
+
+
+      await renderActivities();
+
+
+      await renderRecentActivity();
+
+    };
+
+
+  window.deleteFutureActivity =
+    async function(id){
+
+      if(!requireDelete()) return;
+
+
+      const row =
+        futureActivitiesCache.find(
+          x => x.id === id
+        );
+
+
+      if(!row) return;
+
+
+      if(
+        !confirm(
+          "ลบกิจกรรมนี้หรือไม่?"
+        )
+      ) return;
+
+
+      const result =
+        await sbClient
+          .from(
+            "future_activities"
+          )
+          .delete()
+          .eq(
+            "id",
+            id
+          );
+
+
+      if(result.error){
+
+        alert(
+          "ลบกิจกรรมไม่สำเร็จ: " +
+          result.error.message
+        );
+
+        return;
+
+      }
+
+
+      await logActivity(
+        "delete",
+        "future_activity",
+        row.activity_code,
+        row,
+        null
+      );
+
+
+      await renderActivities();
+
+
+      await renderRecentActivity();
+
+    };
+
+
+  /*
+    เพิ่ม Future Activity
+    ใน Recent Activity
+  */
+
+  const oldActivityText =
+    activityText;
+
+
+  activityText =
+    function(x){
+
+      if(
+        x.entity_type ===
+        "future_activity"
+      ){
+
+        const actionMap = {
+
+          create:
+            "เพิ่มกิจกรรม",
+
+          update:
+            "แก้ไขกิจกรรม",
+
+          delete:
+            "ลบกิจกรรม"
+
+        };
+
+
+        return (
+          actionMap[x.action] ||
+          x.action
+        ) +
+        " • Future Activity";
+
+      }
+
+
+      return oldActivityText(x);
+
+    };
+
+
+})();
 </script>
 </body>
 </html>
