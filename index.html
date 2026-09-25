@@ -11,7 +11,7 @@
 :root{--nav:#102a43;--nav2:#163b5c;--bg:#f4f7fb;--card:#fff;--text:#18324a;--muted:#6b7c8f;--line:#dce5ee;--accent:#1f7a8c;--good:#198754;--warn:#d88b00;--bad:#c0392b;--shadow:0 8px 25px #17324d12}
 *{box-sizing:border-box}body{margin:0;font-family:Segoe UI,Tahoma,sans-serif;background:var(--bg);color:var(--text)}
 button,input,select,textarea{font:inherit}.app{display:flex;min-height:100vh}.sidebar{width:245px;background:linear-gradient(180deg,var(--nav),#0c2235);color:#fff;position:fixed;inset:0 auto 0 0;overflow:auto}.brand{padding:22px 18px;font-size:17px;font-weight:800;border-bottom:1px solid #ffffff18}.brand small{display:block;font-weight:400;color:#b8c9d8;margin-top:5px}.navtitle{padding:18px 18px 7px;color:#89a5bc;font-size:11px;text-transform:uppercase;letter-spacing:1.2px}.nav button{width:100%;border:0;background:transparent;color:#dbe8f2;text-align:left;padding:11px 18px;cursor:pointer}.nav button:hover,.nav button.active{background:#ffffff12;color:#fff;border-left:3px solid #5ec5d2;padding-left:15px}.nav button span{width:27px;display:inline-block}.main{margin-left:245px;width:calc(100% - 245px);padding:28px;max-width:1700px}.top{display:flex;justify-content:space-between;gap:20px;align-items:center;margin-bottom:20px}.top h1{margin:0 0 6px;font-size:28px}.top p{margin:0;color:var(--muted)}.badge,.userchip{padding:8px 12px;border-radius:999px;font-weight:700;font-size:12px}.badge{background:#e7f6f7;color:#11616d;border:1px solid #bde4e7}.userchip{background:#eef6f8;color:#126371}.page.hidden{display:none}.grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px;box-shadow:var(--shadow)}.label{font-size:12px;color:var(--muted)}.num{font-size:27px;font-weight:800;margin-top:6px}.sub{font-size:12px;color:var(--muted);margin-top:4px}.section{margin-top:18px}.sectiongrid{display:grid;grid-template-columns:1.3fr .7fr;gap:18px}.chartbox{height:300px}.cards2{display:grid;grid-template-columns:repeat(2,1fr);gap:14px}.toolbar{display:flex;flex-wrap:wrap;gap:9px;margin-bottom:15px}.toolbar input,.toolbar select,.field input,.field select,.field textarea{border:1px solid #ccd8e3;border-radius:9px;padding:9px 10px;background:#fff}.toolbar input{min-width:220px}.btn{border:1px solid #cbd8e3;background:#fff;color:var(--text);padding:9px 13px;border-radius:9px;cursor:pointer}.btn.primary{background:var(--accent);color:#fff;border-color:var(--accent)}.btn.good{background:#eaf7f0;color:var(--good);border-color:#bfe4cc}.btn.warn{background:#fff7e7;color:#9a6500;border-color:#f0d49b}.btn.danger{background:#fff0ee;color:var(--bad);border-color:#efc1bb}.btn:disabled{opacity:.45;cursor:not-allowed}.tablewrap{overflow:auto}.table{width:100%;border-collapse:collapse;font-size:13px}.table th,.table td{padding:10px 9px;border-bottom:1px solid var(--line);white-space:nowrap;text-align:left}.table th{background:#f7f9fb;color:#587086}.pill{display:inline-block;border-radius:999px;padding:4px 8px;font-size:11px;font-weight:700}.pill.good{background:#e8f7ee;color:#17733e}.pill.warn{background:#fff4db;color:#8b6100}.pill.bad{background:#ffebe8;color:#a82f23}.pill.info{background:#e8f4f7;color:#126371}.metricgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}.metric{padding:14px;background:#f8fafc;border:1px solid var(--line);border-radius:10px}.metric b{font-size:20px;display:block}.small{font-size:11px;color:var(--muted)}.row-actions{display:flex;gap:5px;align-items:center}.savebar{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:12px;padding:10px 12px;background:#f7fbfc;border:1px solid #d7e9ec;border-radius:10px}.save-status{font-size:12px;color:var(--muted)}.modal{position:fixed;inset:0;background:#06152288;display:none;align-items:center;justify-content:center;padding:20px;z-index:20}.modal.show{display:flex}.modalbox{background:#fff;width:min(850px,100%);max-height:90vh;overflow:auto;border-radius:16px;padding:20px}.modalhead{display:flex;justify-content:space-between;align-items:center}.close{border:0;background:transparent;font-size:26px;cursor:pointer}.formgrid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}.field{display:flex;flex-direction:column;gap:5px}.field label{font-size:12px;color:var(--muted)}.field.full{grid-column:1/-1}.actions{display:flex;justify-content:flex-end;gap:9px;margin-top:16px}.notice{padding:12px 14px;border-radius:10px;background:#eef7fa;border:1px solid #c8e4ea;color:#1c6070;font-size:13px}.empty{padding:35px;text-align:center;color:var(--muted)}
-#authGate{position:fixed;inset:0;z-index:9999;background:#f4f7fb;display:flex;align-items:center;justify-content:center;padding:20px}.authbox{width:min(430px,100%);background:#fff;border:1px solid #dce5ee;border-radius:18px;padding:28px;box-shadow:0 18px 50px #17324d18}.authbox h1{margin:0 0 6px;color:#102a43}.authbox p{color:#6b7c8f;font-size:13px}.authfield{display:flex;flex-direction:column;gap:6px;margin:12px 0}.authfield label{font-size:12px;color:#587086}.authfield input{padding:11px;border:1px solid #ccd8e3;border-radius:9px;width:100%}.authactions{display:flex;gap:8px;margin-top:15px}.authmsg{font-size:12px;margin-top:12px;color:#a82f23;white-space:pre-wrap}.hidden{display:none!important}
+#authGate{position:fixed;inset:0;z-index:9999;display:flex;align-items:center;justify-content:center;padding:20px;background:linear-gradient(90deg,rgba(5,27,43,.70),rgba(5,27,43,.38)),url('./login-bg.jpg') center center/cover no-repeat}.authbox{width:min(430px,100%);background:rgba(255,255,255,.94);backdrop-filter:blur(7px);-webkit-backdrop-filter:blur(7px);border:1px solid rgba(255,255,255,.72);border-radius:20px;padding:30px;box-shadow:0 22px 60px rgba(0,0,0,.28)}.authbox h1{margin:0 0 6px;color:#102a43}.authbox p{color:#6b7c8f;font-size:13px}.authfield{display:flex;flex-direction:column;gap:6px;margin:12px 0}.authfield label{font-size:12px;color:#587086}.authfield input{padding:11px;border:1px solid #ccd8e3;border-radius:9px;width:100%;background:#fff}.authactions{display:flex;gap:8px;margin-top:15px}.authmsg{font-size:12px;margin-top:12px;color:#a82f23;white-space:pre-wrap}.authlogo{width:58px;height:58px;display:grid;place-items:center;border-radius:16px;background:#e7f6f7;border:1px solid #bde4e7;font-size:31px;box-shadow:0 8px 20px rgba(16,42,67,.10)}.search-filter-panel{width:100%;margin-bottom:15px}.search-row{display:flex;align-items:center;gap:9px;width:100%;margin-bottom:10px}.search-row input{flex:1;min-width:0;height:42px;border:1px solid #ccd8e3;border-radius:9px;padding:9px 12px;background:#fff}.search-row input:focus,.filter-row select:focus{outline:none;border-color:#1f7a8c;box-shadow:0 0 0 2px #1f7a8c18}.search-row .btn{height:42px}.filter-row{display:grid;grid-template-columns:repeat(3,minmax(150px,1fr)) auto;gap:9px;align-items:end}.filter-group{display:flex;flex-direction:column;gap:5px}.filter-group label{font-size:11px;color:var(--muted);font-weight:700}.filter-row select{width:100%;height:40px;border:1px solid #ccd8e3;border-radius:9px;padding:8px 10px;background:#fff;color:var(--text)}.generation-head-actions{display:flex;gap:9px;align-items:center}.generation-add-note{font-size:12px;color:var(--muted);margin-top:4px}.generation-card-current{border-color:#8fd3da;box-shadow:0 10px 28px #1f7a8c18}.hidden{display:none!important}@media(max-width:700px){.search-row{flex-wrap:wrap}.search-row input{flex:100%;width:100%}.search-row .btn{flex:1}.filter-row{grid-template-columns:1fr}.generation-head-actions{width:100%;flex-direction:column;align-items:stretch}.generation-head-actions .btn{width:100%}}
 @media(max-width:1000px){.sidebar{width:205px}.main{margin-left:205px;width:calc(100% - 205px);padding:18px}.grid,.metricgrid{grid-template-columns:repeat(2,1fr)}.sectiongrid{grid-template-columns:1fr}}
 @media(max-width:700px){.sidebar{position:static;width:100%;height:auto}.app{display:block}.main{margin:0;width:100%}.grid,.metricgrid,.formgrid,.cards2{grid-template-columns:1fr}.top{align-items:flex-start;flex-direction:column}}
 </style>
@@ -20,7 +20,7 @@ button,input,select,textarea{font:inherit}.app{display:flex;min-height:100vh}.si
 
 <div id="authGate">
   <div class="authbox">
-    <div style="font-size:38px">🦐</div>
+    <div class="authlogo">🦐</div>
     <h1>Shrimp Breeding System</h1>
     <p>ระบบจัดการข้อมูลการปรับปรุงพันธุ์กุ้ง — Cloud Edition</p>
     <div id="signupNameWrap" class="authfield hidden"><label>ชื่อผู้ใช้</label><input id="authName"></div>
@@ -62,29 +62,52 @@ button,input,select,textarea{font:inherit}.app{display:flex;min-height:100vh}.si
 <section id="dashboard" class="page">
  <div class="top"><div><h1>กุ้งแชบ๊วยปรับปรุงพันธุ์</h1><p>ภาพรวมโครงการตั้งแต่ P0 จนถึงรุ่นปัจจุบัน</p></div><div id="userBar"></div></div>
  <div class="grid">
-  <div class="card"><div class="label">รุ่นปัจจุบัน</div><div class="num">G5</div><div class="sub">Current generation</div></div>
-  <div class="card"><div class="label">จำนวนครอบครัว</div><div class="num" id="dashFamilies">60</div><div class="sub">G5 families</div></div>
+  <div class="card"><div class="label">รุ่นปัจจุบัน</div><div class="num" id="dashCurrentGen">G5</div><div class="sub">Current generation</div></div>
+  <div class="card"><div class="label">จำนวนครอบครัว</div><div class="num" id="dashFamilies">60</div><div class="sub" id="dashFamilySub">G5 families</div></div>
   <div class="card"><div class="label">Heritability</div><div class="num">0.208</div><div class="sub">SE 0.082</div></div>
   <div class="card"><div class="label">Genetic Gain</div><div class="num">+8%</div><div class="sub">per generation</div></div>
  </div>
  <div class="section sectiongrid">
   <div class="card"><h2>🧬 Generation Progress</h2><div class="chartbox"><canvas id="genChart"></canvas></div></div>
   <div class="card"><h2>🎯 Program Status</h2><div class="metricgrid">
-   <div class="metric"><span class="small">Growth Test</span><b>G5</b></div><div class="metric"><span class="small">EBV</span><b id="dashEBV">Ready</b></div><div class="metric"><span class="small">Selection</span><b id="dashSelected">0</b></div><div class="metric"><span class="small">Cloud</span><b id="dashCloud">Connected</b></div>
+   <div class="metric"><span class="small">Growth Test</span><b id="dashGrowthGen">G5</b></div><div class="metric"><span class="small">EBV</span><b id="dashEBV">Ready</b></div><div class="metric"><span class="small">Selection</span><b id="dashSelected">0</b></div><div class="metric"><span class="small">Cloud</span><b id="dashCloud">Connected</b></div>
   </div><hr style="border:0;border-top:1px solid var(--line);margin:18px 0"><div class="notice">ข้อมูลจะถูกเก็บใน Supabase Cloud และสามารถเพิ่ม/แก้ไขต่อเนื่องได้ตามสิทธิ์ของผู้ใช้</div></div>
  </div>
  <div class="section card"><h2>📌 Recent Activity</h2><div id="recentActivity"></div></div>
 </section>
 
-<section id="generations" class="page hidden"><div class="top"><div><h1>🧬 Generations</h1><p>เลือก generation เพื่อดูข้อมูล</p></div></div><div class="grid" id="generationCards"></div></section>
+<section id="generations" class="page hidden"><div class="top"><div><h1>🧬 Generations</h1><p>จัดการรุ่นของโครงการ และเพิ่ม G6, G7, G8, G9, G10 และรุ่นถัดไปได้จากระบบ</p></div><div class="generation-head-actions"><button class="btn primary write-only" onclick="openGenerationModal()">＋ เพิ่ม Generation</button></div></div><div class="generation-add-note">รุ่นใหม่จะใช้รุ่นก่อนหน้าเป็น Parent โดยอัตโนมัติ และข้อมูลแต่ละรุ่นจะถูกแยกออกจากกัน</div><div class="grid" id="generationCards"></div></section>
 
 <section id="families" class="page hidden"><div class="top"><div><h1>👨‍👩‍👧 Family Management</h1><p>จัดการ Family และสถิติจากข้อมูลรายตัว</p></div></div>
- <div class="toolbar"><select id="familyGen" onchange="renderFamilies()"></select><input id="familySearch" placeholder="ค้นหา Family ID..." oninput="renderFamilies()"><button class="btn primary write-only" onclick="openFamilyModal()">＋ เพิ่ม Family</button><button class="btn good write-only" onclick="saveAllData()">💾 บันทึกทั้งหมด</button></div>
+ <div class="search-filter-panel">
+  <div class="search-row">
+   <input id="familySearch" placeholder="ค้นหา Family ID..." onkeydown="if(event.key==='Enter')renderFamilies()">
+   <button class="btn primary" onclick="renderFamilies()">🔎 ค้นหา</button>
+   <button class="btn" onclick="clearFamilyFilters()">ล้าง</button>
+  </div>
+  <div class="filter-row">
+   <div class="filter-group"><label>Generation</label><select id="familyGen" onchange="renderFamilies()"></select></div>
+   <div></div><div></div>
+   <div class="row-actions"><button class="btn primary write-only" onclick="openFamilyModal()">＋ เพิ่ม Family</button><button class="btn good write-only" onclick="saveAllData()">💾 บันทึกทั้งหมด</button></div>
+  </div>
+ </div>
  <div id="familyCards" class="cards2"></div>
 </section>
 
 <section id="individuals" class="page hidden"><div class="top"><div><h1>🦐 Individual Database</h1><p>ข้อมูลกุ้งรายตัวและประวัติการวัด</p></div></div>
- <div class="toolbar"><select id="indGen" onchange="renderIndividuals()"></select><input id="indSearch" placeholder="ค้นหา Individual / Family / VIE..." oninput="renderIndividuals()"><button class="btn primary write-only" onclick="openRecordModal()">＋ เพิ่มข้อมูล</button><label class="btn write-only">📥 Import Excel<input type="file" accept=".xlsx,.xls,.csv" onchange="importExcel(event)" hidden></label><button class="btn export-only" onclick="exportCurrent()">📤 Export Excel</button></div>
+ <div class="search-filter-panel">
+  <div class="search-row">
+   <input id="indSearch" placeholder="ค้นหา Individual ID / Family ID / VIE Tag / EBV..." onkeydown="if(event.key==='Enter')renderIndividuals()">
+   <button class="btn primary" onclick="renderIndividuals()">🔎 ค้นหา</button>
+   <button class="btn" onclick="clearIndividualFilters()">ล้าง</button>
+  </div>
+  <div class="filter-row">
+   <div class="filter-group"><label>Generation</label><select id="indGen" onchange="renderIndividuals()"></select></div>
+   <div class="filter-group"><label>Sex</label><select id="indSexFilter" onchange="renderIndividuals()"><option value="">ทุกเพศ</option><option value="Male">Male</option><option value="Female">Female</option></select></div>
+   <div class="filter-group"><label>Selection</label><select id="indSelectionFilter" onchange="renderIndividuals()"><option value="">ทุกสถานะ</option><option value="Selected">Selected</option><option value="Candidate">Candidate</option><option value="Not Selected">Not Selected</option></select></div>
+   <div class="row-actions"><button class="btn primary write-only" onclick="openRecordModal()">＋ เพิ่มข้อมูล</button><label class="btn write-only">📥 Import Excel<input type="file" accept=".xlsx,.xls,.csv" onchange="importExcel(event)" hidden></label><button class="btn export-only" onclick="exportCurrent()">📤 Export Excel</button></div>
+  </div>
+ </div>
  <div class="savebar"><span class="save-status" id="dataSaveStatus">☁️ Cloud</span><button class="btn good write-only" onclick="saveAllData()">💾 บันทึกข้อมูลทั้งหมด</button></div>
  <div class="card"><div class="tablewrap" id="individualTable"></div></div>
 </section>
@@ -120,6 +143,8 @@ button,input,select,textarea{font:inherit}.app{display:flex;min-height:100vh}.si
 
 <div id="familyModal" class="modal"><div class="modalbox"><div class="modalhead"><h2 id="familyModalTitle">เพิ่ม Family</h2><button class="close" onclick="closeModal('familyModal')">×</button></div><div class="formgrid"><div class="field"><label>Generation</label><select id="famGen"></select></div><div class="field"><label>Family ID</label><input id="famId"></div><div class="field"><label>Parent</label><input id="famParent"></div><div class="field full"><label>Note</label><textarea id="famNote"></textarea></div></div><div class="actions"><button class="btn" onclick="closeModal('familyModal')">ยกเลิก</button><button class="btn primary write-only" onclick="saveFamily()">บันทึก</button></div></div></div>
 
+<div id="generationModal" class="modal"><div class="modalbox"><div class="modalhead"><h2>＋ เพิ่ม Generation</h2><button class="close" onclick="closeModal('generationModal')">×</button></div><div class="notice">ระบบจะสร้างรุ่นถัดจากรุ่นล่าสุดให้อัตโนมัติ เช่น G5 → G6 → G7 และตั้ง Parent เป็นรุ่นก่อนหน้า</div><div class="formgrid" style="margin-top:12px"><div class="field"><label>Generation ใหม่</label><input id="newGenName" readonly></div><div class="field"><label>Parent</label><input id="newGenParent" readonly></div><div class="field"><label>จำนวน Family</label><input id="newGenFamilies" type="number" min="0" step="1" value="0"></div><div class="field full"><label>หมายเหตุ</label><textarea id="newGenNote" placeholder="เช่น รุ่นคัดเลือกจาก G5 เพื่อสร้าง G6"></textarea></div></div><div class="actions"><button class="btn" onclick="closeModal('generationModal')">ยกเลิก</button><button class="btn primary write-only" onclick="saveGeneration()">สร้าง Generation</button></div></div></div>
+
 <div id="experimentModal" class="modal"><div class="modalbox"><div class="modalhead"><h2 id="experimentModalTitle">เพิ่มการทดลอง</h2><button class="close" onclick="closeModal('experimentModal')">×</button></div><div class="formgrid"><div class="field"><label>Name</label><input id="exName"></div><div class="field"><label>Pond</label><input id="exPond"></div><div class="field"><label>Date</label><input id="exDate" type="date"></div><div class="field"><label>N</label><input id="exN" type="number"></div></div><div class="actions"><button class="btn" onclick="closeModal('experimentModal')">ยกเลิก</button><button class="btn primary write-only" onclick="saveExperiment()">บันทึก</button></div></div></div>
 
 <div id="waterModal" class="modal"><div class="modalbox"><div class="modalhead"><h2 id="waterModalTitle">เพิ่มคุณภาพน้ำ</h2><button class="close" onclick="closeModal('waterModal')">×</button></div><div class="formgrid"><div class="field"><label>Date</label><input id="waterDate" type="date"></div><div class="field"><label>Pond</label><input id="waterPond"></div><div class="field"><label>Temperature</label><input id="waterTemp"></div><div class="field"><label>pH</label><input id="waterPH"></div><div class="field"><label>DO</label><input id="waterDO"></div><div class="field"><label>Salinity</label><input id="waterSalinity"></div><div class="field"><label>NH3</label><input id="waterNH3"></div></div><div class="actions"><button class="btn" onclick="closeModal('waterModal')">ยกเลิก</button><button class="btn primary write-only" onclick="saveWater()">บันทึก</button></div></div></div>
@@ -128,10 +153,33 @@ button,input,select,textarea{font:inherit}.app{display:flex;min-height:100vh}.si
 const SUPABASE_URL="https://sptjvpivfhxkzkfteaeb.supabase.co";
 const SUPABASE_KEY="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNwdGp2cGl2Zmh4a3prZnRlYWViIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTAxNDk3NjUsImV4cCI6MjEwNTcyNTc2NX0.eHtneBuP7Afop9HXIViPu5FpANCxJx-pq_jI3bT3Dj8";
 const sbClient=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
-const GENS={P0:45,G1:47,G2:51,G3:55,G4:55,G5:60};
-const PARENTS={P0:"Wild foundation",G1:"P0",G2:"G1",G3:"G2",G4:"G3",G5:"G4"};
+const DEFAULT_GENS={P0:45,G1:47,G2:51,G3:55,G4:55,G5:60};
+const DEFAULT_PARENTS={P0:"Wild foundation",G1:"P0",G2:"G1",G3:"G2",G4:"G3",G5:"G4"};
+let GENS={...DEFAULT_GENS};
+let PARENTS={...DEFAULT_PARENTS};
 let currentUser=null,currentProfile=null,editIndex=-1,familyEditIndex=-1,familyEditGen="G5",experimentEditIndex=-1,waterEditIndex=-1,saveTimer=null;
 let charts={};
+
+function generationKeys(){return Object.keys(GENS).sort((a,b)=>{if(a==='P0')return -1;if(b==='P0')return 1;return (parseInt(a.slice(1))||0)-(parseInt(b.slice(1))||0)})}
+function latestGeneration(){const gs=generationKeys().filter(g=>/^G\d+$/.test(g));return gs.length?gs[gs.length-1]:'P0'}
+function initGenerations(){
+  const saved=ls('sbs_generations');
+  if(saved&&typeof saved==='object'&&!Array.isArray(saved)){
+    GENS={};PARENTS={};
+    Object.entries(saved).forEach(([g,v])=>{
+      const n=Number(v?.families ?? v ?? 0);
+      GENS[g]=Number.isFinite(n)?n:0;
+      PARENTS[g]=v?.parent || (g==='P0'?'Wild foundation':`G${Math.max(0,(parseInt(g.slice(1))||1)-1)}`);
+    });
+  } else {
+    GENS={...DEFAULT_GENS};PARENTS={...DEFAULT_PARENTS};
+  }
+}
+function saveGenerations(){
+  const meta={};generationKeys().forEach(g=>meta[g]={families:GENS[g],parent:PARENTS[g]});
+  ls('sbs_generations',meta);
+}
+function nextGenerationName(){const gs=generationKeys().filter(g=>/^G\d+$/.test(g));const n=gs.length?parseInt(gs[gs.length-1].slice(1))+1:1;return `G${n}`}
 
 function esc(v){return String(v??"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[m]))}
 function roleLabel(r){return({admin:"Admin",researcher:"Researcher",editor:"Editor",viewer:"Viewer"})[r]||r||"Viewer"}
@@ -142,8 +190,8 @@ function requireEdit(){if(!canEdit()){alert("สิทธิ์ Viewer เป็
 function requireDelete(){if(!canDelete()){alert("เฉพาะ Admin เท่านั้นที่ลบข้อมูลได้");return false}return true}
 
 function ls(k,v){if(arguments.length===1){try{return JSON.parse(localStorage.getItem(k))}catch{return localStorage.getItem(k)}}localStorage.setItem(k,JSON.stringify(v));queueCloudSave();return v}
-function records(g="G5"){return ls("sbs_records_"+g)||[]}
-function families(g="G5"){return ls("sbs_families_"+g)||[]}
+function records(g=latestGeneration()){return ls("sbs_records_"+g)||[]}
+function families(g=latestGeneration()){return ls("sbs_families_"+g)||[]}
 function experiments(){return ls("sbs_experiments")||[]}
 function payload(){let d={};for(let i=0;i<localStorage.length;i++){let k=localStorage.key(i);if(k?.startsWith("sbs_")){try{d[k]=JSON.parse(localStorage.getItem(k))}catch{d[k]=localStorage.getItem(k)}}}return d}
 function applyPayload(d){Object.entries(d||{}).forEach(([k,v])=>{if(k.startsWith("sbs_"))localStorage.setItem(k,typeof v==="string"?v:JSON.stringify(v))})}
@@ -181,20 +229,43 @@ function showPage(id,btn){
  if(id==="users")renderUsers();if(id==="dashboard")renderDashboard();if(id==="individuals")renderIndividuals();if(id==="families")renderFamilies();if(id==="growth")renderGrowth();if(id==="ebv")renderEBV();if(id==="broodstock")renderBroodstock();if(id==="experiments")renderExperiments();if(id==="water")renderWater();if(id==="quality")renderQuality();if(id==="settings")renderSettings();
 }
 function fillSelect(id){
- const e=document.getElementById(id);if(!e)return;const old=e.value;e.innerHTML=Object.keys(GENS).map(g=>`<option>${g}</option>`).join("");if(GENS[old])e.value=old;
+ const e=document.getElementById(id);if(!e)return;const old=e.value;e.innerHTML=generationKeys().map(g=>`<option value="${esc(g)}">${esc(g)}</option>`).join("");if(GENS[old]!==undefined)e.value=old;else e.value=latestGeneration();
 }
 function fillAllSelects(){["familyGen","indGen","growthGen","ebvGen","famGen"].forEach(fillSelect)}
 function renderDashboard(){
- const all=records("G5"),eb=all.filter(x=>x.EBV!==""&&x.EBV!=null),sel=all.filter(x=>x.Selection==="Selected");
- document.getElementById("dashFamilies").textContent=GENS.G5;document.getElementById("dashEBV").textContent=eb.length;document.getElementById("dashSelected").textContent=sel.length;
- const ctx=document.getElementById("genChart");if(charts.gen)charts.gen.destroy();charts.gen=new Chart(ctx,{type:"line",data:{labels:Object.keys(GENS),datasets:[{label:"Families",data:Object.values(GENS),tension:.25}]},options:{responsive:true,maintainAspectRatio:false}});
+ const current=latestGeneration(),all=records(current),eb=all.filter(x=>x.EBV!==""&&x.EBV!=null),sel=all.filter(x=>x.Selection==="Selected");
+ document.getElementById("dashCurrentGen").textContent=current;document.getElementById("dashFamilies").textContent=GENS[current]??0;document.getElementById("dashFamilySub").textContent=`${current} families`;document.getElementById("dashGrowthGen").textContent=current;document.getElementById("dashEBV").textContent=eb.length;document.getElementById("dashSelected").textContent=sel.length;
+ const ctx=document.getElementById("genChart");if(charts.gen)charts.gen.destroy();charts.gen=new Chart(ctx,{type:"line",data:{labels:generationKeys(),datasets:[{label:"Families",data:generationKeys().map(g=>GENS[g]),tension:.25}]},options:{responsive:true,maintainAspectRatio:false}});
  document.getElementById("recentActivity").innerHTML=`<div class="notice">ผู้ใช้ ${esc(currentProfile?.display_name||currentUser?.email)} เข้าใช้งานระบบ • ${new Date().toLocaleString("th-TH")}</div>`;
 }
-function renderGenerations(){document.getElementById("generationCards").innerHTML=Object.keys(GENS).map(g=>`<div class="card"><div class="label">${g}</div><div class="num">${GENS[g]}</div><p>Parent: ${esc(PARENTS[g])}</p><button class="btn primary" onclick="document.getElementById('indGen').value='${g}';showPage('individuals')">ดูข้อมูล</button></div>`).join("")}
+function renderGenerations(){
+ const current=latestGeneration();
+ document.getElementById("generationCards").innerHTML=generationKeys().map(g=>`<div class="card ${g===current?'generation-card-current':''}"><div class="label">${g}${g===current?' • Current':''}</div><div class="num">${GENS[g]}</div><p>Parent: ${esc(PARENTS[g])}</p><button class="btn primary" onclick="document.getElementById('indGen').value='${g}';showPage('individuals')">ดูข้อมูล</button></div>`).join("");
+ applyRoleUI();
+}
+function openGenerationModal(){
+ if(!requireEdit())return;
+ const name=nextGenerationName(),parent=latestGeneration();
+ newGenName.value=name;newGenParent.value=parent;newGenFamilies.value=0;newGenNote.value='';generationModal.classList.add('show');
+}
+function saveGeneration(){
+ if(!requireEdit())return;
+ const g=newGenName.value.trim(),parent=newGenParent.value.trim(),n=Math.max(0,Math.floor(Number(newGenFamilies.value)||0));
+ if(!/^G\d+$/.test(g)||GENS[g]!==undefined)return alert('Generation นี้มีอยู่แล้วหรือชื่อไม่ถูกต้อง');
+ GENS[g]=n;PARENTS[g]=parent||latestGeneration();
+ saveGenerations();
+ closeModal('generationModal');
+ fillAllSelects();
+ ['indGen','familyGen','growthGen','ebvGen'].forEach(id=>{const e=document.getElementById(id);if(e)e.value=g});
+ renderGenerations();renderDashboard();renderIndividuals();renderFamilies();renderGrowth();renderEBV();renderPedigree();
+ alert(`สร้าง ${g} สำเร็จ`);
+}
+function clearIndividualFilters(){indSearch.value="";indSexFilter.value="";indSelectionFilter.value="";indGen.value=latestGeneration();renderIndividuals()}
 function renderIndividuals(){
- fillSelect("indGen");const g=document.getElementById("indGen").value||"G5",q=(document.getElementById("indSearch").value||"").toLowerCase(),a=records(g).map((r,i)=>({...r,_i:i})).filter(r=>Object.values(r).some(v=>String(v).toLowerCase().includes(q)));
+ fillSelect("indGen");const g=document.getElementById("indGen").value||latestGeneration(),q=(document.getElementById("indSearch").value||"").trim().toLowerCase(),sex=indSexFilter.value,selection=indSelectionFilter.value;
+ const a=records(g).map((r,i)=>({...r,_i:i})).filter(r=>(!q||Object.values(r).some(v=>String(v).toLowerCase().includes(q)))&&(!sex||r.Sex===sex)&&(!selection||r.Selection===selection));
  document.getElementById("settingRecords").textContent=a.length;
- document.getElementById("individualTable").innerHTML=a.length?`<table class="table"><thead><tr><th>Family</th><th>Individual</th><th>Sex</th><th>Date</th><th>Weight</th><th>Length</th><th>VIE</th><th>EBV</th><th>Selection</th><th>Action</th></tr></thead><tbody>${a.map(x=>`<tr><td>${esc(x["Family ID"])}</td><td>${esc(x["Individual ID"])}</td><td>${esc(x.Sex)}</td><td>${esc(x.Date)}</td><td>${esc(x["Weight (g)"])}</td><td>${esc(x["Length (cm)"])}</td><td>${esc(x["VIE Tag"])}</td><td>${esc(x.EBV)}</td><td>${esc(x.Selection)}</td><td><button class="btn" onclick="openRecordModal(${x._i})">แก้ไข</button> <button class="btn danger" onclick="deleteRecord(${x._i},'${g}')">ลบ</button></td></tr>`).join("")}</tbody></table>`:"<div class='empty'>ยังไม่มีข้อมูลรายตัว</div>";
+ document.getElementById("individualTable").innerHTML=a.length?`<table class="table"><thead><tr><th>Family</th><th>Individual</th><th>Sex</th><th>Date</th><th>Weight</th><th>Length</th><th>VIE</th><th>EBV</th><th>Selection</th><th>Action</th></tr></thead><tbody>${a.map(x=>`<tr><td>${esc(x["Family ID"])}</td><td>${esc(x["Individual ID"])}</td><td>${esc(x.Sex)}</td><td>${esc(x.Date)}</td><td>${esc(x["Weight (g)"])}</td><td>${esc(x["Length (cm)"])}</td><td>${esc(x["VIE Tag"])}</td><td>${esc(x.EBV)}</td><td>${esc(x.Selection)}</td><td><button class="btn" onclick="openRecordModal(${x._i})">แก้ไข</button> <button class="btn danger" onclick="deleteRecord(${x._i},'${g}')">ลบ</button></td></tr>`).join("")}</tbody></table>`:"<div class='empty'>ยังไม่มีข้อมูลรายตัวตามเงื่อนไขที่เลือก</div>";
  applyRoleUI();
 }
 function openRecordModal(i=-1){
@@ -213,21 +284,22 @@ function importExcel(ev){
 }
 function exportCurrent(){if(!canExport())return alert("สิทธิ์นี้ไม่สามารถ Export ได้");const a=records(indGen.value),ws=XLSX.utils.json_to_sheet(a),wb=XLSX.utils.book_new();XLSX.utils.book_append_sheet(wb,ws,indGen.value);XLSX.writeFile(wb,`Shrimp_Breeding_${indGen.value}.xlsx`)}
 
+function clearFamilyFilters(){familySearch.value="";familyGen.value=latestGeneration();renderFamilies()}
 function renderFamilies(){
- fillSelect("familyGen");const g=familyGen.value||"G5",q=(familySearch.value||"").toLowerCase(),manual=families(g),out=[];
+ fillSelect("familyGen");const g=familyGen.value||latestGeneration(),q=(familySearch.value||"").toLowerCase(),manual=families(g),out=[];
  for(let i=1;i<=GENS[g];i++){const id=`${g}-F${String(i).padStart(3,"0")}`,rr=records(g).filter(x=>x["Family ID"]===id),w=rr.map(x=>Number(x["Weight (g)"])).filter(Number.isFinite),e=rr.map(x=>Number(x.EBV)).filter(Number.isFinite),m=manual.findIndex(x=>x.id===id);out.push({id,n:rr.length,weight:w.length?w.reduce((a,b)=>a+b,0)/w.length:null,ebv:e.length?e.reduce((a,b)=>a+b,0)/e.length:null,mi:m})}
  manual.forEach((x,i)=>{if(!out.some(y=>y.id===x.id))out.push({...x,n:0,mi:i})});
  const show=out.filter(x=>x.id.toLowerCase().includes(q));familyCards.innerHTML=show.map(x=>`<div class="card"><div class="small">${g}</div><h2>${esc(x.id)}</h2><p>Individuals: <b>${x.n||0}</b></p><p>Avg Weight: <b>${x.weight==null?"—":x.weight.toFixed(2)+" g"}</b></p><p>Avg EBV: <b>${x.ebv==null?"—":x.ebv.toFixed(3)}</b></p><div class="row-actions">${x.mi>=0?`<button class="btn" onclick="openFamilyModal(${x.mi},'${g}')">แก้ไข</button><button class="btn danger" onclick="deleteFamily(${x.mi},'${g}')">ลบ</button>`:""}</div></div>`).join("");
  applyRoleUI();
 }
-function openFamilyModal(i=-1,g="G5"){if(!requireEdit())return;familyEditIndex=i;familyEditGen=g;fillSelect("famGen");famGen.value=g;const r=i>=0?families(g)[i]:{};famId.value=r.id||"";famParent.value=r.parent||"";famNote.value=r.note||"";familyModal.classList.add("show")}
+function openFamilyModal(i=-1,g=latestGeneration()){if(!requireEdit())return;familyEditIndex=i;familyEditGen=g;fillSelect("famGen");famGen.value=g;const r=i>=0?families(g)[i]:{};famId.value=r.id||"";famParent.value=r.parent||"";famNote.value=r.note||"";familyModal.classList.add("show")}
 function saveFamily(){if(!requireEdit())return;const g=famGen.value,id=famId.value.trim();if(!id)return alert("ระบุ Family ID");const a=families(g),r={id,parent:famParent.value,n:0,note:famNote.value};familyEditIndex>=0&&familyEditGen===g?a[familyEditIndex]=r:a.push(r);ls("sbs_families_"+g,a);closeModal("familyModal");renderFamilies()}
 function deleteFamily(i,g){if(!requireDelete()||!confirm("ลบ Family นี้หรือไม่?"))return;const a=families(g);a.splice(i,1);ls("sbs_families_"+g,a);renderFamilies()}
 
-function renderGrowth(){fillSelect("growthGen");const g=growthGen.value||"G5",m=growthMetric.value,a=records(g),vals=a.map(x=>Number(m==="weight"?x["Weight (g)"]:m==="length"?x["Length (cm)"]:x["Survival (%)"])).filter(Number.isFinite),mean=vals.length?vals.reduce((a,b)=>a+b,0)/vals.length:0;growthStats.innerHTML=[["N",vals.length],["Mean",mean.toFixed(2)],["Min",vals.length?Math.min(...vals).toFixed(2):"—"],["Max",vals.length?Math.max(...vals).toFixed(2):"—"]].map(x=>`<div class="metric"><span class="small">${x[0]}</span><b>${x[1]}</b></div>`).join("");const ctx=document.getElementById("growthChart");if(charts.growth)charts.growth.destroy();charts.growth=new Chart(ctx,{type:"line",data:{labels:vals.map((_,i)=>i+1),datasets:[{label:m,data:vals,tension:.2}]},options:{responsive:true,maintainAspectRatio:false}});
+function renderGrowth(){fillSelect("growthGen");const g=growthGen.value||latestGeneration(),m=growthMetric.value,a=records(g),vals=a.map(x=>Number(m==="weight"?x["Weight (g)"]:m==="length"?x["Length (cm)"]:x["Survival (%)"])).filter(Number.isFinite),mean=vals.length?vals.reduce((a,b)=>a+b,0)/vals.length:0;growthStats.innerHTML=[["N",vals.length],["Mean",mean.toFixed(2)],["Min",vals.length?Math.min(...vals).toFixed(2):"—"],["Max",vals.length?Math.max(...vals).toFixed(2):"—"]].map(x=>`<div class="metric"><span class="small">${x[0]}</span><b>${x[1]}</b></div>`).join("");const ctx=document.getElementById("growthChart");if(charts.growth)charts.growth.destroy();charts.growth=new Chart(ctx,{type:"line",data:{labels:vals.map((_,i)=>i+1),datasets:[{label:m,data:vals,tension:.2}]},options:{responsive:true,maintainAspectRatio:false}});
 }
-function renderEBV(){fillSelect("ebvGen");const g=ebvGen.value||"G5",f=ebvFilter.value,a=records(g),eb=a.filter(x=>Number.isFinite(Number(x.EBV))),view=a.filter(x=>f==="all"||x.Selection===f).sort((x,y)=>Number(y.EBV||-Infinity)-Number(x.EBV||-Infinity));ebvMetrics.innerHTML=[["Records",a.length],["EBV Calculated",eb.length],["Selected",a.filter(x=>x.Selection==="Selected").length],["Top EBV",eb.length?Math.max(...eb.map(x=>Number(x.EBV))).toFixed(3):"—"]].map(x=>`<div class="card"><div class="label">${x[0]}</div><div class="num">${x[1]}</div></div>`).join("");ebvTable.innerHTML=view.length?`<table class="table"><thead><tr><th>Rank</th><th>Individual</th><th>Family</th><th>Weight</th><th>EBV</th><th>Selection</th></tr></thead><tbody>${view.slice(0,200).map((x,i)=>`<tr><td>${i+1}</td><td>${esc(x["Individual ID"])}</td><td>${esc(x["Family ID"])}</td><td>${esc(x["Weight (g)"])}</td><td><b>${esc(x.EBV)}</b></td><td>${esc(x.Selection)}</td></tr>`).join("")}</tbody></table>`:"<div class='empty'>ยังไม่มีข้อมูล</div>"}
-function renderBroodstock(){const a=records("G5"),s=a.filter(x=>x.Selection==="Selected");bsSelected.textContent=s.length;bsMale.textContent=s.filter(x=>x.Sex==="Male").length;bsFemale.textContent=s.filter(x=>x.Sex==="Female").length;bsTable.innerHTML=s.length?`<table class="table"><thead><tr><th>Individual</th><th>Family</th><th>Sex</th><th>EBV</th><th>Weight</th></tr></thead><tbody>${s.map(x=>`<tr><td>${esc(x["Individual ID"])}</td><td>${esc(x["Family ID"])}</td><td>${esc(x.Sex)}</td><td>${esc(x.EBV)}</td><td>${esc(x["Weight (g)"])}</td></tr>`).join("")}</tbody></table>`:"<div class='empty'>ยังไม่มี Selected</div>"}
+function renderEBV(){fillSelect("ebvGen");const g=ebvGen.value||latestGeneration(),f=ebvFilter.value,a=records(g),eb=a.filter(x=>Number.isFinite(Number(x.EBV))),view=a.filter(x=>f==="all"||x.Selection===f).sort((x,y)=>Number(y.EBV||-Infinity)-Number(x.EBV||-Infinity));ebvMetrics.innerHTML=[["Records",a.length],["EBV Calculated",eb.length],["Selected",a.filter(x=>x.Selection==="Selected").length],["Top EBV",eb.length?Math.max(...eb.map(x=>Number(x.EBV))).toFixed(3):"—"]].map(x=>`<div class="card"><div class="label">${x[0]}</div><div class="num">${x[1]}</div></div>`).join("");ebvTable.innerHTML=view.length?`<table class="table"><thead><tr><th>Rank</th><th>Individual</th><th>Family</th><th>Weight</th><th>EBV</th><th>Selection</th></tr></thead><tbody>${view.slice(0,200).map((x,i)=>`<tr><td>${i+1}</td><td>${esc(x["Individual ID"])}</td><td>${esc(x["Family ID"])}</td><td>${esc(x["Weight (g)"])}</td><td><b>${esc(x.EBV)}</b></td><td>${esc(x.Selection)}</td></tr>`).join("")}</tbody></table>`:"<div class='empty'>ยังไม่มีข้อมูล</div>"}
+function renderBroodstock(){const a=records(latestGeneration()),s=a.filter(x=>x.Selection==="Selected");bsSelected.textContent=s.length;bsMale.textContent=s.filter(x=>x.Sex==="Male").length;bsFemale.textContent=s.filter(x=>x.Sex==="Female").length;bsTable.innerHTML=s.length?`<table class="table"><thead><tr><th>Individual</th><th>Family</th><th>Sex</th><th>EBV</th><th>Weight</th></tr></thead><tbody>${s.map(x=>`<tr><td>${esc(x["Individual ID"])}</td><td>${esc(x["Family ID"])}</td><td>${esc(x.Sex)}</td><td>${esc(x.EBV)}</td><td>${esc(x["Weight (g)"])}</td></tr>`).join("")}</tbody></table>`:"<div class='empty'>ยังไม่มี Selected</div>"}
 function renderExperiments(){const a=experiments();experimentList.innerHTML=a.length?a.map((x,i)=>`<div class="card"><h3>🧪 ${esc(x.name)}</h3><p>Pond: ${esc(x.pond)}</p><p>Date: ${esc(x.date)} • N: ${esc(x.n)}</p><div class="row-actions"><button class="btn" onclick="openExperimentModal(${i})">แก้ไข</button><button class="btn danger" onclick="deleteExperiment(${i})">ลบ</button></div></div>`).join(""):"<div class='card empty'>ยังไม่มีการทดลอง</div>";applyRoleUI()}
 function openExperimentModal(i=-1){if(!requireEdit())return;experimentEditIndex=i;const r=i>=0?experiments()[i]:{};exName.value=r.name||"";exPond.value=r.pond||"";exDate.value=r.date||"";exN.value=r.n||"";experimentModal.classList.add("show")}
 function saveExperiment(){if(!requireEdit())return;const a=experiments(),r={name:exName.value,pond:exPond.value,date:exDate.value,n:exN.value};experimentEditIndex>=0?a[experimentEditIndex]=r:a.push(r);ls("sbs_experiments",a);closeModal("experimentModal");renderExperiments()}
@@ -235,15 +307,15 @@ function deleteExperiment(i){if(!requireDelete()||!confirm("ลบการท�
 
 function water(){return ls("sbs_water")||[]}
 function renderWater(){const a=water();waterTable.innerHTML=a.length?`<table class="table"><thead><tr><th>Date</th><th>Pond</th><th>Temp</th><th>pH</th><th>DO</th><th>Salinity</th><th>NH3</th><th>Action</th></tr></thead><tbody>${a.map((x,i)=>`<tr><td>${esc(x.date)}</td><td>${esc(x.pond)}</td><td>${esc(x.temp)}</td><td>${esc(x.ph)}</td><td>${esc(x.do)}</td><td>${esc(x.salinity)}</td><td>${esc(x.nh3)}</td><td><button class="btn" onclick="openWaterModal(${i})">แก้ไข</button> <button class="btn danger" onclick="deleteWater(${i})">ลบ</button></td></tr>`).join("")}</tbody></table>`:"<div class='empty'>ยังไม่มีข้อมูลคุณภาพน้ำ</div>";applyRoleUI()}
-function openWaterModal(i=-1){if(!requireEdit())return;waterEditIndex=i;const r=i>=0?water()[i]:{};waterDate.value=r.date||new Date().toISOString().slice(0,10);waterPond.value=r.pond||"G5";waterTemp.value=r.temp||"";waterPH.value=r.ph||"";waterDO.value=r.do||"";waterSalinity.value=r.salinity||"";waterNH3.value=r.nh3||"";waterModal.classList.add("show")}
+function openWaterModal(i=-1){if(!requireEdit())return;waterEditIndex=i;const r=i>=0?water()[i]:{};waterDate.value=r.date||new Date().toISOString().slice(0,10);waterPond.value=r.pond||latestGeneration();waterTemp.value=r.temp||"";waterPH.value=r.ph||"";waterDO.value=r.do||"";waterSalinity.value=r.salinity||"";waterNH3.value=r.nh3||"";waterModal.classList.add("show")}
 function saveWater(){if(!requireEdit())return;const a=water(),r={date:waterDate.value,pond:waterPond.value,temp:waterTemp.value,ph:waterPH.value,do:waterDO.value,salinity:waterSalinity.value,nh3:waterNH3.value};waterEditIndex>=0?a[waterEditIndex]=r:a.push(r);ls("sbs_water",a);closeModal("waterModal");renderWater()}
 function deleteWater(i){if(!requireDelete()||!confirm("ลบบันทึกนี้หรือไม่?"))return;const a=water();a.splice(i,1);ls("sbs_water",a);renderWater()}
 
-function renderQuality(){const all=Object.keys(GENS).flatMap(g=>records(g)),issues=[["Missing Family ID",all.some(x=>!x["Family ID"])],["Missing Weight",all.some(x=>x["Weight (g)"]==="")],["Missing EBV",all.some(x=>x.EBV==="")]];qualityMetrics.innerHTML=[["Total Records",all.length],["Families",Object.values(GENS).reduce((a,b)=>a+b,0)],["EBV Records",all.filter(x=>x.EBV!=="").length],["Issues",issues.filter(x=>x[1]).length]].map(x=>`<div class="card"><div class="label">${x[0]}</div><div class="num">${x[1]}</div></div>`).join("");qualityList.innerHTML=issues.map(x=>`<div style="padding:12px;border-bottom:1px solid var(--line)">${x[1]?"🟠":"🟢"} ${x[0]} — ${x[1]?"CHECK":"PASS"}</div>`).join("")}
-function renderActivities(){activityList.innerHTML=["Nov 2026 — Harvest G5 growth tests","Dec 2026 — Compile data and EBV analysis","Jan 2027 — Select G6 broodstock","Feb–Mar 2027 — Expanded stock / improved group"].map(x=>`<div class="card"><h3>${x}</h3><span class="pill info">Planned</span></div>`).join("")}
-function renderSettings(){dbStatus.textContent="Cloud";settingRecords.textContent=Object.keys(GENS).reduce((n,g)=>n+records(g).length,0);lastSave.textContent=new Date().toLocaleTimeString("th-TH")}
-function renderPedigree(){pedigreeTree.innerHTML=Object.keys(GENS).map(g=>`<div class="card" style="margin:8px 0"><b>${g}</b> ← ${esc(PARENTS[g])}</div>`).join("")}
-function saveAllData(){if(!requireEdit())return;Object.keys(GENS).forEach(g=>{ls("sbs_records_"+g,records(g));ls("sbs_families_"+g,families(g))});ls("sbs_experiments",experiments());ls("sbs_water",water());cloudSave();setSaveStatus("☁️ บันทึกข้อมูลทั้งหมดแล้ว")}
+function renderQuality(){const all=generationKeys().flatMap(g=>records(g)),issues=[["Missing Family ID",all.some(x=>!x["Family ID"])],["Missing Weight",all.some(x=>x["Weight (g)"]==="")],["Missing EBV",all.some(x=>x.EBV==="")]];qualityMetrics.innerHTML=[["Total Records",all.length],["Families",Object.values(GENS).reduce((a,b)=>a+b,0)],["EBV Records",all.filter(x=>x.EBV!=="").length],["Issues",issues.filter(x=>x[1]).length]].map(x=>`<div class="card"><div class="label">${x[0]}</div><div class="num">${x[1]}</div></div>`).join("");qualityList.innerHTML=issues.map(x=>`<div style="padding:12px;border-bottom:1px solid var(--line)">${x[1]?"🟠":"🟢"} ${x[0]} — ${x[1]?"CHECK":"PASS"}</div>`).join("")}
+function renderActivities(){const current=latestGeneration(),next=/^G\d+$/.test(current)?`G${parseInt(current.slice(1))+1}`:"G1";activityList.innerHTML=[`Current — ${current} growth test / data collection`,`Next — EBV analysis and selection for ${next}`,`Future — Expand stock and continue breeding to ${next} and subsequent generations`].map(x=>`<div class="card"><h3>${x}</h3><span class="pill info">Planned</span></div>`).join("")}
+function renderSettings(){dbStatus.textContent="Cloud";settingRecords.textContent=generationKeys().reduce((n,g)=>n+records(g).length,0);lastSave.textContent=new Date().toLocaleTimeString("th-TH")}
+function renderPedigree(){pedigreeTree.innerHTML=generationKeys().map(g=>`<div class="card" style="margin:8px 0"><b>${g}</b> ← ${esc(PARENTS[g])}</div>`).join("")}
+function saveAllData(){if(!requireEdit())return;saveGenerations();generationKeys().forEach(g=>{ls("sbs_records_"+g,records(g));ls("sbs_families_"+g,families(g))});ls("sbs_experiments",experiments());ls("sbs_water",water());cloudSave();setSaveStatus("☁️ บันทึกข้อมูลทั้งหมดแล้ว")}
 function downloadBackup(){const p=payload();const a=document.createElement("a");a.href=URL.createObjectURL(new Blob([JSON.stringify(p,null,2)],{type:"application/json"}));a.download="Shrimp_Breeding_Backup_"+new Date().toISOString().slice(0,10)+".json";a.click();URL.revokeObjectURL(a.href)}
 
 async function renderUsers(){
@@ -264,7 +336,7 @@ authSubmit.onclick=async()=>{
 };
 
 async function enterApp(user){
- currentUser=user;try{await loadProfile(user);await cloudLoad();authGate.style.display="none";document.querySelector(".app").style.visibility="visible";fillAllSelects();renderDashboard();renderGenerations();renderIndividuals();renderFamilies();renderGrowth();renderEBV();renderBroodstock();renderExperiments();renderWater();renderQuality();renderActivities();renderPedigree();applyRoleUI()}catch(e){console.error(e);authGate.style.display="flex";authMsg.textContent="โหลดโปรไฟล์ไม่สำเร็จ: "+e.message}
+ currentUser=user;try{await loadProfile(user);await cloudLoad();initGenerations();authGate.style.display="none";document.querySelector(".app").style.visibility="visible";fillAllSelects();renderDashboard();renderGenerations();renderIndividuals();renderFamilies();renderGrowth();renderEBV();renderBroodstock();renderExperiments();renderWater();renderQuality();renderActivities();renderPedigree();applyRoleUI()}catch(e){console.error(e);authGate.style.display="flex";authMsg.textContent="โหลดโปรไฟล์ไม่สำเร็จ: "+e.message}
 }
 sbClient.auth.onAuthStateChange(async(_event,session)=>{if(session?.user)await enterApp(session.user);else{currentUser=null;currentProfile=null;document.querySelector(".app").style.visibility="hidden";authGate.style.display="flex"}});
 (async()=>{const {data}=await sbClient.auth.getSession();if(data.session?.user)await enterApp(data.session.user)})();
