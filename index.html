@@ -128,7 +128,7 @@ button,input,select,textarea{font:inherit}.app{display:flex;min-height:100vh}.si
 
 <section id="quality" class="page hidden"><div class="top"><div><h1>📊 Data Quality Center</h1><p>ตรวจสอบความพร้อมของข้อมูล</p></div></div><div id="qualityMetrics" class="grid"></div><div class="section card"><div id="qualityList"></div></div></section>
 
-<section id="activities" class="page hidden"><div class="top"><div><h1>📅 Future Activities</h1><p>กิจกรรมสำคัญของโครงการ</p></div></div><div id="activityList" class="cards2"></div></section>
+<section id="activities" class="page hidden"><div class="top"><div><h1>📅 Future Activities</h1><p>กิจกรรมสำคัญของโครงการ</p></div></div><div id="activityList"></div></section>
 
 <section id="documents" class="page hidden"><div class="top"><div><h1>📁 Documents</h1><p>พื้นที่สำหรับเอกสารและไฟล์โครงการ</p></div></div><div class="card"><div class="notice">พื้นที่นี้เตรียมไว้สำหรับ Supabase Storage ในขั้นต่อไป</div></div></section>
 
@@ -1112,7 +1112,7 @@ enterApp = async function (user) {
     .fa-grid{
       width:100%;
       display:grid;
-      grid-template-columns:repeat(3,minmax(0,1fr));
+      grid-template-columns:repeat(2,minmax(0,1fr));
       gap:16px;
       box-sizing:border-box
     }
