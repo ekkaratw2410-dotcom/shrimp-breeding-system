@@ -1037,22 +1037,88 @@ enterApp = async function (user) {
   const style = document.createElement("style");
   style.textContent = `
     .fa-toolbar{
-      display:flex;
-      flex-wrap:wrap;
-      gap:9px;
-      margin-bottom:15px
+      width:100%;
+      margin-bottom:18px
     }
 
-    .fa-toolbar input,
-    .fa-toolbar select{
+    .fa-search-row{
+      display:flex;
+      align-items:center;
+      gap:10px;
+      width:100%;
+      margin-bottom:12px
+    }
+
+    .fa-search-row input{
+      flex:1;
+      min-width:0;
+      height:42px;
       border:1px solid #ccd8e3;
       border-radius:9px;
-      padding:9px 10px;
-      background:#fff
+      padding:0 13px;
+      background:#fff;
+      box-sizing:border-box
     }
 
-    .fa-toolbar input{
-      min-width:240px
+    .fa-clear-btn{
+      height:42px;
+      padding:0 15px;
+      border:1px solid #ccd8e3;
+      border-radius:9px;
+      background:#fff;
+      color:#456070;
+      cursor:pointer;
+      white-space:nowrap
+    }
+
+    .fa-filter-row{
+      display:grid;
+      grid-template-columns:repeat(4,minmax(150px,1fr)) auto;
+      gap:10px;
+      align-items:end;
+      width:100%
+    }
+
+    .fa-filter-group{
+      display:flex;
+      flex-direction:column;
+      gap:5px;
+      min-width:0
+    }
+
+    .fa-filter-group label{
+      font-size:12px;
+      font-weight:600;
+      color:#6b7b88
+    }
+
+    .fa-filter-group select{
+      width:100%;
+      height:40px;
+      border:1px solid #ccd8e3;
+      border-radius:9px;
+      padding:0 10px;
+      background:#fff;
+      box-sizing:border-box
+    }
+
+    .fa-add-btn{
+      height:40px;
+      white-space:nowrap
+    }
+
+    @media (max-width:900px){
+      .fa-filter-row{
+        grid-template-columns:repeat(2,minmax(150px,1fr))
+      }
+      .fa-add-btn{width:100%}
+    }
+
+    @media (max-width:600px){
+      .fa-search-row{flex-wrap:wrap}
+      .fa-search-row input{flex:100%;width:100%}
+      .fa-clear-btn{width:100%}
+      .fa-filter-row{grid-template-columns:1fr}
     }
 
     .fa-grid{
@@ -1268,83 +1334,59 @@ enterApp = async function (user) {
 
       <div class="fa-toolbar">
 
-        <input
-          id="faSearch"
-          placeholder="🔎 ค้นหากิจกรรม / รายละเอียด / ผู้รับผิดชอบ..."
-        >
-
-        <select id="faStatus">
-          <option value="all">
-            ทุกสถานะ
-          </option>
-          <option value="Planned">
-            Planned
-          </option>
-          <option value="In Progress">
-            In Progress
-          </option>
-          <option value="Completed">
-            Completed
-          </option>
-          <option value="Delayed">
-            Delayed
-          </option>
-          <option value="Cancelled">
-            Cancelled
-          </option>
-        </select>
-
-        <select id="faPriority">
-          <option value="all">
-            ทุกความสำคัญ
-          </option>
-          <option value="High">High</option>
-          <option value="Medium">Medium</option>
-          <option value="Low">Low</option>
-        </select>
-
-        <select id="faGeneration">
-          <option value="all">
-            ทุกรุ่น
-          </option>
-        </select>
-
-        <select id="faType">
-          <option value="all">
-            ทุกประเภท
-          </option>
-          <option value="Breeding">
-            Breeding
-          </option>
-          <option value="Experiment">
-            Experiment
-          </option>
-          <option value="Data Collection">
-            Data Collection
-          </option>
-          <option value="Production">
-            Production
-          </option>
-          <option value="Analysis">
-            Analysis
-          </option>
-          <option value="Other">
-            Other
-          </option>
-        </select>
-
-        ${
-          faCanEdit()
-          ?
-          `<button
-            class="btn primary"
-            id="faAddBtn"
+        <div class="fa-search-row">
+          <input
+            id="faSearch"
+            placeholder="🔎 ค้นหากิจกรรม / รายละเอียด / ผู้รับผิดชอบ..."
           >
-            ＋ เพิ่มกิจกรรม
-          </button>`
-          :
-          ""
-        }
+          <button class="fa-clear-btn" id="faClearBtn" type="button">ล้างการค้นหา</button>
+        </div>
+
+        <div class="fa-filter-row">
+          <div class="fa-filter-group">
+            <label>สถานะ</label>
+            <select id="faStatus">
+              <option value="all">ทุกสถานะ</option>
+              <option value="Planned">Planned</option>
+              <option value="In Progress">In Progress</option>
+              <option value="Completed">Completed</option>
+              <option value="Delayed">Delayed</option>
+              <option value="Cancelled">Cancelled</option>
+            </select>
+          </div>
+
+          <div class="fa-filter-group">
+            <label>ความสำคัญ</label>
+            <select id="faPriority">
+              <option value="all">ทุกความสำคัญ</option>
+              <option value="High">High</option>
+              <option value="Medium">Medium</option>
+              <option value="Low">Low</option>
+            </select>
+          </div>
+
+          <div class="fa-filter-group">
+            <label>รุ่น</label>
+            <select id="faGeneration">
+              <option value="all">ทุกรุ่น</option>
+            </select>
+          </div>
+
+          <div class="fa-filter-group">
+            <label>ประเภท</label>
+            <select id="faType">
+              <option value="all">ทุกประเภท</option>
+              <option value="Breeding">Breeding</option>
+              <option value="Experiment">Experiment</option>
+              <option value="Data Collection">Data Collection</option>
+              <option value="Production">Production</option>
+              <option value="Analysis">Analysis</option>
+              <option value="Other">Other</option>
+            </select>
+          </div>
+
+          ${faCanEdit() ? `<button class="btn primary fa-add-btn" id="faAddBtn">＋ เพิ่มกิจกรรม</button>` : ""}
+        </div>
 
       </div>
 
@@ -1385,6 +1427,17 @@ enterApp = async function (user) {
         "input",
         renderFutureCards
       );
+
+    document
+      .getElementById("faClearBtn")
+      .addEventListener("click", function(){
+        document.getElementById("faSearch").value = "";
+        document.getElementById("faStatus").value = "all";
+        document.getElementById("faPriority").value = "all";
+        document.getElementById("faGeneration").value = "all";
+        document.getElementById("faType").value = "all";
+        renderFutureCards();
+      });
 
 
     document
