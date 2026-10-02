@@ -1,17 +1,12 @@
-# Shrimp Breeding System
+# shrimp-breeding-system
 
-ระบบจัดการงานปรับปรุงพันธุ์กุ้งแชบ๊วย (Fenneropenaeus merguiensis)
+V5 working build based on the user-customized index.html.
 
-## โครงสร้าง
-- `index.html` — หน้าเว็บหลัก
-- เตรียมต่อยอดกับ Supabase สำหรับฐานข้อมูลออนไลน์และระบบผู้ใช้
-
-## GitHub Pages
-1. สร้าง repository เช่น `shrimp-breeding-system`
-2. Upload `index.html` และ `README.md`
-3. Settings → Pages
-4. Source: Deploy from a branch
-5. Branch: `main` / root
-6. Save
-
-> ห้ามใส่ Supabase service_role/secret key ในไฟล์เว็บ
+## Added
+- Excel/CSV import preview and validation
+- Auto mapping for the real annual breeding spreadsheet format
+- Automatic linking of Generation, Family, Individual and pedigree fields
+- Growth fields: age, wt, tl, cl
+- Breeding fields: sex, mat, status, environment, color score
+- Gencode remains optional
+- Existing UI/layout preserved as the base

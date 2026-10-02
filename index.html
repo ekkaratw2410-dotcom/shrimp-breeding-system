@@ -137,6 +137,15 @@ button,input,select,textarea{font:inherit}.app{display:flex;min-height:100vh}.si
 <section id="users" class="page hidden"><div class="top"><div><h1>👥 User Management</h1><p>Admin เท่านั้น — จัดการสิทธิ์ผู้ใช้งาน</p></div></div><div class="card"><div class="tablewrap" id="userTable"></div></div></section>
 </main></div>
 
+
+<div id="importModal" class="modal"><div class="modalbox" style="width:min(1180px,100%)">
+ <div class="modalhead"><div><h2 style="margin:0">📥 Import Excel / CSV</h2><div class="small" style="margin-top:4px">นำเข้าไฟล์งาน breeding จริง → ตรวจสอบ → Preview → เชื่อมข้อมูลอัตโนมัติ</div></div><button class="close" onclick="closeModal('importModal')">×</button></div>
+ <div id="importSummary" class="metricgrid" style="margin-top:14px"></div>
+ <div id="importNotice" class="notice" style="margin-top:12px">เลือกไฟล์ Excel หรือ CSV เพื่อเริ่มตรวจสอบ</div>
+ <div id="importErrors" style="margin-top:12px"></div>
+ <div class="tablewrap" style="margin-top:12px;max-height:390px;border:1px solid var(--line);border-radius:10px"><div id="importPreview" class="empty">ยังไม่มีข้อมูลสำหรับ Preview</div></div>
+ <div class="actions"><button class="btn" onclick="closeModal('importModal')">ยกเลิก</button><button id="importConfirmBtn" class="btn primary write-only" onclick="confirmImport()" disabled>✓ ยืนยัน Import</button></div>
+</div></div>
 <div id="recordModal" class="modal"><div class="modalbox"><div class="modalhead"><h2 id="recordModalTitle">เพิ่มข้อมูล</h2><button class="close" onclick="closeModal('recordModal')">×</button></div><div class="formgrid">
 <div class="field"><label>Family ID</label><input id="fFamily"></div><div class="field"><label>Individual ID</label><input id="fIndividual"></div><div class="field"><label>Sex</label><select id="fSex"><option></option><option>Male</option><option>Female</option></select></div><div class="field"><label>Date</label><input id="fDate" type="date"></div><div class="field"><label>Weight (g)</label><input id="fWeight" type="number" step=".01"></div><div class="field"><label>Length (cm)</label><input id="fLength" type="number" step=".01"></div><div class="field"><label>Survival (%)</label><input id="fSurvival" type="number" step=".01"></div><div class="field"><label>VIE Tag</label><input id="fVIE"></div><div class="field"><label>EBV</label><input id="fEBV" type="number" step=".001"></div><div class="field"><label>Selection</label><select id="fSelection"><option></option><option>Selected</option><option>Candidate</option><option>Not Selected</option></select></div><div class="field full"><label>Notes</label><textarea id="fNotes"></textarea></div>
 </div><div class="actions"><button class="btn" onclick="closeModal('recordModal')">ยกเลิก</button><button class="btn primary write-only" onclick="saveRecord()">บันทึก</button></div></div></div>
@@ -265,7 +274,7 @@ function renderIndividuals(){
  fillSelect("indGen");const g=document.getElementById("indGen").value||latestGeneration(),q=(document.getElementById("indSearch").value||"").trim().toLowerCase(),sex=indSexFilter.value,selection=indSelectionFilter.value;
  const a=records(g).map((r,i)=>({...r,_i:i})).filter(r=>(!q||Object.values(r).some(v=>String(v).toLowerCase().includes(q)))&&(!sex||r.Sex===sex)&&(!selection||r.Selection===selection));
  document.getElementById("settingRecords").textContent=a.length;
- document.getElementById("individualTable").innerHTML=a.length?`<table class="table"><thead><tr><th>Family</th><th>Individual</th><th>Sex</th><th>Date</th><th>Weight</th><th>Length</th><th>VIE</th><th>EBV</th><th>Selection</th><th>Action</th></tr></thead><tbody>${a.map(x=>`<tr><td>${esc(x["Family ID"])}</td><td>${esc(x["Individual ID"])}</td><td>${esc(x.Sex)}</td><td>${esc(x.Date)}</td><td>${esc(x["Weight (g)"])}</td><td>${esc(x["Length (cm)"])}</td><td>${esc(x["VIE Tag"])}</td><td>${esc(x.EBV)}</td><td>${esc(x.Selection)}</td><td><button class="btn" onclick="openRecordModal(${x._i})">แก้ไข</button> <button class="btn danger" onclick="deleteRecord(${x._i},'${g}')">ลบ</button></td></tr>`).join("")}</tbody></table>`:"<div class='empty'>ยังไม่มีข้อมูลรายตัวตามเงื่อนไขที่เลือก</div>";
+ document.getElementById("individualTable").innerHTML=a.length?`<table class="table"><thead><tr><th>Family</th><th>Individual</th><th>Sex</th><th>Date</th><th>Weight</th><th>Length</th><th>Env</th><th>Status</th><th>VIE</th><th>EBV</th><th>Selection</th><th>Action</th></tr></thead><tbody>${a.map(x=>`<tr><td>${esc(x["Family ID"])}</td><td>${esc(x["Individual ID"])}</td><td>${esc(x.Sex)}</td><td>${esc(x.Date)}</td><td>${esc(x["Weight (g)"])}</td><td>${esc(x["Length (cm)"])}</td><td>${esc(x.Environment||x.env)}</td><td>${x.Status==="1"?"🟢 รอด":x.Status==="2"?"🔴 ตาย":esc(x["Survival (%)"])}</td><td>${esc(x["VIE Tag"])}</td><td>${esc(x.EBV)}</td><td>${esc(x.Selection)}</td><td><button class="btn" onclick="openRecordModal(${x._i})">แก้ไข</button> <button class="btn danger" onclick="deleteRecord(${x._i},'${g}')">ลบ</button></td></tr>`).join("")}</tbody></table>`:"<div class='empty'>ยังไม่มีข้อมูลรายตัวตามเงื่อนไขที่เลือก</div>";
  applyRoleUI();
 }
 function openRecordModal(i=-1){
@@ -279,9 +288,81 @@ function saveRecord(){
  if(!r["Family ID"])return alert("กรุณาระบุ Family ID");const a=records(g);editIndex<0?a.push(r):a[editIndex]=r;ls("sbs_records_"+g,a);closeModal("recordModal");renderIndividuals();renderDashboard();
 }
 function deleteRecord(i,g){if(!requireDelete()||!confirm("ลบข้อมูลรายการนี้หรือไม่?"))return;const a=records(g);a.splice(i,1);ls("sbs_records_"+g,a);renderIndividuals()}
-function importExcel(ev){
- if(!requireEdit())return;const file=ev.target.files[0];if(!file)return;const rd=new FileReader();rd.onload=e=>{try{const wb=XLSX.read(e.target.result,{type:"array"}),rows=XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]],{defval:""}),keys=["Family ID","Individual ID","Sex","Date","Weight (g)","Length (cm)","Survival (%)","VIE Tag","EBV","Selection","Notes"],a=records(indGen.value);let add=0,upd=0;rows.forEach(x=>{let r={};keys.forEach(k=>r[k]=x[k]??"");let i=r["Individual ID"]?a.findIndex(z=>z["Individual ID"]===r["Individual ID"]):-1;if(i>=0){a[i]=r;upd++}else{a.push(r);add++}});ls("sbs_records_"+indGen.value,a);renderIndividuals();alert(`นำเข้าสำเร็จ เพิ่ม ${add} / อัปเดต ${upd}`)}catch(err){alert(err.message)}ev.target.value=""};rd.readAsArrayBuffer(file);
+let pendingImport=null;
+const IMPORT_ALIASES={
+  No:["No","no","ลำดับ"], animalID:["animalID","Animal ID","Individual ID","individualID","รหัสกุ้ง"],
+  sire:["sire","Sire","Father","พ่อ"], dam:["dam","Dam","Mother","แม่"], FamID:["FamID","Family ID","familyID","Family_ID","รหัสครอบครัว"],
+  Generation:["Generation","generation","Gen","รุ่น"], Gencode:["Gencode","gencode"], env:["env","Env","Environment","environment","บ่อ"],
+  sex:["sex","Sex","เพศ"], mat:["mat","Mat"], age:["age","Age","อายุ"], wt:["wt","Wt","weight","Weight (g)","Weight_g","น้ำหนัก"],
+  tl:["tl","TL","length","Length (cm)","Total Length","ความยาว"], cl:["cl","CL","Carapace Length","ความยาวกระดอง"],
+  status:["status","Status","สถานะ"], color:["No.of color (ShrimpFan)","No. of color (ShrimpFan)","No.of color","color","Color Score","สี"],
+  VIE:["VIE Tag","VIE","VIE_Tag"], EBV:["EBV","ebv"], Selection:["Selection","selection"], Date:["Date","date","วันที่"], Notes:["Notes","notes","หมายเหตุ"]
+};
+function normHeader(v){return String(v??"").trim().toLowerCase().replace(/[\s_\-()./]+/g,"");}
+function pickCol(row,key){const entries=Object.keys(row);const aliases=IMPORT_ALIASES[key]||[];for(const a of aliases){const na=normHeader(a);const hit=entries.find(k=>normHeader(k)===na);if(hit!==undefined)return row[hit];}return "";}
+function text(v){return v===null||v===undefined?"":String(v).trim();}
+function num(v){if(v===""||v===null||v===undefined)return null;const n=Number(String(v).replace(/,/g,""));return Number.isFinite(n)?n:null;}
+function normalizeSex(v){const t=text(v);const low=t.toLowerCase();if(["male","m","ตัวผู้","ผู้"].includes(low))return "Male";if(["female","f","ตัวเมีย","เมีย"].includes(low))return "Female";return t;}
+function normalizeImportedRow(x,rowNo){
+ const animal=text(pickCol(x,"animalID")), fam=text(pickCol(x,"FamID")), gen=text(pickCol(x,"Generation"));
+ const env=text(pickCol(x,"env")), status=text(pickCol(x,"status")), mat=text(pickCol(x,"mat"));
+ const wt=pickCol(x,"wt"),tl=pickCol(x,"tl"),cl=pickCol(x,"cl"),age=pickCol(x,"age"),color=pickCol(x,"color");
+ const sexRaw=text(pickCol(x,"sex")), sex=normalizeSex(sexRaw);
+ const r={
+  "Family ID":fam,"Individual ID":animal,Sex:sex,"Sex Code":sexRaw,Date:text(pickCol(x,"Date"))||new Date().toISOString().slice(0,10),
+  "Weight (g)":text(wt),"Length (cm)":text(tl),"Survival (%)":status==="1"?"100":status==="2"?"0":"",
+  "VIE Tag":text(pickCol(x,"VIE")),EBV:text(pickCol(x,"EBV")),Selection:text(pickCol(x,"Selection")),Notes:text(pickCol(x,"Notes")),
+  No:text(pickCol(x,"No")),sire:text(pickCol(x,"sire")),dam:text(pickCol(x,"dam")),Generation:gen,Gencode:text(pickCol(x,"Gencode")),
+  env:env,Environment:env==="1"?"บ่อผ้าใบ":env==="2"?"บ่อดิน":"",mat:mat,age:text(age),"Carapace Length (cm)":text(cl),Status:status,"Color Score":text(color),"Color Test":"No.of color (ShrimpFan)"
+ };
+ const errors=[];
+ if(!animal)errors.push("ไม่มี animalID");
+ if(!fam)errors.push("ไม่มี FamID");
+ if(!gen||!/^(P0|G\d+)$/i.test(gen))errors.push("Generation ไม่ถูกต้อง");
+ if(env && !["1","2"].includes(env))errors.push("env ต้องเป็น 1 หรือ 2");
+ if(mat && !["0","1"].includes(mat))errors.push("mat ต้องเป็น 0 หรือ 1");
+ if(status && !["1","2"].includes(status))errors.push("status ต้องเป็น 1 หรือ 2");
+ if(wt!==""&&num(wt)===null)errors.push("wt ไม่ใช่ตัวเลข");
+ if(tl!==""&&num(tl)===null)errors.push("tl ไม่ใช่ตัวเลข");
+ if(cl!==""&&num(cl)===null)errors.push("cl ไม่ใช่ตัวเลข");
+ if(age!==""&&num(age)===null)errors.push("age ไม่ใช่ตัวเลข");
+ return {rowNo,r,errors};
 }
+function importExcel(ev){
+ if(!requireEdit())return;const file=ev.target.files[0];if(!file)return;
+ const rd=new FileReader();rd.onload=e=>{try{
+  const wb=XLSX.read(e.target.result,{type:"array",cellDates:true});const sheet=wb.Sheets[wb.SheetNames[0]];const rows=XLSX.utils.sheet_to_json(sheet,{defval:"",raw:false});
+  if(!rows.length)throw new Error("ไม่พบข้อมูลใน Sheet แรก");
+  const normalized=rows.map((x,i)=>normalizeImportedRow(x,i+2));
+  const byId=new Map();const duplicateRows=[];normalized.forEach(o=>{if(o.r["Individual ID"]){if(byId.has(o.r["Individual ID"])){o.errors.push("animalID ซ้ำในไฟล์");duplicateRows.push(o.rowNo)}else byId.set(o.r["Individual ID"],o.rowNo)}});
+  const genSet=[...new Set(normalized.map(o=>o.r.Generation).filter(Boolean))];
+  const valid=normalized.filter(o=>!o.errors.length);pendingImport={fileName:file.name,rows:normalized,valid,genSet};
+  renderImportPreview();importModal.classList.add("show");
+ }catch(err){alert("อ่านไฟล์ไม่สำเร็จ: "+err.message)}finally{ev.target.value=""}};rd.readAsArrayBuffer(file);
+}
+function renderImportPreview(){
+ const p=pendingImport;if(!p)return;const bad=p.rows.length-p.valid.length;
+ importSummary.innerHTML=[["ไฟล์",p.fileName],["ทั้งหมด",p.rows.length.toLocaleString()],["พร้อม Import",p.valid.length.toLocaleString()],["ต้องแก้ไข",bad.toLocaleString()]].map(x=>`<div class="metric"><span class="small">${esc(x[0])}</span><b style="font-size:${x[0]==='ไฟล์'?'14px':'20px'}">${esc(x[1])}</b></div>`).join("");
+ const gens=p.genSet.join(", ")||"—";importNotice.innerHTML=`📌 Generation: <b>${esc(gens)}</b> &nbsp; • &nbsp; ระบบจะเชื่อม <b>Generation → Family → Individual → Pedigree → Growth/Traits</b> อัตโนมัติ<br><span class="small">Gencode เว้นว่างได้ • env: 1=บ่อผ้าใบ, 2=บ่อดิน • status: 1=รอด, 2=ตาย • mat ใช้ตามเพศ</span>`;
+ const errRows=p.rows.filter(o=>o.errors.length).slice(0,20);importErrors.innerHTML=errRows.length?`<div class="notice" style="background:#fff7e7;border-color:#f0d49b;color:#795500"><b>รายการที่ต้องตรวจ (${p.rows.filter(o=>o.errors.length).length})</b><div style="margin-top:8px">${errRows.map(o=>`แถว ${o.rowNo}: ${esc(o.errors.join(", "))}`).join("<br>")}${p.rows.filter(o=>o.errors.length).length>20?"<br>…แสดง 20 รายการแรก":""}</div></div>`:"<div class='notice' style='background:#eaf7f0;border-color:#bfe4cc;color:#17733e'>✓ ไม่พบข้อผิดพลาดเบื้องต้น</div>";
+ const show=p.rows.slice(0,100);importPreview.innerHTML=show.length?`<table class="table"><thead><tr><th>Row</th><th>Individual</th><th>Family</th><th>Gen</th><th>Sire</th><th>Dam</th><th>Env</th><th>Sex</th><th>Mat</th><th>Age</th><th>Wt</th><th>TL</th><th>CL</th><th>Status</th><th>Color</th></tr></thead><tbody>${show.map(o=>`<tr><td>${o.rowNo}</td><td>${esc(o.r["Individual ID"])}</td><td>${esc(o.r["Family ID"])}</td><td>${esc(o.r.Generation)}</td><td>${esc(o.r.sire)}</td><td>${esc(o.r.dam)}</td><td>${esc(o.r.Environment||o.r.env)}</td><td>${esc(o.r["Sex Code"]||o.r.Sex)}</td><td>${esc(o.r.mat)}</td><td>${esc(o.r.age)}</td><td>${esc(o.r["Weight (g)"])}</td><td>${esc(o.r["Length (cm)"])}</td><td>${esc(o.r["Carapace Length (cm)"])}</td><td>${esc(o.r.Status)}</td><td>${esc(o.r["Color Score"])}</td></tr>`).join("")}</tbody></table>${p.rows.length>100?`<div class="small" style="padding:8px">แสดง Preview 100 แถวแรกจาก ${p.rows.length.toLocaleString()} แถว</div>`:""}`:"<div class='empty'>ไม่มีข้อมูล</div>";
+ importConfirmBtn.disabled=p.valid.length===0;
+}
+function confirmImport(){
+ if(!requireEdit()||!pendingImport)return;const p=pendingImport;const byGen={};p.valid.forEach(o=>{(byGen[o.r.Generation]??=[]).push(o.r)});
+ let add=0,upd=0,famAdd=0;
+ Object.entries(byGen).forEach(([g,incoming])=>{
+  if(!GENS[g])GENS[g]=0;if(!PARENTS[g])PARENTS[g]=g==='P0'?"Wild foundation":`G${Math.max(0,(parseInt(g.slice(1))||1)-1)}`;
+  const a=records(g);const ids=new Map(a.map((r,i)=>[r["Individual ID"],i]));
+  incoming.forEach(r=>{const id=r["Individual ID"],idx=ids.get(id);if(idx!==undefined){a[idx]={...a[idx],...r};upd++}else{a.push(r);ids.set(id,a.length-1);add++}});ls("sbs_records_"+g,a);
+  const fam=families(g);const existing=new Set(fam.map(x=>x.id));const importedFamilies=[...new Set(incoming.map(r=>r["Family ID"]).filter(Boolean))];
+  importedFamilies.forEach(id=>{if(!existing.has(id)){const parent=incoming.find(r=>r["Family ID"]===id);fam.push({id,parent:parent?.sire||"",n:0,note:"สร้างอัตโนมัติจาก Excel Import"});existing.add(id);famAdd++}});ls("sbs_families_"+g,fam);
+  const maxFam=Math.max(0,...importedFamilies.map(id=>{const m=String(id).match(/F(\d+)/i);return m?Number(m[1]):0}));if(maxFam>Number(GENS[g]||0))GENS[g]=maxFam;
+ });
+ saveGenerations();pendingImport=null;closeModal("importModal");fillAllSelects();renderDashboard();renderGenerations();renderIndividuals();renderFamilies();renderGrowth();renderEBV();renderBroodstock();renderQuality();renderPedigree();saveAllData();
+ alert(`Import สำเร็จ\nเพิ่มกุ้ง ${add.toLocaleString()} ตัว\nอัปเดตกุ้งเดิม ${upd.toLocaleString()} ตัว\nสร้าง Family อัตโนมัติ ${famAdd.toLocaleString()} Family`);
+}
+
 function exportCurrent(){if(!canExport())return alert("สิทธิ์นี้ไม่สามารถ Export ได้");const a=records(indGen.value),ws=XLSX.utils.json_to_sheet(a),wb=XLSX.utils.book_new();XLSX.utils.book_append_sheet(wb,ws,indGen.value);XLSX.writeFile(wb,`Shrimp_Breeding_${indGen.value}.xlsx`)}
 
 function clearFamilyFilters(){familySearch.value="";familyGen.value=latestGeneration();renderFamilies()}
