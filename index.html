@@ -11,7 +11,15 @@
 :root{--nav:#102a43;--nav2:#163b5c;--bg:#f4f7fb;--card:#fff;--text:#18324a;--muted:#6b7c8f;--line:#dce5ee;--accent:#1f7a8c;--good:#198754;--warn:#d88b00;--bad:#c0392b;--shadow:0 8px 25px #17324d12}
 *{box-sizing:border-box}body{margin:0;font-family:Segoe UI,Tahoma,sans-serif;background:var(--bg);color:var(--text)}
 button,input,select,textarea{font:inherit}.app{display:flex;min-height:100vh}.sidebar{width:245px;background:linear-gradient(180deg,var(--nav),#0c2235);color:#fff;position:fixed;inset:0 auto 0 0;overflow:auto}.brand{padding:22px 18px;font-size:17px;font-weight:800;border-bottom:1px solid #ffffff18}.brand small{display:block;font-weight:400;color:#b8c9d8;margin-top:5px}.navtitle{padding:18px 18px 7px;color:#89a5bc;font-size:11px;text-transform:uppercase;letter-spacing:1.2px}.nav button{width:100%;border:0;background:transparent;color:#dbe8f2;text-align:left;padding:11px 18px;cursor:pointer}.nav button:hover,.nav button.active{background:#ffffff12;color:#fff;border-left:3px solid #5ec5d2;padding-left:15px}.nav button span{width:27px;display:inline-block}.main{margin-left:245px;width:calc(100% - 245px);padding:28px;max-width:1700px}.top{display:flex;justify-content:space-between;gap:20px;align-items:center;margin-bottom:20px}.top h1{margin:0 0 6px;font-size:28px}.top p{margin:0;color:var(--muted)}.badge,.userchip{padding:8px 12px;border-radius:999px;font-weight:700;font-size:12px}.badge{background:#e7f6f7;color:#11616d;border:1px solid #bde4e7}.userchip{background:#eef6f8;color:#126371}.page.hidden{display:none}.grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px;box-shadow:var(--shadow)}.label{font-size:12px;color:var(--muted)}.num{font-size:27px;font-weight:800;margin-top:6px}.sub{font-size:12px;color:var(--muted);margin-top:4px}.section{margin-top:18px}.sectiongrid{display:grid;grid-template-columns:1.3fr .7fr;gap:18px}.chartbox{height:300px}.cards2{display:grid;grid-template-columns:repeat(2,1fr);gap:14px}.toolbar{display:flex;flex-wrap:wrap;gap:9px;margin-bottom:15px}.toolbar input,.toolbar select,.field input,.field select,.field textarea{border:1px solid #ccd8e3;border-radius:9px;padding:9px 10px;background:#fff}.toolbar input{min-width:220px}.btn{border:1px solid #cbd8e3;background:#fff;color:var(--text);padding:9px 13px;border-radius:9px;cursor:pointer}.btn.primary{background:var(--accent);color:#fff;border-color:var(--accent)}.btn.good{background:#eaf7f0;color:var(--good);border-color:#bfe4cc}.btn.warn{background:#fff7e7;color:#9a6500;border-color:#f0d49b}.btn.danger{background:#fff0ee;color:var(--bad);border-color:#efc1bb}.btn:disabled{opacity:.45;cursor:not-allowed}.tablewrap{overflow:auto}.table{width:100%;border-collapse:collapse;font-size:13px}.table th,.table td{padding:10px 9px;border-bottom:1px solid var(--line);white-space:nowrap;text-align:left}.table th{background:#f7f9fb;color:#587086}.pill{display:inline-block;border-radius:999px;padding:4px 8px;font-size:11px;font-weight:700}.pill.good{background:#e8f7ee;color:#17733e}.pill.warn{background:#fff4db;color:#8b6100}.pill.bad{background:#ffebe8;color:#a82f23}.pill.info{background:#e8f4f7;color:#126371}.metricgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}.metric{padding:14px;background:#f8fafc;border:1px solid var(--line);border-radius:10px}.metric b{font-size:20px;display:block}.small{font-size:11px;color:var(--muted)}.row-actions{display:flex;gap:5px;align-items:center}.savebar{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:12px;padding:10px 12px;background:#f7fbfc;border:1px solid #d7e9ec;border-radius:10px}.save-status{font-size:12px;color:var(--muted)}.modal{position:fixed;inset:0;background:#06152288;display:none;align-items:center;justify-content:center;padding:20px;z-index:20}.modal.show{display:flex}.modalbox{background:#fff;width:min(850px,100%);max-height:90vh;overflow:auto;border-radius:16px;padding:20px}.modalhead{display:flex;justify-content:space-between;align-items:center}.close{border:0;background:transparent;font-size:26px;cursor:pointer}.formgrid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}.field{display:flex;flex-direction:column;gap:5px}.field label{font-size:12px;color:var(--muted)}.field.full{grid-column:1/-1}.actions{display:flex;justify-content:flex-end;gap:9px;margin-top:16px}.notice{padding:12px 14px;border-radius:10px;background:#eef7fa;border:1px solid #c8e4ea;color:#1c6070;font-size:13px}.empty{padding:35px;text-align:center;color:var(--muted)}
-#authGate{position:fixed;inset:0;z-index:9999;display:flex;align-items:center;justify-content:center;padding:20px;background:linear-gradient(90deg,rgba(5,27,43,.70),rgba(5,27,43,.38)),url('./login-bg.jpg') center center/cover no-repeat}.authbox{width:min(430px,100%);background:rgba(255,255,255,.94);backdrop-filter:blur(7px);-webkit-backdrop-filter:blur(7px);border:1px solid rgba(255,255,255,.72);border-radius:20px;padding:30px;box-shadow:0 22px 60px rgba(0,0,0,.28)}.authbox h1{margin:0 0 6px;color:#102a43}.authbox p{color:#6b7c8f;font-size:13px}.authfield{display:flex;flex-direction:column;gap:6px;margin:12px 0}.authfield label{font-size:12px;color:#587086}.authfield input{padding:11px;border:1px solid #ccd8e3;border-radius:9px;width:100%;background:#fff}.authactions{display:flex;gap:8px;margin-top:15px}.authmsg{font-size:12px;margin-top:12px;color:#a82f23;white-space:pre-wrap}.authlogo{width:58px;height:58px;display:grid;place-items:center;border-radius:16px;background:#e7f6f7;border:1px solid #bde4e7;font-size:31px;box-shadow:0 8px 20px rgba(16,42,67,.10)}.search-filter-panel{width:100%;margin-bottom:15px}.search-row{display:flex;align-items:center;gap:9px;width:100%;margin-bottom:10px}.search-row input{flex:1;min-width:0;height:42px;border:1px solid #ccd8e3;border-radius:9px;padding:9px 12px;background:#fff}.search-row input:focus,.filter-row select:focus{outline:none;border-color:#1f7a8c;box-shadow:0 0 0 2px #1f7a8c18}.search-row .btn{height:42px}.filter-row{display:grid;grid-template-columns:repeat(3,minmax(150px,1fr)) auto;gap:9px;align-items:end}.filter-group{display:flex;flex-direction:column;gap:5px}.filter-group label{font-size:11px;color:var(--muted);font-weight:700}.filter-row select{width:100%;height:40px;border:1px solid #ccd8e3;border-radius:9px;padding:8px 10px;background:#fff;color:var(--text)}.generation-head-actions{display:flex;gap:9px;align-items:center}.generation-add-note{font-size:12px;color:var(--muted);margin-top:4px}.generation-card-current{border-color:#8fd3da;box-shadow:0 10px 28px #1f7a8c18}.hidden{display:none!important}@media(max-width:700px){.search-row{flex-wrap:wrap}.search-row input{flex:100%;width:100%}.search-row .btn{flex:1}.filter-row{grid-template-columns:1fr}.generation-head-actions{width:100%;flex-direction:column;align-items:stretch}.generation-head-actions .btn{width:100%}}
+#authGate{position:fixed;inset:0;z-index:9999;display:flex;align-items:center;justify-content:center;padding:20px;background:linear-gradient(90deg,rgba(5,27,43,.70),rgba(5,27,43,.38)),url('./login-bg.jpg') center center/cover no-repeat}.authbox{width:min(430px,100%);background:rgba(255,255,255,.94);backdrop-filter:blur(7px);-webkit-backdrop-filter:blur(7px);border:1px solid rgba(255,255,255,.72);border-radius:20px;padding:30px;box-shadow:0 22px 60px rgba(0,0,0,.28)}.authbox h1{margin:0 0 6px;color:#102a43}.authbox p{color:#6b7c8f;font-size:13px}.authfield{display:flex;flex-direction:column;gap:6px;margin:12px 0}.authfield label{font-size:12px;color:#587086}.authfield input{padding:11px;border:1px solid #ccd8e3;border-radius:9px;width:100%;background:#fff}.authactions{display:flex;gap:8px;margin-top:15px}.authmsg{font-size:12px;margin-top:12px;color:#a82f23;white-space:pre-wrap}.authlogo{width:58px;height:58px;display:grid;place-items:center;border-radius:16px;background:#e7f6f7;border:1px solid #bde4e7;font-size:31px;box-shadow:0 8px 20px rgba(16,42,67,.10)}.search-filter-panel{width:100%;margin-bottom:15px}.search-row{display:flex;align-items:center;gap:9px;width:100%;margin-bottom:10px}.search-row input{flex:1;min-width:0;height:42px;border:1px solid #ccd8e3;border-radius:9px;padding:9px 12px;background:#fff}.search-row input:focus,.filter-row select:focus{outline:none;border-color:#1f7a8c;box-shadow:0 0 0 2px #1f7a8c18}.search-row .btn{height:42px}.filter-row{display:grid;grid-template-columns:repeat(3,minmax(150px,1fr)) auto;gap:9px;align-items:end}.filter-group{display:flex;flex-direction:column;gap:5px}.filter-group label{font-size:11px;color:var(--muted);font-weight:700}.filter-row select{width:100%;height:40px;border:1px solid #ccd8e3;border-radius:9px;padding:8px 10px;background:#fff;color:var(--text)}.generation-head-actions{display:flex;gap:9px;align-items:center}.generation-add-note{font-size:12px;color:var(--muted);margin-top:4px}.generation-card-current{border-color:#8fd3da;box-shadow:0 10px 28px #1f7a8c18}.hidden{display:none!important}
+.import-history-toolbar{display:flex;justify-content:space-between;gap:12px;align-items:center;flex-wrap:wrap}
+.import-history-card{border:1px solid var(--line);border-radius:14px;padding:16px;background:var(--card);box-shadow:0 4px 14px rgba(0,0,0,.03)}
+.import-history-meta{display:grid;grid-template-columns:repeat(5,minmax(100px,1fr));gap:10px;margin-top:12px}
+.import-history-actions{display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end;margin-top:14px}
+.import-id{font-family:ui-monospace,SFMono-Regular,Consolas,monospace;font-size:11px;color:var(--muted);word-break:break-all}
+.import-status{display:inline-flex;align-items:center;gap:5px;padding:5px 9px;border-radius:999px;font-size:12px;background:#eaf7f0;color:#17733e}
+@media(max-width:900px){.import-history-meta{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:600px){.import-history-meta{grid-template-columns:1fr}}@media(max-width:700px){.search-row{flex-wrap:wrap}.search-row input{flex:100%;width:100%}.search-row .btn{flex:1}.filter-row{grid-template-columns:1fr}.generation-head-actions{width:100%;flex-direction:column;align-items:stretch}.generation-head-actions .btn{width:100%}}
 @media(max-width:1000px){.sidebar{width:205px}.main{margin-left:205px;width:calc(100% - 205px);padding:18px}.grid,.metricgrid{grid-template-columns:repeat(2,1fr)}.sectiongrid{grid-template-columns:1fr}}
 @media(max-width:700px){.sidebar{position:static;width:100%;height:auto}.app{display:block}.main{margin:0;width:100%}.grid,.metricgrid,.formgrid,.cards2{grid-template-columns:1fr}.top{align-items:flex-start;flex-direction:column}}
 </style>
@@ -130,7 +138,17 @@ button,input,select,textarea{font:inherit}.app{display:flex;min-height:100vh}.si
 
 <section id="activities" class="page hidden"><div class="top"><div><h1>📅 Future Activities</h1><p>กิจกรรมสำคัญของโครงการ</p></div></div><div id="activityList"></div></section>
 
-<section id="documents" class="page hidden"><div class="top"><div><h1>📁 Documents</h1><p>พื้นที่สำหรับเอกสารและไฟล์โครงการ</p></div></div><div class="card"><div class="notice">พื้นที่นี้เตรียมไว้สำหรับ Supabase Storage ในขั้นต่อไป</div></div></section>
+<section id="documents" class="page hidden">
+<div class="top"><div><h1>📁 Documents & Import History</h1><p>จัดการไฟล์ Excel/CSV ที่นำเข้า และติดตามข้อมูลที่มาจากแต่ละ Import</p></div></div>
+<div class="card">
+ <div class="import-history-toolbar">
+  <div><b>📥 Import Excel / CSV</b><div class="small">Upload → Validate → Preview → Import → Auto-link → History</div></div>
+  <div class="row-actions"><label class="btn primary write-only">📥 Import Excel / CSV<input type="file" accept=".xlsx,.xls,.csv" onchange="importExcel(event)" hidden></label><button class="btn" onclick="renderImportHistory()">🔄 รีเฟรช</button></div>
+ </div>
+ <div class="notice" style="margin-top:12px">🛡️ การลบ Import จะลบเฉพาะข้อมูลที่สร้างจาก Import นั้น และถ้า Import เดิมไปแก้ข้อมูลที่มีอยู่ ระบบจะเก็บค่าก่อนแก้ไว้เพื่อคืนค่ากลับอย่างปลอดภัย</div>
+</div>
+<div class="section"><div id="importHistoryList"></div></div>
+</section>
 
 <section id="settings" class="page hidden"><div class="top"><div><h1>⚙️ System</h1><p>สถานะระบบและการสำรองข้อมูล</p></div></div><div class="grid"><div class="card"><div class="label">Database</div><div class="num" id="dbStatus">Cloud</div></div><div class="card"><div class="label">Role</div><div class="num" id="myRole">—</div></div><div class="card"><div class="label">Records</div><div class="num" id="settingRecords">0</div></div><div class="card"><div class="label">Last Save</div><div class="num" style="font-size:18px" id="lastSave">—</div></div></div><div class="section card"><button class="btn good" onclick="downloadBackup()">💾 Download Backup</button></div></section>
 
@@ -235,7 +253,7 @@ function applyRoleUI(){
 function showPage(id,btn){
  document.querySelectorAll(".page").forEach(p=>p.classList.add("hidden"));document.getElementById(id)?.classList.remove("hidden");
  document.querySelectorAll(".nav button").forEach(b=>b.classList.remove("active"));if(btn)btn.classList.add("active");
- if(id==="users")renderUsers();if(id==="dashboard")renderDashboard();if(id==="individuals")renderIndividuals();if(id==="families")renderFamilies();if(id==="growth")renderGrowth();if(id==="ebv")renderEBV();if(id==="broodstock")renderBroodstock();if(id==="experiments")renderExperiments();if(id==="water")renderWater();if(id==="quality")renderQuality();if(id==="settings")renderSettings();
+ if(id==="users")renderUsers();if(id==="dashboard")renderDashboard();if(id==="individuals")renderIndividuals();if(id==="families")renderFamilies();if(id==="growth")renderGrowth();if(id==="ebv")renderEBV();if(id==="broodstock")renderBroodstock();if(id==="experiments")renderExperiments();if(id==="water")renderWater();if(id==="quality")renderQuality();if(id==="settings")renderSettings();if(id==="documents")renderImportHistory();
 }
 function fillSelect(id){
  const e=document.getElementById(id);if(!e)return;const old=e.value;e.innerHTML=generationKeys().map(g=>`<option value="${esc(g)}">${esc(g)}</option>`).join("");if(GENS[old]!==undefined)e.value=old;else e.value=latestGeneration();
@@ -285,10 +303,15 @@ function openRecordModal(i=-1){
 }
 function saveRecord(){
  if(!requireEdit())return;const g=indGen.value,r={"Family ID":fFamily.value.trim(),"Individual ID":fIndividual.value.trim(),Sex:fSex.value,Date:fDate.value,"Weight (g)":fWeight.value,"Length (cm)":fLength.value,"Survival (%)":fSurvival.value,"VIE Tag":fVIE.value,EBV:fEBV.value,Selection:fSelection.value,Notes:fNotes.value};
- if(!r["Family ID"])return alert("กรุณาระบุ Family ID");const a=records(g);editIndex<0?a.push(r):a[editIndex]=r;ls("sbs_records_"+g,a);closeModal("recordModal");renderIndividuals();renderDashboard();
+ if(!r["Family ID"])return alert("กรุณาระบุ Family ID");const a=records(g);if(editIndex<0)a.push(r);else{const old=a[editIndex];r.__import_id=old?.__import_id||null;a[editIndex]=r}ls("sbs_records_"+g,a);closeModal("recordModal");renderIndividuals();renderDashboard();
 }
 function deleteRecord(i,g){if(!requireDelete()||!confirm("ลบข้อมูลรายการนี้หรือไม่?"))return;const a=records(g);a.splice(i,1);ls("sbs_records_"+g,a);renderIndividuals()}
 let pendingImport=null;
+function importHistory(){return ls("sbs_import_history")||[]}
+function saveImportHistory(a){ls("sbs_import_history",a)}
+function makeImportId(){return "IMP-"+Date.now().toString(36).toUpperCase()+"-"+Math.random().toString(36).slice(2,8).toUpperCase()}
+function formatBytes(n){if(!Number.isFinite(Number(n)))return "—";let v=Number(n),u=["B","KB","MB","GB"],i=0;while(v>=1024&&i<u.length-1){v/=1024;i++}return (i?v.toFixed(1):Math.round(v))+" "+u[i]}
+
 const IMPORT_ALIASES={
   No:["No","no","ลำดับ"], animalID:["animalID","Animal ID","Individual ID","individualID","รหัสกุ้ง"],
   sire:["sire","Sire","Father","พ่อ"], dam:["dam","Dam","Mother","แม่"], FamID:["FamID","Family ID","familyID","Family_ID","รหัสครอบครัว"],
@@ -349,18 +372,106 @@ function renderImportPreview(){
  importConfirmBtn.disabled=p.valid.length===0;
 }
 function confirmImport(){
- if(!requireEdit()||!pendingImport)return;const p=pendingImport;const byGen={};p.valid.forEach(o=>{(byGen[o.r.Generation]??=[]).push(o.r)});
- let add=0,upd=0,famAdd=0;
+ if(!requireEdit()||!pendingImport)return;
+ const p=pendingImport,importId=makeImportId();
+ const byGen={};p.valid.forEach(o=>{(byGen[o.r.Generation]??=[]).push(o.r)});
+ const historyEntry={id:importId,fileName:p.fileName,fileSize:p.fileSize||0,fileType:p.fileType||"",importedAt:new Date().toISOString(),importedBy:currentUser?.id||null,rowCount:p.rows.length,validRows:p.valid.length,added:0,updated:0,familyAdded:0,generations:p.genSet,recordNew:[],recordUpdated:[],familyNew:[]};
  Object.entries(byGen).forEach(([g,incoming])=>{
-  if(!GENS[g])GENS[g]=0;if(!PARENTS[g])PARENTS[g]=g==='P0'?"Wild foundation":`G${Math.max(0,(parseInt(g.slice(1))||1)-1)}`;
-  const a=records(g);const ids=new Map(a.map((r,i)=>[r["Individual ID"],i]));
-  incoming.forEach(r=>{const id=r["Individual ID"],idx=ids.get(id);if(idx!==undefined){a[idx]={...a[idx],...r};upd++}else{a.push(r);ids.set(id,a.length-1);add++}});ls("sbs_records_"+g,a);
-  const fam=families(g);const existing=new Set(fam.map(x=>x.id));const importedFamilies=[...new Set(incoming.map(r=>r["Family ID"]).filter(Boolean))];
-  importedFamilies.forEach(id=>{if(!existing.has(id)){const parent=incoming.find(r=>r["Family ID"]===id);fam.push({id,parent:parent?.sire||"",n:0,note:"สร้างอัตโนมัติจาก Excel Import"});existing.add(id);famAdd++}});ls("sbs_families_"+g,fam);
-  const maxFam=Math.max(0,...importedFamilies.map(id=>{const m=String(id).match(/F(\d+)/i);return m?Number(m[1]):0}));if(maxFam>Number(GENS[g]||0))GENS[g]=maxFam;
+  if(!GENS[g])GENS[g]=0;
+  if(!PARENTS[g])PARENTS[g]=g==='P0'?"Wild foundation":`G${Math.max(0,(parseInt(g.slice(1))||1)-1)}`;
+  const a=records(g),ids=new Map(a.map((r,i)=>[r["Individual ID"],i]));
+  incoming.forEach(r=>{
+   const id=r["Individual ID"],idx=ids.get(id);
+   if(idx!==undefined){
+    const before=JSON.parse(JSON.stringify(a[idx]));
+    a[idx]={...a[idx],...r,__import_id:importId};
+    historyEntry.recordUpdated.push({generation:g,individualId:id,before});historyEntry.updated++;
+   }else{
+    a.push({...r,__import_id:importId});ids.set(id,a.length-1);
+    historyEntry.recordNew.push({generation:g,individualId:id});historyEntry.added++;
+   }
+  });
+  ls("sbs_records_"+g,a);
+  const fam=families(g),existing=new Set(fam.map(x=>x.id));
+  const importedFamilies=[...new Set(incoming.map(r=>r["Family ID"]).filter(Boolean))];
+  importedFamilies.forEach(id=>{if(!existing.has(id)){const parent=incoming.find(r=>r["Family ID"]===id);fam.push({id,parent:parent?.sire||"",n:0,note:"สร้างอัตโนมัติจาก Excel Import",__import_id:importId});existing.add(id);historyEntry.familyNew.push({generation:g,id});historyEntry.familyAdded++}});
+  ls("sbs_families_"+g,fam);
+  const maxFam=Math.max(0,...importedFamilies.map(id=>{const m=String(id).match(/F(\d+)/i);return m?Number(m[1]):0}));
+  if(maxFam>Number(GENS[g]||0))GENS[g]=maxFam;
  });
- saveGenerations();pendingImport=null;closeModal("importModal");fillAllSelects();renderDashboard();renderGenerations();renderIndividuals();renderFamilies();renderGrowth();renderEBV();renderBroodstock();renderQuality();renderPedigree();saveAllData();
- alert(`Import สำเร็จ\nเพิ่มกุ้ง ${add.toLocaleString()} ตัว\nอัปเดตกุ้งเดิม ${upd.toLocaleString()} ตัว\nสร้าง Family อัตโนมัติ ${famAdd.toLocaleString()} Family`);
+ saveGenerations();
+ const hist=importHistory();hist.unshift(historyEntry);saveImportHistory(hist.slice(0,100));
+ pendingImport=null;closeModal("importModal");fillAllSelects();renderDashboard();renderGenerations();renderIndividuals();renderFamilies();renderGrowth();renderEBV();renderBroodstock();renderQuality();renderPedigree();renderImportHistory();saveAllData();
+ logActivity("import","import_batch",importId,null,{fileName:historyEntry.fileName,rowCount:historyEntry.rowCount,validRows:historyEntry.validRows,added:historyEntry.added,updated:historyEntry.updated,familyAdded:historyEntry.familyAdded,generations:historyEntry.generations}).then(renderRecentActivity);
+ alert(`Import สำเร็จ\n\nไฟล์: ${historyEntry.fileName}\nเพิ่มกุ้งใหม่: ${historyEntry.added.toLocaleString()} ตัว\nอัปเดตกุ้งเดิม: ${historyEntry.updated.toLocaleString()} ตัว\nสร้าง Family ใหม่: ${historyEntry.familyAdded.toLocaleString()} Family\n\nImport ID: ${importId}`);
+}
+
+function deleteImport(importId){
+ if(!requireDelete())return;
+ const hist=importHistory(),entry=hist.find(x=>x.id===importId);if(!entry)return alert("ไม่พบ Import นี้");
+ if(!confirm(`ยืนยันลบ Import นี้หรือไม่?\n\nไฟล์: ${entry.fileName}\nเพิ่มกุ้งใหม่: ${Number(entry.added||0).toLocaleString()} ตัว\nอัปเดตกุ้งเดิม: ${Number(entry.updated||0).toLocaleString()} ตัว\nสร้าง Family ใหม่: ${Number(entry.familyAdded||0).toLocaleString()}\n\nระบบจะลบเฉพาะข้อมูลที่เป็นของ Import นี้ และคืนค่าข้อมูลเดิมที่ถูกแก้ไขให้โดยอัตโนมัติ`))return;
+ let skipped=0;
+ const gens=new Set([...(entry.recordNew||[]).map(x=>x.generation),...(entry.recordUpdated||[]).map(x=>x.generation),...(entry.familyNew||[]).map(x=>x.generation)]);
+ gens.forEach(g=>{
+  let a=records(g);
+  const newIds=new Set((entry.recordNew||[]).filter(x=>x.generation===g).map(x=>x.individualId));
+  const restoreMap=new Map((entry.recordUpdated||[]).filter(x=>x.generation===g).map(x=>[x.individualId,x.before]));
+  a=a.filter(r=>{
+   if(newIds.has(r["Individual ID"])){
+    if(r.__import_id!==entry.id)skipped++;
+    return r.__import_id!==entry.id;
+   }
+   return true;
+  });
+  a=a.map(r=>{
+   const id=r["Individual ID"];
+   if(restoreMap.has(id)){
+    if(r.__import_id===entry.id)return restoreMap.get(id);
+    skipped++;
+   }
+   return r;
+  });
+  ls("sbs_records_"+g,a);
+  const famIds=new Set((entry.familyNew||[]).filter(x=>x.generation===g).map(x=>x.id));
+  if(famIds.size){let fam=families(g);fam=fam.filter(x=>!(famIds.has(x.id)&&x.__import_id===entry.id));ls("sbs_families_"+g,fam)}
+ });
+ saveImportHistory(hist.filter(x=>x.id!==entry.id));
+ logActivity("delete","import_batch",entry.id,entry,null).then(renderRecentActivity);
+ fillAllSelects();renderDashboard();renderGenerations();renderIndividuals();renderFamilies();renderGrowth();renderEBV();renderBroodstock();renderQuality();renderPedigree();renderImportHistory();saveAllData();
+ alert(`ลบ Import เรียบร้อยแล้ว\n\n${skipped?"มีข้อมูลบางรายการที่ถูก Import/แก้ไขโดย Import ภายหลัง จึงไม่ถูกย้อนทับ":"ข้อมูลถูกย้อนกลับตามต้นทางเรียบร้อย"}`);
+}
+
+function viewImportDetails(importId){
+ const x=importHistory().find(v=>v.id===importId);if(!x)return;
+ alert(`Import ID: ${x.id}\nไฟล์: ${x.fileName}\nวันที่: ${new Date(x.importedAt).toLocaleString("th-TH")}\nGeneration: ${(x.generations||[]).join(", ")||"—"}\nทั้งหมด: ${Number(x.rowCount||0).toLocaleString()}\nพร้อม Import: ${Number(x.validRows||0).toLocaleString()}\nเพิ่มใหม่: ${Number(x.added||0).toLocaleString()}\nอัปเดต: ${Number(x.updated||0).toLocaleString()}\nFamily ใหม่: ${Number(x.familyAdded||0).toLocaleString()}`);
+}
+
+function renderImportHistory(){
+ const box=document.getElementById("importHistoryList");if(!box)return;
+ const hist=importHistory();
+ if(!hist.length){box.innerHTML='<div class="card empty">ยังไม่มีประวัติการ Import — เมื่อ Import ไฟล์แล้ว รายการจะปรากฏที่นี่</div>';applyRoleUI();return}
+ box.innerHTML=hist.map(x=>{
+  const date=x.importedAt?new Date(x.importedAt).toLocaleString("th-TH"):"—";
+  return `<div class="import-history-card" style="margin-bottom:12px">
+   <div style="display:flex;justify-content:space-between;gap:12px;align-items:flex-start;flex-wrap:wrap">
+    <div><h3 style="margin:0 0 5px">📄 ${esc(x.fileName)}</h3><div class="import-id">Import ID: ${esc(x.id)}</div></div>
+    <span class="import-status">✓ Imported</span>
+   </div>
+   <div class="import-history-meta">
+    <div class="metric"><span class="small">วันที่</span><b style="font-size:14px">${esc(date)}</b></div>
+    <div class="metric"><span class="small">ข้อมูลทั้งหมด</span><b>${Number(x.rowCount||0).toLocaleString()}</b></div>
+    <div class="metric"><span class="small">เพิ่มใหม่</span><b>${Number(x.added||0).toLocaleString()}</b></div>
+    <div class="metric"><span class="small">อัปเดต</span><b>${Number(x.updated||0).toLocaleString()}</b></div>
+    <div class="metric"><span class="small">Family ใหม่</span><b>${Number(x.familyAdded||0).toLocaleString()}</b></div>
+   </div>
+   <div class="small" style="margin-top:10px">Generation: ${esc((x.generations||[]).join(", ")||"—")} • ขนาดไฟล์: ${esc(formatBytes(x.fileSize))}</div>
+   <div class="import-history-actions">
+    <button class="btn" onclick="viewImportDetails('${esc(x.id)}')">🔎 ดูรายละเอียด</button>
+    <button class="btn danger admin-only" onclick="deleteImport('${esc(x.id)}')">🗑️ ลบ Import</button>
+   </div>
+  </div>`;
+ }).join("");
+ applyRoleUI();
 }
 
 function exportCurrent(){if(!canExport())return alert("สิทธิ์นี้ไม่สามารถ Export ได้");const a=records(indGen.value),ws=XLSX.utils.json_to_sheet(a),wb=XLSX.utils.book_new();XLSX.utils.book_append_sheet(wb,ws,indGen.value);XLSX.writeFile(wb,`Shrimp_Breeding_${indGen.value}.xlsx`)}
@@ -672,46 +783,6 @@ deleteRecord = function (i, g) {
     before,
     null
   ).then(renderRecentActivity);
-
-};
-
-
-/* ===== Import Excel ===== */
-
-const _originalImportExcel =
-  importExcel;
-
-importExcel = function (ev) {
-
-  const file =
-    ev.target.files?.[0];
-
-  if (!file) return;
-
-  const beforeCount =
-    records(indGen.value).length;
-
-  _originalImportExcel(ev);
-
-  setTimeout(function () {
-
-    const afterCount =
-      records(indGen.value).length;
-
-    logActivity(
-      "import",
-      "individual",
-      indGen.value,
-      null,
-      {
-        file_name: file.name,
-        generation: indGen.value,
-        before_count: beforeCount,
-        after_count: afterCount
-      }
-    ).then(renderRecentActivity);
-
-  }, 500);
 
 };
 
