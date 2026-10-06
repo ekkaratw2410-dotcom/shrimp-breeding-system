@@ -329,12 +329,32 @@ const IMPORT_ALIASES={
   VIE:["VIE Tag","VIE","VIE_Tag"], EBV:["EBV","ebv"], Selection:["Selection","selection"], Date:["Date","date","วันที่"], Notes:["Notes","notes","หมายเหตุ"]
 };
 function normHeader(v){return String(v??"").trim().toLowerCase().replace(/[\s_\-()./]+/g,"");}
+// Family ID มาตรฐานของระบบ: G4F001 (ไม่มีขีด)
+function normalizeFamilyId(id,g=""){
+ const raw=String(id??"").trim().toUpperCase().replace(/[\s_-]+/g,"");
+ if(!raw)return "";
+ let m=raw.match(/^([PG]\d+)F(\d+)$/i);
+ if(m)return `${m[1].toUpperCase()}F${String(Number(m[2])).padStart(3,"0")}`;
+ m=raw.match(/^F(\d+)$/i);
+ if(m&&g)return `${String(g).trim().toUpperCase()}F${String(Number(m[1])).padStart(3,"0")}`;
+ return raw;
+}
+function normalizeAllFamilyIds(){
+ generationKeys().forEach(g=>{
+  const a=records(g);
+  a.forEach(r=>{if(r["Family ID"])r["Family ID"]=normalizeFamilyId(r["Family ID"],g);if(r.FamID)r.FamID=normalizeFamilyId(r.FamID,g)});
+  ls("sbs_records_"+g,a);
+  const fam=families(g),seen=new Set(),out=[];
+  fam.forEach(f=>{const id=normalizeFamilyId(f.id,g);if(!id||seen.has(id))return;seen.add(id);out.push({...f,id})});
+  ls("sbs_families_"+g,out);
+ });
+}
 function pickCol(row,key){const entries=Object.keys(row);const aliases=IMPORT_ALIASES[key]||[];for(const a of aliases){const na=normHeader(a);const hit=entries.find(k=>normHeader(k)===na);if(hit!==undefined)return row[hit];}return "";}
 function text(v){return v===null||v===undefined?"":String(v).trim();}
 function num(v){if(v===""||v===null||v===undefined)return null;const n=Number(String(v).replace(/,/g,""));return Number.isFinite(n)?n:null;}
 function normalizeSex(v){const t=text(v);const low=t.toLowerCase();if(["male","m","ตัวผู้","ผู้"].includes(low))return "Male";if(["female","f","ตัวเมีย","เมีย"].includes(low))return "Female";return t;}
 function normalizeImportedRow(x,rowNo){
- const animal=text(pickCol(x,"animalID")), fam=text(pickCol(x,"FamID")), gen=text(pickCol(x,"Generation"));
+ const animal=text(pickCol(x,"animalID")), gen=text(pickCol(x,"Generation")), fam=normalizeFamilyId(pickCol(x,"FamID"),gen);
  const env=text(pickCol(x,"env")), status=text(pickCol(x,"status")), mat=text(pickCol(x,"mat"));
  const wt=pickCol(x,"wt"),tl=pickCol(x,"tl"),cl=pickCol(x,"cl"),age=pickCol(x,"age"),color=pickCol(x,"color");
  const sexRaw=text(pickCol(x,"sex")), sex=normalizeSex(sexRaw);
@@ -398,7 +418,7 @@ function importExcel(ev){
 function renderImportPreview(){
  const p=pendingImport;if(!p)return;const bad=p.rows.length-p.valid.length;
  importSummary.innerHTML=[["ไฟล์",p.fileName],["ทั้งหมด",p.rows.length.toLocaleString()],["พร้อม Import",p.valid.length.toLocaleString()],["ต้องแก้ไข",bad.toLocaleString()]].map(x=>`<div class="metric"><span class="small">${esc(x[0])}</span><b style="font-size:${x[0]==='ไฟล์'?'14px':'20px'}">${esc(x[1])}</b></div>`).join("");
- const gens=p.genSet.join(", ")||"—";importNotice.innerHTML=`📌 Generation: <b>${esc(gens)}</b> &nbsp; • &nbsp; ระบบจะเชื่อม <b>Generation → Family → Individual → Pedigree → Growth/Traits</b> อัตโนมัติ<br><span class="small">Gencode เว้นว่างได้ • env: 1=บ่อผ้าใบ, 2=บ่อดิน • status: 1=รอด, 2=ตาย • mat ใช้ตามเพศ</span>`;
+ const gens=p.genSet.join(", ")||"—";importNotice.innerHTML=`📌 Generation: <b>${esc(gens)}</b> &nbsp; • &nbsp; ระบบจะเชื่อม <b>Generation → Family → Individual → Pedigree → Growth/Traits</b> อัตโนมัติ และปรับ Family ID เป็นรูปแบบมาตรฐาน <b>G4F001</b> (ไม่มีขีด)<br><span class="small">Gencode เว้นว่างได้ • env: 1=บ่อผ้าใบ, 2=บ่อดิน • status: 1=รอด, 2=ตาย • mat ใช้ตามเพศ</span>`;
  const errRows=p.rows.filter(o=>o.errors.length).slice(0,20);importErrors.innerHTML=errRows.length?`<div class="notice" style="background:#fff7e7;border-color:#f0d49b;color:#795500"><b>รายการที่ต้องตรวจ (${p.rows.filter(o=>o.errors.length).length})</b><div style="margin-top:8px">${errRows.map(o=>`แถว ${o.rowNo}: ${esc(o.errors.join(", "))}`).join("<br>")}${p.rows.filter(o=>o.errors.length).length>20?"<br>…แสดง 20 รายการแรก":""}</div></div>`:"<div class='notice' style='background:#eaf7f0;border-color:#bfe4cc;color:#17733e'>✓ ไม่พบข้อผิดพลาดเบื้องต้น</div>";
  const show=p.rows.slice(0,100);importPreview.innerHTML=show.length?`<table class="table"><thead><tr><th>Row</th><th>Individual</th><th>Family</th><th>Gen</th><th>Sire</th><th>Dam</th><th>Env</th><th>Sex</th><th>Mat</th><th>Age</th><th>Wt</th><th>TL</th><th>CL</th><th>Status</th><th>Color</th></tr></thead><tbody>${show.map(o=>`<tr><td>${o.rowNo}</td><td>${esc(o.r["Individual ID"])}</td><td>${esc(o.r["Family ID"])}</td><td>${esc(o.r.Generation)}</td><td>${esc(o.r.sire)}</td><td>${esc(o.r.dam)}</td><td>${esc(o.r.Environment||o.r.env)}</td><td>${esc(o.r["Sex Code"]||o.r.Sex)}</td><td>${esc(o.r.mat)}</td><td>${esc(o.r.age)}</td><td>${esc(o.r["Weight (g)"])}</td><td>${esc(o.r["Length (cm)"])}</td><td>${esc(o.r["Carapace Length (cm)"])}</td><td>${esc(o.r.Status)}</td><td>${esc(o.r["Color Score"])}</td></tr>`).join("")}</tbody></table>${p.rows.length>100?`<div class="small" style="padding:8px">แสดง Preview 100 แถวแรกจาก ${p.rows.length.toLocaleString()} แถว</div>`:""}`:"<div class='empty'>ไม่มีข้อมูล</div>";
  importConfirmBtn.disabled=p.valid.length===0;
@@ -420,6 +440,7 @@ async function confirmImport(){
   if(!PARENTS[g])PARENTS[g]=g==='P0'?"Wild foundation":`G${Math.max(0,(parseInt(g.slice(1))||1)-1)}`;
   const a=records(g),ids=new Map(a.map((r,i)=>[r["Individual ID"],i]));
   incoming.forEach(r=>{
+   r["Family ID"]=normalizeFamilyId(r["Family ID"],g); r.FamID=normalizeFamilyId(r.FamID||r["Family ID"],g);
    const id=r["Individual ID"],idx=ids.get(id);
    if(idx!==undefined){
     const before=JSON.parse(JSON.stringify(a[idx]));
@@ -440,7 +461,7 @@ async function confirmImport(){
  });
  saveGenerations();
  const hist=importHistory();hist.unshift(historyEntry);saveImportHistory(hist.slice(0,100));
- pendingImport=null;closeModal("importModal");fillAllSelects();renderDashboard();renderGenerations();renderIndividuals();renderFamilies();renderGrowth();renderEBV();renderBroodstock();renderQuality();renderPedigree();renderImportHistory();saveAllData();
+ pendingImport=null;closeModal("importModal");normalizeAllFamilyIds();fillAllSelects();renderDashboard();renderGenerations();renderIndividuals();renderFamilies();renderGrowth();renderEBV();renderBroodstock();renderQuality();renderPedigree();renderImportHistory();saveAllData();
  logActivity("import","import_batch",importId,null,{fileName:historyEntry.fileName,rowCount:historyEntry.rowCount,validRows:historyEntry.validRows,added:historyEntry.added,updated:historyEntry.updated,familyAdded:historyEntry.familyAdded,generations:historyEntry.generations}).then(renderRecentActivity);
  alert(`Import สำเร็จ\n\nไฟล์: ${historyEntry.fileName}\nเพิ่มกุ้งใหม่: ${historyEntry.added.toLocaleString()} ตัว\nอัปเดตกุ้งเดิม: ${historyEntry.updated.toLocaleString()} ตัว\nสร้าง Family ใหม่: ${historyEntry.familyAdded.toLocaleString()} Family\n\nImport ID: ${importId}`);
 }
@@ -559,7 +580,7 @@ function exportCurrent(){if(!canExport())return alert("สิทธิ์นี�
 function clearFamilyFilters(){familySearch.value="";familyGen.value=latestGeneration();renderFamilies()}
 function renderFamilies(){
  fillSelect("familyGen");const g=familyGen.value||latestGeneration(),q=(familySearch.value||"").toLowerCase(),manual=families(g),out=[];
- for(let i=1;i<=GENS[g];i++){const id=`${g}-F${String(i).padStart(3,"0")}`,rr=records(g).filter(x=>x["Family ID"]===id),w=rr.map(x=>Number(x["Weight (g)"])).filter(Number.isFinite),e=rr.map(x=>Number(x.EBV)).filter(Number.isFinite),m=manual.findIndex(x=>x.id===id);out.push({id,n:rr.length,weight:w.length?w.reduce((a,b)=>a+b,0)/w.length:null,ebv:e.length?e.reduce((a,b)=>a+b,0)/e.length:null,mi:m})}
+ for(let i=1;i<=GENS[g];i++){const id=`${String(g).toUpperCase()}F${String(i).padStart(3,"0")}`,rr=records(g).filter(x=>x["Family ID"]===id),w=rr.map(x=>Number(x["Weight (g)"])).filter(Number.isFinite),e=rr.map(x=>Number(x.EBV)).filter(Number.isFinite),m=manual.findIndex(x=>x.id===id);out.push({id,n:rr.length,weight:w.length?w.reduce((a,b)=>a+b,0)/w.length:null,ebv:e.length?e.reduce((a,b)=>a+b,0)/e.length:null,mi:m})}
  manual.forEach((x,i)=>{if(!out.some(y=>y.id===x.id))out.push({...x,n:0,mi:i})});
  const show=out.filter(x=>x.id.toLowerCase().includes(q));familyCards.innerHTML=show.map(x=>`<div class="card"><div class="small">${g}</div><h2>${esc(x.id)}</h2><p>Individuals: <b>${x.n||0}</b></p><p>Avg Weight: <b>${x.weight==null?"—":x.weight.toFixed(2)+" g"}</b></p><p>Avg EBV: <b>${x.ebv==null?"—":x.ebv.toFixed(3)}</b></p><div class="row-actions">${x.mi>=0?`<button class="btn" onclick="openFamilyModal(${x.mi},'${g}')">แก้ไข</button><button class="btn danger" onclick="deleteFamily(${x.mi},'${g}')">ลบ</button>`:""}</div></div>`).join("");
  applyRoleUI();
@@ -587,7 +608,7 @@ function renderQuality(){const all=generationKeys().flatMap(g=>records(g)),issue
 function renderActivities(){const current=latestGeneration(),next=/^G\d+$/.test(current)?`G${parseInt(current.slice(1))+1}`:"G1";activityList.innerHTML=[`Current — ${current} growth test / data collection`,`Next — EBV analysis and selection for ${next}`,`Future — Expand stock and continue breeding to ${next} and subsequent generations`].map(x=>`<div class="card"><h3>${x}</h3><span class="pill info">Planned</span></div>`).join("")}
 function renderSettings(){dbStatus.textContent="Cloud";settingRecords.textContent=generationKeys().reduce((n,g)=>n+records(g).length,0);lastSave.textContent=new Date().toLocaleTimeString("th-TH")}
 function renderPedigree(){pedigreeTree.innerHTML=generationKeys().map(g=>`<div class="card" style="margin:8px 0"><b>${g}</b> ← ${esc(PARENTS[g])}</div>`).join("")}
-function saveAllData(){if(!requireEdit())return;saveGenerations();generationKeys().forEach(g=>{ls("sbs_records_"+g,records(g));ls("sbs_families_"+g,families(g))});ls("sbs_experiments",experiments());ls("sbs_water",water());cloudSave();setSaveStatus("☁️ บันทึกข้อมูลทั้งหมดแล้ว")}
+function saveAllData(){if(!requireEdit())return;normalizeAllFamilyIds();saveGenerations();generationKeys().forEach(g=>{ls("sbs_records_"+g,records(g));ls("sbs_families_"+g,families(g))});ls("sbs_experiments",experiments());ls("sbs_water",water());cloudSave();setSaveStatus("☁️ บันทึกข้อมูลทั้งหมดแล้ว")}
 function downloadBackup(){const p=payload();const a=document.createElement("a");a.href=URL.createObjectURL(new Blob([JSON.stringify(p,null,2)],{type:"application/json"}));a.download="Shrimp_Breeding_Backup_"+new Date().toISOString().slice(0,10)+".json";a.click();URL.revokeObjectURL(a.href)}
 
 async function renderUsers(){
