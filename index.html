@@ -147,6 +147,13 @@ button,input,select,textarea{font:inherit}.app{display:flex;min-height:100vh}.si
  </div>
  <div class="notice" style="margin-top:12px">🛡️ การลบ Import จะลบเฉพาะข้อมูลที่สร้างจาก Import นั้น และถ้า Import เดิมไปแก้ข้อมูลที่มีอยู่ ระบบจะเก็บค่าก่อนแก้ไว้เพื่อคืนค่ากลับอย่างปลอดภัย</div>
 </div>
+<div class="section card">
+ <div style="display:flex;justify-content:space-between;gap:12px;align-items:center;flex-wrap:wrap">
+  <div><h3 style="margin:0 0 5px">🧹 จัดการข้อมูลเก่าที่ไม่มี Import ID</h3><div class="small">ใช้สำหรับข้อมูลที่ถูกนำเข้าในระบบรุ่นเก่าก่อนมี Import History — ไม่ต้องลบกุ้งทีละตัว</div></div>
+  <button class="btn" onclick="renderLegacyCleanup()">🔄 ตรวจสอบข้อมูลเก่า</button>
+ </div>
+ <div id="legacyCleanup" style="margin-top:12px"></div>
+</div>
 <div class="section"><div id="importHistoryList"></div></div>
 </section>
 
@@ -253,7 +260,7 @@ function applyRoleUI(){
 function showPage(id,btn){
  document.querySelectorAll(".page").forEach(p=>p.classList.add("hidden"));document.getElementById(id)?.classList.remove("hidden");
  document.querySelectorAll(".nav button").forEach(b=>b.classList.remove("active"));if(btn)btn.classList.add("active");
- if(id==="users")renderUsers();if(id==="dashboard")renderDashboard();if(id==="individuals")renderIndividuals();if(id==="families")renderFamilies();if(id==="growth")renderGrowth();if(id==="ebv")renderEBV();if(id==="broodstock")renderBroodstock();if(id==="experiments")renderExperiments();if(id==="water")renderWater();if(id==="quality")renderQuality();if(id==="settings")renderSettings();if(id==="documents")renderImportHistory();
+ if(id==="users")renderUsers();if(id==="dashboard")renderDashboard();if(id==="individuals")renderIndividuals();if(id==="families")renderFamilies();if(id==="growth")renderGrowth();if(id==="ebv")renderEBV();if(id==="broodstock")renderBroodstock();if(id==="experiments")renderExperiments();if(id==="water")renderWater();if(id==="quality")renderQuality();if(id==="settings")renderSettings();if(id==="documents"){renderImportHistory();renderLegacyCleanup();}
 }
 function fillSelect(id){
  const e=document.getElementById(id);if(!e)return;const old=e.value;e.innerHTML=generationKeys().map(g=>`<option value="${esc(g)}">${esc(g)}</option>`).join("");if(GENS[old]!==undefined)e.value=old;else e.value=latestGeneration();
@@ -351,6 +358,31 @@ function normalizeImportedRow(x,rowNo){
  if(age!==""&&num(age)===null)errors.push("age ไม่ใช่ตัวเลข");
  return {rowNo,r,errors};
 }
+function safeImportFileName(name){
+ return String(name||"import.xlsx").replace(/[^\wก-๙.-]+/g,"_").slice(0,120);
+}
+function importStoragePath(entry){return entry?.storagePath||"";}
+async function uploadImportFile(file,importId){
+ if(!file||!importId)return null;
+ const path=`imports/${importId}/${safeImportFileName(file.name)}`;
+ const {error}=await sbClient.storage.from("breeding-imports").upload(path,file,{upsert:false,contentType:file.type||"application/octet-stream"});
+ if(error)throw new Error("อัปโหลดไฟล์ต้นฉบับไม่สำเร็จ: "+error.message);
+ return path;
+}
+async function downloadImportFile(importId){
+ const entry=importHistory().find(x=>x.id===importId);if(!entry)return alert("ไม่พบ Import นี้");
+ if(!entry.storagePath)return alert("Import นี้เป็นรายการเก่าที่ระบบยังไม่ได้เก็บไฟล์ Excel ต้นฉบับไว้ จึงไม่สามารถดาวน์โหลดไฟล์เดิมได้");
+ const {data,error}=await sbClient.storage.from("breeding-imports").createSignedUrl(entry.storagePath,300);
+ if(error||!data?.signedUrl)return alert("ไม่สามารถสร้างลิงก์ดาวน์โหลดไฟล์ได้: "+(error?.message||"ไม่ทราบสาเหตุ"));
+ window.open(data.signedUrl,"_blank","noopener");
+}
+async function deleteImportFile(entry){
+ if(!entry?.storagePath)return {ok:true,missing:true};
+ const {error}=await sbClient.storage.from("breeding-imports").remove([entry.storagePath]);
+ if(error)return {ok:false,error};
+ return {ok:true,missing:false};
+}
+
 function importExcel(ev){
  if(!requireEdit())return;const file=ev.target.files[0];if(!file)return;
  const rd=new FileReader();rd.onload=e=>{try{
@@ -359,7 +391,7 @@ function importExcel(ev){
   const normalized=rows.map((x,i)=>normalizeImportedRow(x,i+2));
   const byId=new Map();const duplicateRows=[];normalized.forEach(o=>{if(o.r["Individual ID"]){if(byId.has(o.r["Individual ID"])){o.errors.push("animalID ซ้ำในไฟล์");duplicateRows.push(o.rowNo)}else byId.set(o.r["Individual ID"],o.rowNo)}});
   const genSet=[...new Set(normalized.map(o=>o.r.Generation).filter(Boolean))];
-  const valid=normalized.filter(o=>!o.errors.length);pendingImport={fileName:file.name,rows:normalized,valid,genSet};
+  const valid=normalized.filter(o=>!o.errors.length);pendingImport={fileName:file.name,fileSize:file.size||0,fileType:file.type||"",file,rows:normalized,valid,genSet};
   renderImportPreview();importModal.classList.add("show");
  }catch(err){alert("อ่านไฟล์ไม่สำเร็จ: "+err.message)}finally{ev.target.value=""}};rd.readAsArrayBuffer(file);
 }
@@ -371,11 +403,18 @@ function renderImportPreview(){
  const show=p.rows.slice(0,100);importPreview.innerHTML=show.length?`<table class="table"><thead><tr><th>Row</th><th>Individual</th><th>Family</th><th>Gen</th><th>Sire</th><th>Dam</th><th>Env</th><th>Sex</th><th>Mat</th><th>Age</th><th>Wt</th><th>TL</th><th>CL</th><th>Status</th><th>Color</th></tr></thead><tbody>${show.map(o=>`<tr><td>${o.rowNo}</td><td>${esc(o.r["Individual ID"])}</td><td>${esc(o.r["Family ID"])}</td><td>${esc(o.r.Generation)}</td><td>${esc(o.r.sire)}</td><td>${esc(o.r.dam)}</td><td>${esc(o.r.Environment||o.r.env)}</td><td>${esc(o.r["Sex Code"]||o.r.Sex)}</td><td>${esc(o.r.mat)}</td><td>${esc(o.r.age)}</td><td>${esc(o.r["Weight (g)"])}</td><td>${esc(o.r["Length (cm)"])}</td><td>${esc(o.r["Carapace Length (cm)"])}</td><td>${esc(o.r.Status)}</td><td>${esc(o.r["Color Score"])}</td></tr>`).join("")}</tbody></table>${p.rows.length>100?`<div class="small" style="padding:8px">แสดง Preview 100 แถวแรกจาก ${p.rows.length.toLocaleString()} แถว</div>`:""}`:"<div class='empty'>ไม่มีข้อมูล</div>";
  importConfirmBtn.disabled=p.valid.length===0;
 }
-function confirmImport(){
+async function confirmImport(){
  if(!requireEdit()||!pendingImport)return;
  const p=pendingImport,importId=makeImportId();
+ let storagePath=null;
+ try{
+  storagePath=await uploadImportFile(p.file,importId);
+ }catch(e){
+  alert(e.message||"อัปโหลดไฟล์ต้นฉบับไม่สำเร็จ");
+  return;
+ }
  const byGen={};p.valid.forEach(o=>{(byGen[o.r.Generation]??=[]).push(o.r)});
- const historyEntry={id:importId,fileName:p.fileName,fileSize:p.fileSize||0,fileType:p.fileType||"",importedAt:new Date().toISOString(),importedBy:currentUser?.id||null,rowCount:p.rows.length,validRows:p.valid.length,added:0,updated:0,familyAdded:0,generations:p.genSet,recordNew:[],recordUpdated:[],familyNew:[]};
+ const historyEntry={id:importId,fileName:p.fileName,fileSize:p.fileSize||0,fileType:p.fileType||"",importedAt:new Date().toISOString(),importedBy:currentUser?.id||null,storagePath,fileStored:!!storagePath,rowCount:p.rows.length,validRows:p.valid.length,added:0,updated:0,familyAdded:0,generations:p.genSet,recordNew:[],recordUpdated:[],familyNew:[]};
  Object.entries(byGen).forEach(([g,incoming])=>{
   if(!GENS[g])GENS[g]=0;
   if(!PARENTS[g])PARENTS[g]=g==='P0'?"Wild foundation":`G${Math.max(0,(parseInt(g.slice(1))||1)-1)}`;
@@ -406,10 +445,16 @@ function confirmImport(){
  alert(`Import สำเร็จ\n\nไฟล์: ${historyEntry.fileName}\nเพิ่มกุ้งใหม่: ${historyEntry.added.toLocaleString()} ตัว\nอัปเดตกุ้งเดิม: ${historyEntry.updated.toLocaleString()} ตัว\nสร้าง Family ใหม่: ${historyEntry.familyAdded.toLocaleString()} Family\n\nImport ID: ${importId}`);
 }
 
-function deleteImport(importId){
+async function deleteImport(importId){
  if(!requireDelete())return;
  const hist=importHistory(),entry=hist.find(x=>x.id===importId);if(!entry)return alert("ไม่พบ Import นี้");
- if(!confirm(`ยืนยันลบ Import นี้หรือไม่?\n\nไฟล์: ${entry.fileName}\nเพิ่มกุ้งใหม่: ${Number(entry.added||0).toLocaleString()} ตัว\nอัปเดตกุ้งเดิม: ${Number(entry.updated||0).toLocaleString()} ตัว\nสร้าง Family ใหม่: ${Number(entry.familyAdded||0).toLocaleString()}\n\nระบบจะลบเฉพาะข้อมูลที่เป็นของ Import นี้ และคืนค่าข้อมูลเดิมที่ถูกแก้ไขให้โดยอัตโนมัติ`))return;
+ const newer=hist.filter(x=>x.importedAt&&entry.importedAt&&x.importedAt>entry.importedAt);
+ if(!confirm(`ยืนยันลบ Import นี้หรือไม่?\n\nไฟล์: ${entry.fileName}\nเพิ่มกุ้งใหม่: ${Number(entry.added||0).toLocaleString()} ตัว\nอัปเดตกุ้งเดิม: ${Number(entry.updated||0).toLocaleString()} ตัว\nสร้าง Family ใหม่: ${Number(entry.familyAdded||0).toLocaleString()}\n\n${newer.length?`⚠️ มี Import ที่ใหม่กว่ารายการนี้ ${newer.length} รายการ\nระบบจะไม่ย้อนทับข้อมูลที่ถูกแก้ไขโดย Import ที่ใหม่กว่า\n\n`:``}🗑️ ระบบจะลบไฟล์ Excel ต้นฉบับด้วย\nและลบ/คืนค่าข้อมูลที่ผูกกับ Import นี้ตาม Import ID`))return;
+ const fileResult=await deleteImportFile(entry);
+ if(!fileResult.ok){
+  alert("ลบไฟล์ Excel จาก Storage ไม่สำเร็จ จึงยกเลิกการลบ Import เพื่อป้องกันข้อมูลไม่ตรงกัน\n\n"+(fileResult.error?.message||"ไม่ทราบสาเหตุ"));
+  return;
+ }
  let skipped=0;
  const gens=new Set([...(entry.recordNew||[]).map(x=>x.generation),...(entry.recordUpdated||[]).map(x=>x.generation),...(entry.familyNew||[]).map(x=>x.generation)]);
  gens.forEach(g=>{
@@ -417,10 +462,7 @@ function deleteImport(importId){
   const newIds=new Set((entry.recordNew||[]).filter(x=>x.generation===g).map(x=>x.individualId));
   const restoreMap=new Map((entry.recordUpdated||[]).filter(x=>x.generation===g).map(x=>[x.individualId,x.before]));
   a=a.filter(r=>{
-   if(newIds.has(r["Individual ID"])){
-    if(r.__import_id!==entry.id)skipped++;
-    return r.__import_id!==entry.id;
-   }
+   if(newIds.has(r["Individual ID"])){if(r.__import_id!==entry.id)skipped++;return r.__import_id!==entry.id;}
    return true;
   });
   a=a.map(r=>{
@@ -436,14 +478,51 @@ function deleteImport(importId){
   if(famIds.size){let fam=families(g);fam=fam.filter(x=>!(famIds.has(x.id)&&x.__import_id===entry.id));ls("sbs_families_"+g,fam)}
  });
  saveImportHistory(hist.filter(x=>x.id!==entry.id));
- logActivity("delete","import_batch",entry.id,entry,null).then(renderRecentActivity);
+ logActivity("delete","import_batch",entry.id,entry,{fileName:entry.fileName,storagePath:entry.storagePath||null,skipped}).then(renderRecentActivity);
  fillAllSelects();renderDashboard();renderGenerations();renderIndividuals();renderFamilies();renderGrowth();renderEBV();renderBroodstock();renderQuality();renderPedigree();renderImportHistory();saveAllData();
- alert(`ลบ Import เรียบร้อยแล้ว\n\n${skipped?"มีข้อมูลบางรายการที่ถูก Import/แก้ไขโดย Import ภายหลัง จึงไม่ถูกย้อนทับ":"ข้อมูลถูกย้อนกลับตามต้นทางเรียบร้อย"}`);
+ alert(`ลบ Import และไฟล์ Excel เรียบร้อยแล้ว\n\n${skipped?"มีข้อมูลบางรายการที่ถูก Import/แก้ไขโดย Import ภายหลัง จึงไม่ถูกย้อนทับ":"ข้อมูลถูกย้อนกลับตามต้นทางเรียบร้อย"}`);
 }
 
 function viewImportDetails(importId){
  const x=importHistory().find(v=>v.id===importId);if(!x)return;
- alert(`Import ID: ${x.id}\nไฟล์: ${x.fileName}\nวันที่: ${new Date(x.importedAt).toLocaleString("th-TH")}\nGeneration: ${(x.generations||[]).join(", ")||"—"}\nทั้งหมด: ${Number(x.rowCount||0).toLocaleString()}\nพร้อม Import: ${Number(x.validRows||0).toLocaleString()}\nเพิ่มใหม่: ${Number(x.added||0).toLocaleString()}\nอัปเดต: ${Number(x.updated||0).toLocaleString()}\nFamily ใหม่: ${Number(x.familyAdded||0).toLocaleString()}`);
+ alert(`Import ID: ${x.id}\nไฟล์: ${x.fileName}\nวันที่: ${new Date(x.importedAt).toLocaleString("th-TH")}\nGeneration: ${(x.generations||[]).join(", ")||"—"}\nทั้งหมด: ${Number(x.rowCount||0).toLocaleString()}\nพร้อม Import: ${Number(x.validRows||0).toLocaleString()}\nเพิ่มใหม่: ${Number(x.added||0).toLocaleString()}\nอัปเดต: ${Number(x.updated||0).toLocaleString()}\nFamily ใหม่: ${Number(x.familyAdded||0).toLocaleString()}
+ไฟล์ต้นฉบับ: ${x.storagePath?"จัดเก็บใน Supabase Storage":"ไม่ได้จัดเก็บ (Import เก่า)"}`);
+}
+
+function isMeaningfulRecord(r){
+ const keys=["Individual ID","Family ID","Weight (g)","Length (cm)","Date","VIE Tag","EBV","Selection","Sex","Environment","env","Status","mat","age","sire","dam"];
+ return keys.some(k=>String(r?.[k]??"").trim()!=="");
+}
+function legacyCleanupStats(){
+ return generationKeys().map(g=>{
+  const a=records(g),blank=a.filter(r=>!isMeaningfulRecord(r)),legacy=a.filter(r=>!r.__import_id&&isMeaningfulRecord(r));
+  return {g,total:a.length,blank:blank.length,legacy:legacy.length};
+ }).filter(x=>x.total>0);
+}
+function renderLegacyCleanup(){
+ const box=document.getElementById("legacyCleanup");if(!box)return;
+ const stats=legacyCleanupStats(),totalLegacy=stats.reduce((n,x)=>n+x.legacy,0),totalBlank=stats.reduce((n,x)=>n+x.blank,0);
+ if(!stats.length){box.innerHTML='<div class="notice">ไม่พบข้อมูลเก่าใน Browser ที่ต้องจัดการ</div>';return;}
+ box.innerHTML=`<div class="notice" style="background:#f8fafc;border-color:#dce5ee">พบข้อมูลที่ยังไม่มี Import ID: <b>${totalLegacy.toLocaleString()}</b> รายการ และแถวว่าง: <b>${totalBlank.toLocaleString()}</b> รายการ<br><span class="small">ข้อมูลที่มี Individual ID จะถือเป็น “ข้อมูลเก่า” และจะไม่ถูกลบจนกดปุ่มยืนยัน ส่วนแถวว่างสามารถลบเป็นชุดได้</span></div>
+ <div class="tablewrap" style="margin-top:10px"><table class="table"><thead><tr><th>Generation</th><th>ทั้งหมด</th><th>ข้อมูลเก่า</th><th>แถวว่าง</th><th>จัดการ</th></tr></thead><tbody>${stats.map(x=>`<tr><td><b>${esc(x.g)}</b></td><td>${x.total.toLocaleString()}</td><td>${x.legacy.toLocaleString()}</td><td>${x.blank.toLocaleString()}</td><td class="row-actions">${x.blank?`<button class="btn danger admin-only" onclick="deleteLegacyRecords('${esc(x.g)}','blank')">ลบแถวว่าง</button>`:""}${x.legacy?`<button class="btn danger admin-only" onclick="deleteLegacyRecords('${esc(x.g)}','legacy')">ลบข้อมูลเก่า</button>`:""}</td></tr>`).join("")}</tbody></table></div>
+ <div class="row-actions" style="margin-top:10px">${totalBlank?`<button class="btn danger admin-only" onclick="deleteAllLegacyRecords('blank')">🗑️ ลบแถวว่างทั้งหมด</button>`:""}${totalLegacy?`<button class="btn danger admin-only" onclick="deleteAllLegacyRecords('legacy')">🗑️ ลบข้อมูลเก่าทั้งหมด</button>`:""}</div>`;
+ applyRoleUI();
+}
+function deleteLegacyRecords(g,mode){
+ if(!requireDelete())return;
+ const a=records(g),keep=a.filter(r=>mode==='blank'?isMeaningfulRecord(r):(!isMeaningfulRecord(r)||!!r.__import_id));
+ const removed=a.length-keep.length;if(!removed)return alert("ไม่พบข้อมูลตามเงื่อนไขนี้");
+ const label=mode==='blank'?"แถวว่าง":"ข้อมูลเก่าที่ไม่มี Import ID";
+ if(!confirm(`ยืนยันลบ ${label} ของ ${g} จำนวน ${removed.toLocaleString()} รายการหรือไม่?\n\nการลบนี้ไม่สามารถย้อนกลับได้ จึงควรสำรองข้อมูลก่อนดำเนินการ`))return;
+ ls("sbs_records_"+g,keep);saveAllData();renderLegacyCleanup();renderIndividuals();renderDashboard();
+}
+function deleteAllLegacyRecords(mode){
+ if(!requireDelete())return;
+ const stats=legacyCleanupStats(),count=stats.reduce((n,x)=>n+(mode==='blank'?x.blank:x.legacy),0);if(!count)return;
+ const label=mode==='blank'?"แถวว่าง":"ข้อมูลเก่าที่ไม่มี Import ID";
+ if(!confirm(`ยืนยันลบ ${label} ทั้งหมด ${count.toLocaleString()} รายการหรือไม่?\n\nระบบจะไม่แตะข้อมูลที่มี Import ID และไม่ลบ Family ที่สร้าง/แก้ไขด้วยตนเอง\n\nการลบนี้ไม่สามารถย้อนกลับได้`))return;
+ stats.forEach(x=>{const a=records(x.g),keep=a.filter(r=>mode==='blank'?isMeaningfulRecord(r):(!isMeaningfulRecord(r)||!!r.__import_id));ls("sbs_records_"+x.g,keep)});
+ saveAllData();renderLegacyCleanup();renderIndividuals();renderDashboard();
 }
 
 function renderImportHistory(){
@@ -464,10 +543,11 @@ function renderImportHistory(){
     <div class="metric"><span class="small">อัปเดต</span><b>${Number(x.updated||0).toLocaleString()}</b></div>
     <div class="metric"><span class="small">Family ใหม่</span><b>${Number(x.familyAdded||0).toLocaleString()}</b></div>
    </div>
-   <div class="small" style="margin-top:10px">Generation: ${esc((x.generations||[]).join(", ")||"—")} • ขนาดไฟล์: ${esc(formatBytes(x.fileSize))}</div>
+   <div class="small" style="margin-top:10px">Generation: ${esc((x.generations||[]).join(", ")||"—")} • ขนาดไฟล์: ${esc(formatBytes(x.fileSize))} • ${x.storagePath?"📦 ไฟล์ต้นฉบับจัดเก็บแล้ว":"⚠️ Import เก่าไม่มีไฟล์ต้นฉบับ"}</div>
    <div class="import-history-actions">
     <button class="btn" onclick="viewImportDetails('${esc(x.id)}')">🔎 ดูรายละเอียด</button>
-    <button class="btn danger admin-only" onclick="deleteImport('${esc(x.id)}')">🗑️ ลบ Import</button>
+    ${x.storagePath?`<button class="btn" onclick="downloadImportFile('${esc(x.id)}')">⬇️ ดาวน์โหลดไฟล์</button>`:`<button class="btn" disabled title="Import เก่าไม่ได้เก็บไฟล์ต้นฉบับ">⬇️ ไม่มีไฟล์ต้นฉบับ</button>`}
+    <button class="btn danger admin-only" onclick="deleteImport('${esc(x.id)}')">🗑️ ลบ Import + ไฟล์</button>
    </div>
   </div>`;
  }).join("");
