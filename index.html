@@ -115,6 +115,7 @@ button,input,select,textarea{font:inherit}.app{display:flex;min-height:100vh}.si
     <button onclick="showPage('broodstock',this)"><span>🦐</span>Broodstock</button>
     <div class="navtitle">Farm & Research</div>
     <button onclick="showPage('experiments',this)"><span>🧪</span>Experiments & Ponds</button>
+    <button onclick="showPage('distribution',this)"><span>🚚</span>Distribution & Deployment</button>
     <button onclick="showPage('health',this)"><span>🦠</span>Health & Biosecurity</button>
     <button onclick="showPage('water',this)"><span>💧</span>Water Quality</button>
     <button onclick="showPage('quality',this)"><span>📊</span>Data Quality</button>
@@ -245,6 +246,8 @@ button,input,select,textarea{font:inherit}.app{display:flex;min-height:100vh}.si
 <section id="broodstock" class="page hidden"><div class="top"><div><h1>🦐 Broodstock</h1><p>ติดตามสถานะพ่อแม่พันธุ์และการคัดเลือก</p></div></div><div class="grid"><div class="card"><div class="label">Selected Candidates</div><div class="num" id="bsSelected">0</div></div><div class="card"><div class="label">Male</div><div class="num" id="bsMale">0</div></div><div class="card"><div class="label">Female</div><div class="num" id="bsFemale">0</div></div><div class="card"><div class="label">Health Cleared</div><div class="num">—</div></div></div><div class="section card"><h2>Selection Candidates</h2><div id="bsTable"></div></div></section>
 
 <section id="experiments" class="page hidden"><div class="top"><div><h1>🧪 Experiments & Ponds</h1><p>จัดการการทดลอง บ่อ และรอบการทดสอบ</p></div><button class="btn primary write-only" onclick="openExperimentModal()">＋ เพิ่มการทดลอง</button></div><div id="experimentList" class="cards2"></div></section>
+
+<section id="distribution" class="page hidden"><div class="top"><div><h1>🚚 Distribution &amp; Deployment</h1><p>การกระจายพันธุ์และติดตามการนำพันธุ์ไปใช้</p></div></div><div class="card"><div class="notice">เมนูหลักสำหรับงาน Distribution &amp; Deployment เพิ่มไว้ตามโครงสร้างระบบแล้ว รายละเอียดและฟังก์ชันภายในจะกำหนดในขั้นตอนถัดไป</div></div></section>
 
 <section id="health" class="page hidden"><div class="top"><div><h1>🦠 Health & Biosecurity</h1><p>บันทึกสุขภาพและผลตรวจโรค</p></div><div class="row-actions"><label class="btn primary write-only">📥 Import Excel<input type="file" accept=".xlsx,.xls,.csv" onchange="importDomainExcel(event,'health')" hidden></label><button class="btn export-only" onclick="exportDomainExcel('health')">📤 Export Excel</button></div></div><div class="grid"><div class="card"><div class="label">WSSV</div><div class="num">Monitor</div><div class="pill info">PCR records</div></div><div class="card"><div class="label">EHP</div><div class="num">Monitor</div><div class="pill info">PCR records</div></div><div class="card"><div class="label">Biosecurity</div><div class="num">Ready</div><div class="pill good">Checklist</div></div><div class="card"><div class="label">Disease Events</div><div class="num" id="healthEventCount">0</div></div></div><div class="card section"><h3>ผลตรวจที่นำเข้า</h3><div id="healthImportedTable" class="tablewrap"></div></div></section>
 
