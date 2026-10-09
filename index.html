@@ -70,7 +70,10 @@ button,input,select,textarea{font:inherit}.app{display:flex;min-height:100vh}.si
 /* Dashboard research-area map */
 .dashboard-map-layout{display:grid;grid-template-columns:minmax(0,1.7fr) minmax(250px,.8fr);gap:16px;align-items:stretch}
 #researchAreaMap{height:390px;min-height:300px;border:1px solid var(--line);border-radius:12px;z-index:1;background:#edf3f5}
-.map-form{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:10px}
+.map-form{display:grid;grid-template-columns:1fr;gap:9px;margin-top:10px}
+.map-coordinate-hint{font-size:11px;color:var(--muted);line-height:1.5;margin-top:5px}
+#researchAreaMap{cursor:crosshair}
+.map-selected-coordinate{padding:8px 10px;border:1px dashed #9bb9c5;border-radius:8px;background:#f5fbfc;font-size:12px}
 .map-form .full{grid-column:1/-1}
 .map-form label{display:flex;flex-direction:column;gap:5px;font-size:11px;color:var(--muted)}
 .map-form input,.map-form textarea{width:100%;min-width:0;border:1px solid #ccd8e3;border-radius:8px;padding:9px;background:#fff;color:var(--text)}
@@ -143,13 +146,14 @@ button,input,select,textarea{font:inherit}.app{display:flex;min-height:100vh}.si
   <div class="dashboard-map-layout">
    <div><div id="researchAreaMap" aria-label="แผนที่พื้นที่วิจัย"></div><p class="small" style="margin:8px 0 0">เลือกหมุดบนแผนที่เพื่อดูชื่อพื้นที่และรายละเอียด • แผนที่ต้องเชื่อมต่ออินเทอร์เน็ต</p></div>
    <div>
-    <h3 style="margin:0 0 6px">เพิ่มพื้นที่</h3><p class="small" style="margin:0">กรอกชื่อพื้นที่และพิกัดละติจูด/ลองจิจูด</p>
+    <h3 style="margin:0 0 6px">เพิ่มพื้นที่</h3><p class="small" style="margin:0">วางลิงก์ Google Maps หรือคัดลอกพิกัดมาใส่ได้เลย หรือคลิกขวาบนแผนที่เพื่อปักหมุด</p>
     <div class="map-form">
-     <label class="full">ชื่อพื้นที่<input id="mapAreaName" maxlength="100" placeholder="เช่น ศพช.ตรัง"></label>
-     <label>Latitude<input id="mapAreaLat" type="number" step="any" min="-90" max="90" placeholder="7.56"></label>
-     <label>Longitude<input id="mapAreaLon" type="number" step="any" min="-180" max="180" placeholder="99.61"></label>
-     <label class="full">รายละเอียด (ไม่บังคับ)<textarea id="mapAreaNotes" rows="2" maxlength="500" placeholder="รายละเอียดพื้นที่หรือกิจกรรม"></textarea></label>
-     <div class="full"><button class="btn primary write-only" style="width:100%" onclick="addDashboardArea()">＋ เพิ่มพื้นที่บนแผนที่</button></div>
+     <label>ชื่อพื้นที่<input id="mapAreaName" maxlength="100" placeholder="เช่น ศพช.ตรัง"></label>
+     <label>พิกัด / ลิงก์ Google Maps<input id="mapAreaCoordinate" type="text" autocomplete="off" placeholder="วางลิงก์ Google Maps หรือ 7.56, 99.61" oninput="previewDashboardCoordinate()" onpaste="setTimeout(previewDashboardCoordinate,0)"></label>
+     <div id="mapCoordinatePreview" class="map-selected-coordinate">พิกัดยังไม่ถูกเลือก — คลิกบนแผนที่หรือวางพิกัดด้านบน</div>
+     <div class="map-coordinate-hint">รองรับลิงก์ Google Maps แบบยาว, รูปแบบ @ละติจูด,ลองจิจูด, พิกัดที่คัดลอกมาโดยตรง และการคลิกบนแผนที่ • คลิกขวาบนแผนที่เพื่อเพิ่มพื้นที่ได้ทันที</div>
+     <label>รายละเอียด (ไม่บังคับ)<textarea id="mapAreaNotes" rows="2" maxlength="500" placeholder="รายละเอียดพื้นที่หรือกิจกรรม"></textarea></label>
+     <button class="btn primary write-only" style="width:100%" onclick="addDashboardArea()">＋ เพิ่มพื้นที่บนแผนที่</button>
     </div>
     <div id="dashboardAreaList" class="map-area-list"></div>
    </div>
@@ -2942,13 +2946,70 @@ enterApp = async function (user) {
 /* Dashboard map areas: stored in the same sbs_ cloud payload as other app data. */
 let dashboardAreaMap = null;
 let dashboardAreaMarkers = [];
+let dashboardSelectedCoordinate = null;
+let dashboardSelectionMarker = null;
 function dashboardAreas(){ return ls('sbs_dashboard_areas') || []; }
+function parseDashboardCoordinate(raw){
+  if(!raw)return null;
+  const value=String(raw).trim();
+  // Google Maps URLs may contain many unrelated numbers, so prefer their explicit coordinate markers.
+  const candidates=[];
+  const at=value.match(/@(-?\d{1,2}(?:\.\d+)?),\s*(-?\d{1,3}(?:\.\d+)?)/);
+  if(at)candidates.push([Number(at[1]),Number(at[2])]);
+  const data=value.match(/!3d(-?\d{1,2}(?:\.\d+)?)!4d(-?\d{1,3}(?:\.\d+)?)/);
+  if(data)candidates.push([Number(data[1]),Number(data[2])]);
+  const query=value.match(/[?&](?:q|query|ll|center|destination)=(-?\d{1,2}(?:\.\d+)?)(?:%2C|,|%20|\s)+(-?\d{1,3}(?:\.\d+)?)/i);
+  if(query)candidates.push([Number(query[1]),Number(query[2])]);
+  const place=value.match(/\/place\/(-?\d{1,2}(?:\.\d+)?)[,+%20]+(-?\d{1,3}(?:\.\d+)?)/i);
+  if(place)candidates.push([Number(place[1]),Number(place[2])]);
+  // Plain pasted coordinate, e.g. "7.56, 99.61" or "7.56 99.61".
+  if(!/https?:\/\//i.test(value)){
+    const direct=value.match(/^\s*(-?\d{1,2}(?:\.\d+)?)\s*[,;\s]\s*(-?\d{1,3}(?:\.\d+)?)\s*$/);
+    if(direct)candidates.push([Number(direct[1]),Number(direct[2])]);
+  }
+  return candidates.find(([lat,lon])=>Number.isFinite(lat)&&Number.isFinite(lon)&&lat>=-90&&lat<=90&&lon>=-180&&lon<=180)||null;
+}
+function setDashboardCoordinate(lat,lon,zoom){
+  lat=Number(lat);lon=Number(lon);
+  if(!Number.isFinite(lat)||!Number.isFinite(lon)||lat < -90||lat > 90||lon < -180||lon > 180)return false;
+  dashboardSelectedCoordinate={lat,lon};
+  const input=document.getElementById('mapAreaCoordinate');if(input)input.value=`${lat.toFixed(6)}, ${lon.toFixed(6)}`;
+  const preview=document.getElementById('mapCoordinatePreview');if(preview)preview.textContent=`พิกัดที่เลือก: ${lat.toFixed(6)}, ${lon.toFixed(6)}`;
+  if(dashboardAreaMap){
+    if(dashboardSelectionMarker)dashboardSelectionMarker.remove();
+    dashboardSelectionMarker=L.marker([lat,lon],{draggable:true,opacity:.85}).addTo(dashboardAreaMap).bindPopup('ตำแหน่งที่กำลังเลือก — ลากหมุดเพื่อปรับตำแหน่งได้');
+    dashboardSelectionMarker.on('dragend',()=>{const ll=dashboardSelectionMarker.getLatLng();setDashboardCoordinate(ll.lat,ll.lng, false);});
+    if(zoom!==false)dashboardAreaMap.setView([lat,lon],Math.max(dashboardAreaMap.getZoom(),13));
+  }
+  return true;
+}
+function previewDashboardCoordinate(){
+  const input=document.getElementById('mapAreaCoordinate');if(!input)return;
+  const parsed=parseDashboardCoordinate(input.value);
+  if(parsed)setDashboardCoordinate(parsed[0],parsed[1]);
+  else if(input.value.trim()){
+    const preview=document.getElementById('mapCoordinatePreview');if(preview)preview.textContent='ยังอ่านพิกัดจากข้อความนี้ไม่ได้ ลองวางลิงก์ Google Maps แบบยาว หรือคลิกบนแผนที่เพื่อเลือกตำแหน่ง';
+  }
+}
 function initDashboardAreaMap(){
   const el=document.getElementById('researchAreaMap');
   if(!el || typeof L==='undefined') return;
   if(!dashboardAreaMap){
     dashboardAreaMap=L.map(el,{scrollWheelZoom:false}).setView([13.2,101.0],5);
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:19,attribution:'&copy; OpenStreetMap contributors'}).addTo(dashboardAreaMap);
+    dashboardAreaMap.on('click',e=>setDashboardCoordinate(e.latlng.lat,e.latlng.lng,false));
+    dashboardAreaMap.on('contextmenu',e=>{
+      setDashboardCoordinate(e.latlng.lat,e.latlng.lng,false);
+      const nameInput=document.getElementById('mapAreaName');
+      const existing=nameInput?.value.trim()||'';
+      const name=prompt('ตั้งชื่อพื้นที่สำหรับพิกัดนี้:',existing);
+      if(name===null)return;
+      if(!name.trim()){alert('กรุณาระบุชื่อพื้นที่');nameInput?.focus();return;}
+      const notesInput=document.getElementById('mapAreaNotes');
+      const notes=prompt('รายละเอียดพื้นที่ (ไม่บังคับ):',notesInput?.value.trim()||'');
+      if(notes===null)return;
+      saveDashboardAreaAt(name.trim(),e.latlng.lat,e.latlng.lng,notes.trim());
+    });
   }
   setTimeout(()=>dashboardAreaMap.invalidateSize(),80);
   renderDashboardAreas();
@@ -2967,26 +3028,38 @@ function renderDashboardAreas(){
     if(areas.length===1)dashboardAreaMap.setView([Number(areas[0].lat),Number(areas[0].lon)],9);
     else if(areas.length>1){const group=L.featureGroup(dashboardAreaMarkers);dashboardAreaMap.fitBounds(group.getBounds().pad(.18),{maxZoom:10});}
   }
-  el.innerHTML=areas.length?areas.map((a,i)=>`<div class="map-area-item"><div><b>${esc(a.name)}</b><p>${Number(a.lat).toFixed(5)}, ${Number(a.lon).toFixed(5)}${a.notes?`<br>${esc(a.notes)}`:''}</p><button class="btn" style="margin-top:7px;padding:5px 8px" onclick="focusDashboardArea(${i})">ดูบนแผนที่</button></div><button class="btn danger write-only" title="ลบพื้นที่" onclick="deleteDashboardArea(${i})">ลบ</button></div>`).join(''):'<div class="empty" style="padding:18px">ยังไม่มีพื้นที่ เพิ่มพื้นที่แรกได้จากแบบฟอร์มด้านบน</div>';
+  el.innerHTML=areas.length?areas.map((a,i)=>`<div class="map-area-item"><div><b>${esc(a.name)}</b><p>${Number(a.lat).toFixed(5)}, ${Number(a.lon).toFixed(5)}${a.notes?`<br>${esc(a.notes)}`:''}</p><button class="btn" style="margin-top:7px;padding:5px 8px" onclick="focusDashboardArea(${i})">ดูบนแผนที่</button></div><button class="btn danger write-only" title="ลบพื้นที่" onclick="deleteDashboardArea(${i})">ลบ</button></div>`).join(''):'<div class="empty" style="padding:18px">ยังไม่มีพื้นที่ เพิ่มพื้นที่แรกได้จากแบบฟอร์มด้านบน หรือคลิกขวาบนแผนที่</div>';
   applyRoleUI();
+}
+function saveDashboardAreaAt(name,lat,lon,notes){
+  if(!requireEdit())return false;
+  const areas=dashboardAreas();areas.push({name,lat:Number(lat),lon:Number(lon),notes:notes||'',createdAt:new Date().toISOString()});ls('sbs_dashboard_areas',areas);
+  const nameInput=document.getElementById('mapAreaName');if(nameInput)nameInput.value='';
+  const coordInput=document.getElementById('mapAreaCoordinate');if(coordInput)coordInput.value='';
+  const notesInput=document.getElementById('mapAreaNotes');if(notesInput)notesInput.value='';
+  dashboardSelectedCoordinate=null;
+  const preview=document.getElementById('mapCoordinatePreview');if(preview)preview.textContent='พิกัดยังไม่ถูกเลือก — คลิกบนแผนที่หรือวางพิกัดด้านบน';
+  if(dashboardSelectionMarker){dashboardSelectionMarker.remove();dashboardSelectionMarker=null;}
+  renderDashboardAreas();if(dashboardAreaMap)dashboardAreaMap.setView([lat,lon],13);if(typeof logActivity==='function')logActivity('create','dashboard_area',name,null,{name,lat,lon,notes});
+  return true;
 }
 function addDashboardArea(){
   if(!requireEdit())return;
   const name=document.getElementById('mapAreaName').value.trim();
-  const lat=Number(document.getElementById('mapAreaLat').value),lon=Number(document.getElementById('mapAreaLon').value);
+  const raw=document.getElementById('mapAreaCoordinate').value.trim();
   const notes=document.getElementById('mapAreaNotes').value.trim();
   if(!name)return alert('กรุณาระบุชื่อพื้นที่');
-  if(document.getElementById('mapAreaLat').value===''||document.getElementById('mapAreaLon').value===''||!Number.isFinite(lat)||!Number.isFinite(lon)||lat < -90||lat > 90||lon < -180||lon > 180)return alert('กรุณาระบุพิกัด Latitude (-90 ถึง 90) และ Longitude (-180 ถึง 180) ให้ถูกต้อง');
-  const areas=dashboardAreas();areas.push({name,lat,lon,notes,createdAt:new Date().toISOString()});ls('sbs_dashboard_areas',areas);
-  document.getElementById('mapAreaName').value='';document.getElementById('mapAreaLat').value='';document.getElementById('mapAreaLon').value='';document.getElementById('mapAreaNotes').value='';
-  renderDashboardAreas();if(dashboardAreaMap)dashboardAreaMap.setView([lat,lon],9);if(typeof logActivity==='function')logActivity('create','dashboard_area',name,null,{name,lat,lon,notes});
+  let parsed=dashboardSelectedCoordinate;
+  if(raw){const fromText=parseDashboardCoordinate(raw);if(fromText)parsed={lat:fromText[0],lon:fromText[1]};}
+  if(!parsed)return alert('กรุณาวางพิกัด/ลิงก์ Google Maps หรือคลิกตำแหน่งบนแผนที่ก่อน');
+  saveDashboardAreaAt(name,parsed.lat,parsed.lon,notes);
 }
 function deleteDashboardArea(i){
   if(!requireDelete()||!confirm('ยืนยันลบพื้นที่นี้ออกจากแผนที่หรือไม่?'))return;
   const areas=dashboardAreas();areas.splice(i,1);ls('sbs_dashboard_areas',areas);renderDashboardAreas();
   if(typeof logActivity==='function')logActivity('delete','dashboard_area','พื้นที่บนแผนที่',null,null);
 }
-function focusDashboardArea(i){const a=dashboardAreas()[i];if(a&&dashboardAreaMap){dashboardAreaMap.setView([Number(a.lat),Number(a.lon)],10);dashboardAreaMarkers[i]?.openPopup();}}
+function focusDashboardArea(i){const a=dashboardAreas()[i];if(a&&dashboardAreaMap){dashboardAreaMap.setView([Number(a.lat),Number(a.lon)],13);dashboardAreaMarkers[i]?.openPopup();}}
 const dashboardRenderBeforeMap = renderDashboard;
 renderDashboard = async function(){
   const result=dashboardRenderBeforeMap.apply(this,arguments);
