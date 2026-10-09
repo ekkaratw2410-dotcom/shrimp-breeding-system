@@ -2976,9 +2976,8 @@ function setDashboardCoordinate(lat,lon,zoom){
   const input=document.getElementById('mapAreaCoordinate');if(input)input.value=`${lat.toFixed(6)}, ${lon.toFixed(6)}`;
   const preview=document.getElementById('mapCoordinatePreview');if(preview)preview.textContent=`พิกัดที่เลือก: ${lat.toFixed(6)}, ${lon.toFixed(6)}`;
   if(dashboardAreaMap){
-    if(dashboardSelectionMarker)dashboardSelectionMarker.remove();
-    dashboardSelectionMarker=L.marker([lat,lon],{draggable:true,opacity:.85}).addTo(dashboardAreaMap).bindPopup('ตำแหน่งที่กำลังเลือก — ลากหมุดเพื่อปรับตำแหน่งได้');
-    dashboardSelectionMarker.on('dragend',()=>{const ll=dashboardSelectionMarker.getLatLng();setDashboardCoordinate(ll.lat,ll.lng, false);});
+    // Keep the map clean while choosing a location; show a marker only after saving the area.
+    if(dashboardSelectionMarker){dashboardSelectionMarker.remove();dashboardSelectionMarker=null;}
     if(zoom!==false)dashboardAreaMap.setView([lat,lon],Math.max(dashboardAreaMap.getZoom(),13));
   }
   return true;
@@ -2995,7 +2994,7 @@ function initDashboardAreaMap(){
   const el=document.getElementById('researchAreaMap');
   if(!el || typeof L==='undefined') return;
   if(!dashboardAreaMap){
-    dashboardAreaMap=L.map(el,{scrollWheelZoom:false}).setView([13.2,101.0],5);
+    dashboardAreaMap=L.map(el,{scrollWheelZoom:true}).setView([13.2,101.0],5);
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:19,attribution:'&copy; OpenStreetMap contributors'}).addTo(dashboardAreaMap);
     dashboardAreaMap.on('click',e=>setDashboardCoordinate(e.latlng.lat,e.latlng.lng,false));
     dashboardAreaMap.on('contextmenu',e=>{
