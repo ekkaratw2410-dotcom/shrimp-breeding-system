@@ -7,6 +7,8 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="https://cdn.sheetjs.com/xlsx-0.20.3/package/dist/xlsx.full.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
 <style>
 :root{--nav:#102a43;--nav2:#163b5c;--bg:#f4f7fb;--card:#fff;--text:#18324a;--muted:#6b7c8f;--line:#dce5ee;--accent:#1f7a8c;--good:#198754;--warn:#d88b00;--bad:#c0392b;--shadow:0 8px 25px #17324d12}
 *{box-sizing:border-box}body{margin:0;font-family:Segoe UI,Tahoma,sans-serif;background:var(--bg);color:var(--text)}
@@ -64,6 +66,19 @@ button,input,select,textarea{font:inherit}.app{display:flex;min-height:100vh}.si
 @media(max-width:600px){.import-history-meta{grid-template-columns:1fr}}@media(max-width:700px){.search-row{flex-wrap:wrap}.search-row input{flex:100%;width:100%}.search-row .btn{flex:1}.filter-row{grid-template-columns:1fr}.generation-head-actions{width:100%;flex-direction:column;align-items:stretch}.generation-head-actions .btn{width:100%}}
 @media(max-width:1000px){.sidebar{width:205px}.main{margin-left:205px;width:calc(100% - 205px);padding:18px}.grid,.metricgrid{grid-template-columns:repeat(2,1fr)}.sectiongrid{grid-template-columns:1fr}}
 @media(max-width:700px){.sidebar{position:static;width:100%;height:auto}.app{display:block}.main{margin:0;width:100%}.grid,.metricgrid,.formgrid,.cards2{grid-template-columns:1fr}.top{align-items:flex-start;flex-direction:column}}
+
+/* Dashboard research-area map */
+.dashboard-map-layout{display:grid;grid-template-columns:minmax(0,1.7fr) minmax(250px,.8fr);gap:16px;align-items:stretch}
+#researchAreaMap{height:390px;min-height:300px;border:1px solid var(--line);border-radius:12px;z-index:1;background:#edf3f5}
+.map-form{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:10px}
+.map-form .full{grid-column:1/-1}
+.map-form label{display:flex;flex-direction:column;gap:5px;font-size:11px;color:var(--muted)}
+.map-form input,.map-form textarea{width:100%;min-width:0;border:1px solid #ccd8e3;border-radius:8px;padding:9px;background:#fff;color:var(--text)}
+.map-area-list{display:flex;flex-direction:column;gap:8px;max-height:250px;overflow:auto;margin-top:12px}
+.map-area-item{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;padding:10px;border:1px solid var(--line);border-radius:10px;background:#f9fbfd}
+.map-area-item p{margin:4px 0 0;font-size:11px;color:var(--muted);line-height:1.45}
+@media(max-width:900px){.dashboard-map-layout{grid-template-columns:1fr}#researchAreaMap{height:330px}}
+
 </style>
 </head>
 <body>
@@ -122,6 +137,23 @@ button,input,select,textarea{font:inherit}.app{display:flex;min-height:100vh}.si
   <div class="card"><h2>🎯 Program Status</h2><div class="metricgrid">
    <div class="metric"><span class="small">Growth Test</span><b id="dashGrowthGen">G5</b></div><div class="metric"><span class="small">EBV</span><b id="dashEBV">Ready</b></div><div class="metric"><span class="small">Selection</span><b id="dashSelected">0</b></div><div class="metric"><span class="small">Cloud</span><b id="dashCloud">Connected</b></div>
   </div><hr style="border:0;border-top:1px solid var(--line);margin:18px 0"><div class="notice">ข้อมูลจะถูกเก็บใน Supabase Cloud และสามารถเพิ่ม/แก้ไขต่อเนื่องได้ตามสิทธิ์ของผู้ใช้</div></div>
+ </div>
+ <div class="section card" id="dashboardMapSection">
+  <div class="panel-title"><div><h2>🗺️ Research Areas</h2><span>แผนที่พื้นที่ดำเนินงานและจุดปฏิบัติงาน สามารถเพิ่มพื้นที่ได้ตามต้องการ</span></div><span class="analysis-badge" id="mapAreaCount">0 พื้นที่</span></div>
+  <div class="dashboard-map-layout">
+   <div><div id="researchAreaMap" aria-label="แผนที่พื้นที่วิจัย"></div><p class="small" style="margin:8px 0 0">เลือกหมุดบนแผนที่เพื่อดูชื่อพื้นที่และรายละเอียด • แผนที่ต้องเชื่อมต่ออินเทอร์เน็ต</p></div>
+   <div>
+    <h3 style="margin:0 0 6px">เพิ่มพื้นที่</h3><p class="small" style="margin:0">กรอกชื่อพื้นที่และพิกัดละติจูด/ลองจิจูด</p>
+    <div class="map-form">
+     <label class="full">ชื่อพื้นที่<input id="mapAreaName" maxlength="100" placeholder="เช่น ศพช.ตรัง"></label>
+     <label>Latitude<input id="mapAreaLat" type="number" step="any" min="-90" max="90" placeholder="7.56"></label>
+     <label>Longitude<input id="mapAreaLon" type="number" step="any" min="-180" max="180" placeholder="99.61"></label>
+     <label class="full">รายละเอียด (ไม่บังคับ)<textarea id="mapAreaNotes" rows="2" maxlength="500" placeholder="รายละเอียดพื้นที่หรือกิจกรรม"></textarea></label>
+     <div class="full"><button class="btn primary write-only" style="width:100%" onclick="addDashboardArea()">＋ เพิ่มพื้นที่บนแผนที่</button></div>
+    </div>
+    <div id="dashboardAreaList" class="map-area-list"></div>
+   </div>
+  </div>
  </div>
  <div class="section card"><h2>📌 Recent Activity</h2><div id="recentActivity"></div></div>
 </section>
@@ -2905,5 +2937,64 @@ enterApp = async function (user) {
 
 })();
 </script>
+
+<script>
+/* Dashboard map areas: stored in the same sbs_ cloud payload as other app data. */
+let dashboardAreaMap = null;
+let dashboardAreaMarkers = [];
+function dashboardAreas(){ return ls('sbs_dashboard_areas') || []; }
+function initDashboardAreaMap(){
+  const el=document.getElementById('researchAreaMap');
+  if(!el || typeof L==='undefined') return;
+  if(!dashboardAreaMap){
+    dashboardAreaMap=L.map(el,{scrollWheelZoom:false}).setView([13.2,101.0],5);
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:19,attribution:'&copy; OpenStreetMap contributors'}).addTo(dashboardAreaMap);
+  }
+  setTimeout(()=>dashboardAreaMap.invalidateSize(),80);
+  renderDashboardAreas();
+}
+function renderDashboardAreas(){
+  const el=document.getElementById('dashboardAreaList'); if(!el)return;
+  const areas=dashboardAreas();
+  const count=document.getElementById('mapAreaCount'); if(count)count.textContent=`${areas.length} พื้นที่`;
+  if(dashboardAreaMap){
+    dashboardAreaMarkers.forEach(m=>m.remove()); dashboardAreaMarkers=[];
+    areas.forEach((a,i)=>{
+      const marker=L.marker([Number(a.lat),Number(a.lon)]).addTo(dashboardAreaMap);
+      marker.bindPopup(`<b>${esc(a.name)}</b>${a.notes?`<br>${esc(a.notes)}`:''}<br><small>${Number(a.lat).toFixed(5)}, ${Number(a.lon).toFixed(5)}</small>`);
+      dashboardAreaMarkers.push(marker);
+    });
+    if(areas.length===1)dashboardAreaMap.setView([Number(areas[0].lat),Number(areas[0].lon)],9);
+    else if(areas.length>1){const group=L.featureGroup(dashboardAreaMarkers);dashboardAreaMap.fitBounds(group.getBounds().pad(.18),{maxZoom:10});}
+  }
+  el.innerHTML=areas.length?areas.map((a,i)=>`<div class="map-area-item"><div><b>${esc(a.name)}</b><p>${Number(a.lat).toFixed(5)}, ${Number(a.lon).toFixed(5)}${a.notes?`<br>${esc(a.notes)}`:''}</p><button class="btn" style="margin-top:7px;padding:5px 8px" onclick="focusDashboardArea(${i})">ดูบนแผนที่</button></div><button class="btn danger write-only" title="ลบพื้นที่" onclick="deleteDashboardArea(${i})">ลบ</button></div>`).join(''):'<div class="empty" style="padding:18px">ยังไม่มีพื้นที่ เพิ่มพื้นที่แรกได้จากแบบฟอร์มด้านบน</div>';
+  applyRoleUI();
+}
+function addDashboardArea(){
+  if(!requireEdit())return;
+  const name=document.getElementById('mapAreaName').value.trim();
+  const lat=Number(document.getElementById('mapAreaLat').value),lon=Number(document.getElementById('mapAreaLon').value);
+  const notes=document.getElementById('mapAreaNotes').value.trim();
+  if(!name)return alert('กรุณาระบุชื่อพื้นที่');
+  if(document.getElementById('mapAreaLat').value===''||document.getElementById('mapAreaLon').value===''||!Number.isFinite(lat)||!Number.isFinite(lon)||lat < -90||lat > 90||lon < -180||lon > 180)return alert('กรุณาระบุพิกัด Latitude (-90 ถึง 90) และ Longitude (-180 ถึง 180) ให้ถูกต้อง');
+  const areas=dashboardAreas();areas.push({name,lat,lon,notes,createdAt:new Date().toISOString()});ls('sbs_dashboard_areas',areas);
+  document.getElementById('mapAreaName').value='';document.getElementById('mapAreaLat').value='';document.getElementById('mapAreaLon').value='';document.getElementById('mapAreaNotes').value='';
+  renderDashboardAreas();if(dashboardAreaMap)dashboardAreaMap.setView([lat,lon],9);if(typeof logActivity==='function')logActivity('create','dashboard_area',name,null,{name,lat,lon,notes});
+}
+function deleteDashboardArea(i){
+  if(!requireDelete()||!confirm('ยืนยันลบพื้นที่นี้ออกจากแผนที่หรือไม่?'))return;
+  const areas=dashboardAreas();areas.splice(i,1);ls('sbs_dashboard_areas',areas);renderDashboardAreas();
+  if(typeof logActivity==='function')logActivity('delete','dashboard_area','พื้นที่บนแผนที่',null,null);
+}
+function focusDashboardArea(i){const a=dashboardAreas()[i];if(a&&dashboardAreaMap){dashboardAreaMap.setView([Number(a.lat),Number(a.lon)],10);dashboardAreaMarkers[i]?.openPopup();}}
+const dashboardRenderBeforeMap = renderDashboard;
+renderDashboard = async function(){
+  const result=dashboardRenderBeforeMap.apply(this,arguments);
+  initDashboardAreaMap();
+  return result;
+};
+document.addEventListener('DOMContentLoaded',()=>{if(!document.getElementById('dashboard')?.classList.contains('hidden'))initDashboardAreaMap();});
+</script>
+
 </body>
 </html>
