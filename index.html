@@ -300,7 +300,17 @@ button,input,select,textarea{font:inherit}.app{display:flex;min-height:100vh}.si
 
 <section id="settings" class="page hidden"><div class="top"><div><h1>⚙️ System</h1><p>สถานะระบบและการสำรองข้อมูล</p></div></div><div class="grid"><div class="card"><div class="label">Database</div><div class="num" id="dbStatus">Cloud</div></div><div class="card"><div class="label">Role</div><div class="num" id="myRole">—</div></div><div class="card"><div class="label">Records</div><div class="num" id="settingRecords">0</div></div><div class="card"><div class="label">Last Save</div><div class="num" style="font-size:18px" id="lastSave">—</div></div></div><div class="section card"><button class="btn good" onclick="downloadBackup()">💾 Download Backup</button></div></section>
 
-<section id="users" class="page hidden"><div class="top"><div><h1>👥 User Management</h1><p>Admin เท่านั้น — จัดการสิทธิ์ผู้ใช้งาน</p></div></div><div class="card"><div class="tablewrap" id="userTable"></div></div></section>
+<section id="users" class="page hidden"><div class="top"><div><h1>👥 User Management</h1><p>Admin เท่านั้น — จัดการสิทธิ์ผู้ใช้งาน</p></div></div>
+ <div class="section card"><div class="panel-title"><div><h2>📘 คู่มือสิทธิ์ผู้ใช้งาน (Role Permissions)</h2><span>ดูได้ทันทีว่าแต่ละ Role ทำอะไรได้บ้าง — ใช้อ้างอิงเมื่อลืมสิทธิ์</span></div></div>
+  <div class="grid" style="grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px;margin-top:14px">
+   <div class="card" style="box-shadow:none;border-top:4px solid #dc6b59"><h3 style="margin:0 0 8px">🔑 Admin — ผู้ดูแลระบบ</h3><div class="small" style="margin-bottom:8px">สิทธิ์สูงสุด</div><ul style="padding-left:20px;margin:0;line-height:1.8;font-size:13px"><li>ดูข้อมูลทั้งหมด</li><li>เพิ่มและแก้ไขข้อมูล</li><li>ลบข้อมูล</li><li>ส่งออกข้อมูล</li><li>ดูแลบัญชีผู้ใช้และเปลี่ยน Role</li></ul></div>
+   <div class="card" style="box-shadow:none;border-top:4px solid #3b82f6"><h3 style="margin:0 0 8px">🧬 Researcher — นักวิจัย</h3><div class="small" style="margin-bottom:8px">ทำงานวิจัยและวิเคราะห์ข้อมูล</div><ul style="padding-left:20px;margin:0;line-height:1.8;font-size:13px"><li>ดูข้อมูล</li><li>เพิ่มและแก้ไขข้อมูล</li><li>ส่งออกข้อมูล</li><li>ไม่สามารถลบข้อมูล</li><li>จัดการบัญชีผู้ใช้ไม่ได้</li></ul></div>
+   <div class="card" style="box-shadow:none;border-top:4px solid #0d9488"><h3 style="margin:0 0 8px">✏️ Editor — ผู้บันทึกข้อมูล</h3><div class="small" style="margin-bottom:8px">บันทึกและปรับปรุงข้อมูลประจำวัน</div><ul style="padding-left:20px;margin:0;line-height:1.8;font-size:13px"><li>ดูข้อมูล</li><li>เพิ่มและแก้ไขข้อมูล</li><li>ไม่สามารถลบข้อมูล</li><li>ส่งออกข้อมูลไม่ได้</li><li>จัดการบัญชีผู้ใช้ไม่ได้</li></ul></div>
+   <div class="card" style="box-shadow:none;border-top:4px solid #94a3b8"><h3 style="margin:0 0 8px">👁️ Viewer — ผู้ดูข้อมูล</h3><div class="small" style="margin-bottom:8px">Read-only</div><ul style="padding-left:20px;margin:0;line-height:1.8;font-size:13px"><li>ดูข้อมูลได้อย่างเดียว</li><li>เพิ่มหรือแก้ไขข้อมูลไม่ได้</li><li>ลบข้อมูลไม่ได้</li><li>ส่งออกข้อมูลไม่ได้</li><li>จัดการบัญชีผู้ใช้ไม่ได้</li></ul></div>
+  </div>
+  <div class="notice" style="margin-top:14px"><b>จำง่าย ๆ:</b> Admin = ทำได้ทุกอย่างรวมจัดการผู้ใช้ · Researcher = เพิ่ม/แก้ไข + ส่งออก · Editor = เพิ่ม/แก้ไข · Viewer = ดูอย่างเดียว</div>
+ </div>
+ <div class="section card"><div class="panel-title"><div><h2>👥 รายชื่อผู้ใช้งาน</h2><span>เปลี่ยน Role จากรายการด้านล่าง แล้วกดบันทึกเพื่อยืนยัน</span></div></div><div class="tablewrap" id="userTable"></div></div></section>
 </main></div>
 
 
