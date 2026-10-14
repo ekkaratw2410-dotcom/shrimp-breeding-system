@@ -262,7 +262,8 @@ button,input,select,textarea{font:inherit}.app{display:flex;min-height:100vh}.si
 <form onsubmit="sbsDistSave(event)"><input type="hidden" id="sbsDistId"><div class="form-grid">
 <label>Date<input type="date" id="sbsDistDate" required></label>
 <label>Generation<input id="sbsDistGen" placeholder="e.g. G5" required></label>
-<label>Life Stage<select id="sbsDistStage"><option>Nauplii</option><option>PL15</option><option>PL20</option><option>Broodstock</option><option>Other</option></select></label>
+<label>Life Stage<select id="sbsDistStage" onchange="sbsDistToggleOtherStage()"><option>Nauplii</option><option>PL15</option><option>PL20</option><option>Broodstock</option><option>Other</option></select></label>
+<label id="sbsDistStageOtherWrap" style="display:none">Specify Life Stage<input id="sbsDistStageOther" placeholder="Enter life stage details" maxlength="120"></label>
 <label>Quantity<input type="number" min="0" step="any" id="sbsDistQty" required></label>
 <label>Unit<select id="sbsDistUnit"><option>ตัว</option><option>คู่</option><option>ล้านตัว</option></select></label>
 <label>Recipient<input id="sbsDistRecipient" required placeholder="หน่วยงาน/ฟาร์มผู้รับ"></label>
@@ -3113,11 +3114,22 @@ document.addEventListener('DOMContentLoaded',()=>{if(!document.getElementById('d
 
 /* Distribution & Deployment - isolated module; keeps authentication flow untouched */
 function sbsDistRecords(){return ls("sbs_distribution_records")||[]}
+function sbsDistToggleOtherStage(){
+ const stage=document.getElementById("sbsDistStage"),wrap=document.getElementById("sbsDistStageOtherWrap"),detail=document.getElementById("sbsDistStageOther");
+ if(!stage||!wrap||!detail)return;
+ const show=stage.value==="Other";wrap.style.display=show?"":"none";detail.required=show;
+ if(!show)detail.value="";
+}
 function sbsDistOpen(id){
  if(!requireEdit())return;
  const r=id?sbsDistRecords().find(x=>x.id===id):null;
  document.getElementById("sbsDistModalTitle").textContent=r?"Edit Distribution":"Add Distribution";
  ["Id","Date","Gen","Stage","Qty","Unit","Recipient","Province","State","Notes"].forEach(k=>{const el=document.getElementById("sbsDist"+k);if(el)el.value=r?(r[{Id:"id",Date:"date",Gen:"generation",Stage:"stage",Qty:"quantity",Unit:"unit",Recipient:"recipient",Province:"province",State:"status",Notes:"notes"}[k]]??""):""});
+ const stage=document.getElementById("sbsDistStage"),detail=document.getElementById("sbsDistStageOther");
+ const knownStages=["Nauplii","PL15","PL20","Broodstock","Other"];
+ if(r&&!knownStages.includes(r.stage)){stage.value="Other";detail.value=r.stageDetail||r.stage||"";}
+ else detail.value=r?(r.stageDetail||""):"";
+ sbsDistToggleOtherStage();
  if(!r)document.getElementById("sbsDistDate").value=new Date().toISOString().slice(0,10);
  document.getElementById("sbsDistModal").classList.add("show");
 }
@@ -3125,7 +3137,8 @@ function sbsDistClose(){document.getElementById("sbsDistModal").classList.remove
 function sbsDistSave(e){
  e.preventDefault();if(!requireEdit())return;
  const rows=sbsDistRecords(),id=document.getElementById("sbsDistId").value||("DD-"+new Date().getFullYear()+"-"+String(Date.now()).slice(-6));
- const r={id,date:document.getElementById("sbsDistDate").value,generation:document.getElementById("sbsDistGen").value.trim(),stage:document.getElementById("sbsDistStage").value,quantity:Number(document.getElementById("sbsDistQty").value),unit:document.getElementById("sbsDistUnit").value,recipient:document.getElementById("sbsDistRecipient").value.trim(),province:document.getElementById("sbsDistProvince").value.trim(),status:document.getElementById("sbsDistState").value,notes:document.getElementById("sbsDistNotes").value.trim(),updatedAt:new Date().toISOString()};
+ const selectedStage=document.getElementById("sbsDistStage").value,stageDetail=document.getElementById("sbsDistStageOther").value.trim();
+ const r={id,date:document.getElementById("sbsDistDate").value,generation:document.getElementById("sbsDistGen").value.trim(),stage:selectedStage,stageDetail:selectedStage==="Other"?stageDetail:"",quantity:Number(document.getElementById("sbsDistQty").value),unit:document.getElementById("sbsDistUnit").value,recipient:document.getElementById("sbsDistRecipient").value.trim(),province:document.getElementById("sbsDistProvince").value.trim(),status:document.getElementById("sbsDistState").value,notes:document.getElementById("sbsDistNotes").value.trim(),updatedAt:new Date().toISOString()};
  const i=rows.findIndex(x=>x.id===id);if(i>=0)rows[i]=r;else{r.createdAt=r.updatedAt;rows.unshift(r)}ls("sbs_distribution_records",rows);if(typeof logActivity==="function")logActivity(i>=0?"update":"create","distribution",id,null,r);sbsDistClose();sbsDistRender();
 }
 function sbsDistRender(){
@@ -3136,9 +3149,9 @@ function sbsDistRender(){
  document.getElementById("sbsDistMetrics").innerHTML=metrics.map((m,i)=>`<div class="card"><div class="small">${m[0]}</div><h2>${m[1]}</h2><div class="small">${m[2]}</div></div>`).join("");
  const gens={};all.forEach(r=>gens[r.generation||"Unspecified"]=(gens[r.generation||"Unspecified"]||0)+(Number(r.quantity)||0));
  document.getElementById("sbsDistGeneration").innerHTML=Object.keys(gens).length?Object.entries(gens).sort((a,b)=>a[0].localeCompare(b[0])).map(([k,v])=>`<div style="margin:12px 0"><div style="display:flex;justify-content:space-between"><span>${sbsDistEsc(k)}</span><b>${v.toLocaleString()}</b></div><div style="height:9px;background:#edf2f7;border-radius:8px"><div style="height:9px;width:${Math.max(2,100*v/Math.max(...Object.values(gens),1))}%;background:#2878f0;border-radius:8px"></div></div></div>`).join(""):'<p class="small">No distribution records yet.</p>';
- const stages={};all.forEach(r=>stages[r.stage||"Other"]=(stages[r.stage||"Other"]||0)+(Number(r.quantity)||0));
+ const stages={};all.forEach(r=>{const label=r.stage==="Other"&&r.stageDetail?"Other: "+r.stageDetail:(r.stage||"Other");stages[label]=(stages[label]||0)+(Number(r.quantity)||0)});
  document.getElementById("sbsDistStages").innerHTML=Object.keys(stages).length?Object.entries(stages).map(([k,v])=>`<div style="display:flex;justify-content:space-between;padding:10px;border-bottom:1px solid #e5edf5"><span>${sbsDistEsc(k)}</span><b>${v.toLocaleString()}</b></div>`).join(""):'<p class="small">No distribution records yet.</p>';
- document.getElementById("sbsDistRows").innerHTML=filtered.map(r=>`<tr><td>${sbsDistEsc(r.id)}</td><td>${sbsDistEsc(r.date||"")}</td><td>${sbsDistEsc(r.generation||"")}</td><td>${sbsDistEsc(r.stage||"")}</td><td>${(Number(r.quantity)||0).toLocaleString()} ${sbsDistEsc(r.unit||"")}</td><td>${sbsDistEsc(r.recipient||"")}${r.province?" · "+sbsDistEsc(r.province):""}</td><td><span class="dist-pill">${sbsDistEsc(r.status||"Planned")}</span></td><td class="dist-actions"><button class="btn" onclick="sbsDistOpen('${sbsDistEsc(r.id)}')">Edit</button><button class="btn" onclick="sbsDistDelete('${sbsDistEsc(r.id)}')">Delete</button></td></tr>`).join("")||'<tr><td colspan="8" class="small">No records match your search.</td></tr>';
+ document.getElementById("sbsDistRows").innerHTML=filtered.map(r=>`<tr><td>${sbsDistEsc(r.id)}</td><td>${sbsDistEsc(r.date||"")}</td><td>${sbsDistEsc(r.generation||"")}</td><td>${sbsDistEsc(r.stage==="Other"&&r.stageDetail?"Other: "+r.stageDetail:(r.stage||""))}</td><td>${(Number(r.quantity)||0).toLocaleString()} ${sbsDistEsc(r.unit||"")}</td><td>${sbsDistEsc(r.recipient||"")}${r.province?" · "+sbsDistEsc(r.province):""}</td><td><span class="dist-pill">${sbsDistEsc(r.status||"Planned")}</span></td><td class="dist-actions"><button class="btn" onclick="sbsDistOpen('${sbsDistEsc(r.id)}')">Edit</button><button class="btn" onclick="sbsDistDelete('${sbsDistEsc(r.id)}')">Delete</button></td></tr>`).join("")||'<tr><td colspan="8" class="small">No records match your search.</td></tr>';
  document.getElementById("sbsDistCount").textContent=`Showing ${filtered.length} of ${all.length} records`;
 }
 function sbsDistEsc(v){return String(v??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
