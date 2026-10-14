@@ -529,9 +529,7 @@ function normalizeImportedRow(x,rowNo){
  if(age!==""&&num(age)===null)errors.push("age ไม่ใช่ตัวเลข");
  return {rowNo,r,errors};
 }
-function safeImportFileName(name){
- return String(name||"import.xlsx").replace(/[^\wก-๙.-]+/g,"_").slice(0,120);
-}
+function safeImportFileName(name){  const match=String(name||"import.xlsx").match(/\.([A-Za-z0-9]{1,8})$/);const ext=String(match?.[1]||"xlsx").toLowerCase();return "source."+(["xlsx","xls","csv"].includes(ext)?ext:"xlsx"); }
 function importStoragePath(entry){return entry?.storagePath||"";}
 async function uploadImportFile(file,importId){
  if(!file||!importId)return null;
@@ -543,7 +541,7 @@ async function uploadImportFile(file,importId){
 async function downloadImportFile(importId){
  const entry=importHistory().find(x=>x.id===importId);if(!entry)return alert("ไม่พบ Import นี้");
  if(!entry.storagePath)return alert("Import นี้เป็นรายการเก่าที่ระบบยังไม่ได้เก็บไฟล์ Excel ต้นฉบับไว้ จึงไม่สามารถดาวน์โหลดไฟล์เดิมได้");
- const {data,error}=await sbClient.storage.from("breeding-imports").createSignedUrl(entry.storagePath,300);
+ const {data,error}=await sbClient.storage.from("breeding-imports").createSignedUrl(entry.storagePath,300,{download:entry.fileName||true});
  if(error||!data?.signedUrl)return alert("ไม่สามารถสร้างลิงก์ดาวน์โหลดไฟล์ได้: "+(error?.message||"ไม่ทราบสาเหตุ"));
  window.open(data.signedUrl,"_blank","noopener");
 }
