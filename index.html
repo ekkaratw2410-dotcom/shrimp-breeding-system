@@ -360,6 +360,8 @@ button,input,select,textarea{font:inherit}.app{display:flex;min-height:100vh}.si
 <div class="section sectiongrid">
 <div class="card"><h3>🧬 Distribution by Generation</h3><div id="sbsDistGeneration" style="min-height:220px"></div></div>
 <div class="card"><h3>🦐 Distribution by Life Stage</h3><div id="sbsDistStages" style="min-height:220px"></div></div></div>
+<div class="card section sbs-dist-records"><div class="sbs-dist-records-head"><div class="sbs-dist-records-title"><span class="sbs-dist-title-icon" style="background:#e1f8ed">📋</span><div><h3>Distribution Records</h3><p>Manage and track shrimp seed deployment records</p></div></div><div class="sbs-dist-tools"><input id="sbsDistSearch" placeholder="⌕ Search ID, recipient..." oninput="sbsDistRender()" style="max-width:250px"><select id="sbsDistStatus" onchange="sbsDistRender()"><option value="">All statuses</option><option>Planned</option><option>Dispatched</option><option>Received</option><option>Deployed</option><option>Monitoring</option><option>Completed</option></select><button class="btn" onclick="sbsDistExport()">⬇ Export CSV</button></div></div>
+<div class="table-wrap"><table><thead><tr><th>ID</th><th>Date</th><th>Generation</th><th>Life Stage</th><th>Quantity</th><th>Recipient</th><th>Status</th><th>Actions</th></tr></thead><tbody id="sbsDistRows"></tbody></table></div><div id="sbsDistCount" class="small"></div></div>
 <div class="sbs-deployment-heading"><div><h2>📈 Production &amp; Deployment Results</h2><p>ติดตามผลต่อเนื่องตั้งแต่ BMC รับ PL15 จนถึงผลการเลี้ยงของเกษตรกร</p></div><button class="btn" onclick="sbsDeployExportAll()">⬇ Export Results CSV</button></div>
 <div class="sbs-deploy-grid">
  <div class="card sbs-deploy-card"><div class="sbs-deploy-card-head"><div><span class="sbs-deploy-icon">🐣</span><h3>1. BMC Grow-out Results</h3><p>ผลการเลี้ยง PL15 จนเป็นพ่อแม่พันธุ์</p></div><button class="btn primary write-only" onclick="sbsDeployOpen('bmc')">＋ Add</button></div><div class="sbs-deploy-stats" id="sbsDeployBmcStats"></div><div class="table-wrap"><table><thead><tr><th>Date / Generation</th><th>BMC</th><th>PL15 received</th><th>Survived</th><th>Broodstock pairs</th><th></th></tr></thead><tbody id="sbsDeployBmcRows"></tbody></table></div></div>
@@ -367,9 +369,6 @@ button,input,select,textarea{font:inherit}.app{display:flex;min-height:100vh}.si
  <div class="card sbs-deploy-card"><div class="sbs-deploy-card-head"><div><span class="sbs-deploy-icon">🚚</span><h3>3. Distribution to Farmers</h3><p>วันที่ส่ง จำนวน และฟาร์มผู้รับ</p></div><button class="btn primary write-only" onclick="sbsDeployOpen('farmer')">＋ Add</button></div><div class="sbs-deploy-stats" id="sbsDeployFarmerStats"></div><div class="table-wrap"><table><thead><tr><th>Date</th><th>Farm / Province</th><th>Generation</th><th>Nauplii sent</th><th></th></tr></thead><tbody id="sbsDeployFarmerRows"></tbody></table></div></div>
  <div class="card sbs-deploy-card"><div class="sbs-deploy-card-head"><div><span class="sbs-deploy-icon">📊</span><h3>4. Farmer Grow-out Results</h3><p>ผลการเลี้ยงที่รายงานจากฟาร์มปลายทาง</p></div><button class="btn primary write-only" onclick="sbsDeployOpen('farmResult')">＋ Add</button></div><div class="sbs-deploy-stats" id="sbsDeployFarmResultStats"></div><div class="table-wrap"><table><thead><tr><th>Farm</th><th>Culture period</th><th>Survival</th><th>Avg. weight</th><th>Production</th><th></th></tr></thead><tbody id="sbsDeployFarmResultRows"></tbody></table></div></div>
 </div>
-<div class="card section sbs-dist-records"><div class="sbs-dist-records-head"><div class="sbs-dist-records-title"><span class="sbs-dist-title-icon" style="background:#e1f8ed">📋</span><div><h3>Distribution Records</h3><p>Manage and track shrimp seed deployment records</p></div></div><div class="sbs-dist-tools"><input id="sbsDistSearch" placeholder="⌕ Search ID, recipient..." oninput="sbsDistRender()" style="max-width:250px"><select id="sbsDistStatus" onchange="sbsDistRender()"><option value="">All statuses</option><option>Planned</option><option>Dispatched</option><option>Received</option><option>Deployed</option><option>Monitoring</option><option>Completed</option></select><button class="btn" onclick="sbsDistExport()">⬇ Export CSV</button></div></div>
-<div class="table-wrap"><table><thead><tr><th>ID</th><th>Date</th><th>Generation</th><th>Life Stage</th><th>Quantity</th><th>Recipient</th><th>Status</th><th>Actions</th></tr></thead><tbody id="sbsDistRows"></tbody></table></div><div id="sbsDistCount" class="small"></div></div>
-
 </section>
 <div class="modal-backdrop" id="sbsDeployModal"><div class="modal"><div class="top"><h2 id="sbsDeployModalTitle">Add result</h2><button class="btn" type="button" onclick="sbsDeployClose()">✕</button></div><form id="sbsDeployForm" onsubmit="sbsDeploySave(event)"><input type="hidden" id="sbsDeployRecordId"><input type="hidden" id="sbsDeployType"><div class="form-grid" id="sbsDeployFields"></div><div class="row-actions" style="justify-content:flex-end;margin-top:16px"><button type="button" class="btn" onclick="sbsDeployClose()">Cancel</button><button class="btn primary" type="submit">Save record</button></div></form></div></div>
 <div class="modal-backdrop" id="sbsDistModal"><div class="modal"><div class="top"><h2 id="sbsDistModalTitle">Add Distribution</h2><button class="btn" onclick="sbsDistClose()">✕</button></div>
@@ -499,9 +498,14 @@ function applyPayload(d){Object.entries(d||{}).forEach(([k,v])=>{if(k.startsWith
 
 async function cloudLoad(){
  const {data,error}=await sbClient.from("app_state").select("data,updated_at").eq("id",1).maybeSingle();
- if(error){console.warn(error);return}
- if(data?.data&&Object.keys(data.data).length)applyPayload(data.data);
- else if(canEdit())await cloudSave();
+ if(error){console.warn(error);setSaveStatus("⚠️ โหลดข้อมูล Cloud ไม่สำเร็จ: "+error.message);return}
+ if(data?.data&&Object.keys(data.data).length){
+  applyPayload(data.data);
+  const cloudData=data.data,localOnlyDeploymentKeys=[];
+  for(let i=0;i<localStorage.length;i++){const k=localStorage.key(i);if(k?.startsWith("sbs_deploy_")&&!Object.prototype.hasOwnProperty.call(cloudData,k))localOnlyDeploymentKeys.push(k)}
+  if(localOnlyDeploymentKeys.length&&canEdit())await cloudSave();
+  else if(localOnlyDeploymentKeys.length)setSaveStatus("⚠️ พบข้อมูล Deployment ในเครื่องที่ยังไม่ซิงก์ Cloud");
+ }else if(canEdit())await cloudSave();
 }
 async function cloudSave(){
  if(!currentUser||!canEdit())return;
@@ -527,7 +531,7 @@ function applyRoleUI(){
 function showPage(id,btn){
  document.querySelectorAll(".page").forEach(p=>p.classList.add("hidden"));document.getElementById(id)?.classList.remove("hidden");
  document.querySelectorAll(".nav button").forEach(b=>b.classList.remove("active"));if(btn)btn.classList.add("active");
- if(id==="distribution"&&typeof sbsDistRender==="function")sbsDistRender();if(id==="health")renderHealthImported();if(id==="users")renderUsers();if(id==="dashboard")renderDashboard();if(id==="individuals")renderIndividuals();if(id==="families")renderFamilies();if(id==="growth")renderGrowth();if(id==="ebv")renderEBV();if(id==="broodstock")renderBroodstock();if(id==="experiments")renderExperiments();if(id==="water")renderWater();if(id==="quality")renderQuality();if(id==="settings")renderSettings();if(id==="documents"){renderImportHistory();renderLegacyCleanup();}
+ if(id==="distribution"){if(typeof sbsDistRender==="function")sbsDistRender();if(typeof sbsDeployRender==="function")sbsDeployRender();}if(id==="health")renderHealthImported();if(id==="users")renderUsers();if(id==="dashboard")renderDashboard();if(id==="individuals")renderIndividuals();if(id==="families")renderFamilies();if(id==="growth")renderGrowth();if(id==="ebv")renderEBV();if(id==="broodstock")renderBroodstock();if(id==="experiments")renderExperiments();if(id==="water")renderWater();if(id==="quality")renderQuality();if(id==="settings")renderSettings();if(id==="documents"){renderImportHistory();renderLegacyCleanup();}
 }
 function fillSelect(id){
  const e=document.getElementById(id);if(!e)return;const old=e.value;e.innerHTML=generationKeys().map(g=>`<option value="${esc(g)}">${esc(g)}</option>`).join("");if(GENS[old]!==undefined)e.value=old;else e.value=latestGeneration();
