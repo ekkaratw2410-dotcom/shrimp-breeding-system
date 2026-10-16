@@ -69,7 +69,9 @@ button,input,select,textarea{font:inherit}.app{display:flex;min-height:100vh}.si
 
 /* Dashboard research-area map */
 .dashboard-map-layout{display:grid;grid-template-columns:minmax(0,1.7fr) minmax(250px,.8fr);gap:16px;align-items:stretch}
-#researchAreaMap{height:390px;min-height:300px;border:1px solid var(--line);border-radius:12px;z-index:1;background:#edf3f5}
+/* Keep the map bottom aligned with the full Add Area column; allow it to grow with the column. */
+.dashboard-map-layout>div:first-child{display:flex;flex-direction:column;min-height:0}
+#researchAreaMap{height:auto;min-height:420px;flex:1 1 auto;border:1px solid var(--line);border-radius:12px;z-index:1;background:#edf3f5}
 .map-form{display:grid;grid-template-columns:1fr;gap:9px;margin-top:10px}
 .map-coordinate-hint{font-size:11px;color:var(--muted);line-height:1.5;margin-top:5px}
 #researchAreaMap{cursor:crosshair}
@@ -80,7 +82,7 @@ button,input,select,textarea{font:inherit}.app{display:flex;min-height:100vh}.si
 .map-area-list{display:flex;flex-direction:column;gap:8px;max-height:250px;overflow:auto;margin-top:12px}
 .map-area-item{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;padding:10px;border:1px solid var(--line);border-radius:10px;background:#f9fbfd}
 .map-area-item p{margin:4px 0 0;font-size:11px;color:var(--muted);line-height:1.45}
-@media(max-width:900px){.dashboard-map-layout{grid-template-columns:1fr}#researchAreaMap{height:330px}}
+@media(max-width:900px){.dashboard-map-layout{grid-template-columns:1fr}.dashboard-map-layout>div:first-child{display:block}#researchAreaMap{height:420px;min-height:420px}}
 
 
 #sbsDistModal{display:none;position:fixed;inset:0;background:#071b2db8;z-index:10020;align-items:center;justify-content:center;padding:18px}#sbsDistModal.show{display:flex}#sbsDistModal > .modal{position:relative;inset:auto;display:block;z-index:auto;align-items:stretch;justify-content:initial;background:#fff;color:#18324a;border:0;border-radius:16px;padding:22px;width:min(760px,100%);max-height:90vh;overflow:auto;box-shadow:0 20px 60px #0003;flex:none}#sbsDistModal input,#sbsDistModal select,#sbsDistModal textarea,#sbsDistSearch,#sbsDistStatus{padding:9px;border:1px solid #dce5ee;border-radius:8px;min-width:0;background:#fff;color:#18324a}#sbsDistModal label{display:flex;flex-direction:column;gap:6px;font-size:13px}#sbsDistModal .form-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:13px}.dist-pill{display:inline-block;border-radius:16px;padding:4px 9px;background:#e6eef9;color:#234c7b;font-size:12px}.dist-actions button{margin-right:5px}@media(max-width:700px){#sbsDistModal .form-grid{grid-template-columns:1fr}.sectiongrid{grid-template-columns:1fr}}
