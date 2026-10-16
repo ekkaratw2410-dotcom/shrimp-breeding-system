@@ -94,6 +94,96 @@ button,input,select,textarea{font:inherit}.app{display:flex;min-height:100vh}.si
 
 .hb-filterbar{display:flex;align-items:end;gap:12px;flex-wrap:wrap;padding:4px 0 14px}.hb-filterbar label{display:flex;flex-direction:column;gap:5px;font-size:12px;color:var(--muted);min-width:145px}.hb-filterbar input,.hb-filterbar select{border:1px solid #cfe0ed;border-radius:9px;padding:10px;background:#fff;color:#17436a;min-width:145px}.hb-filterbar>input{flex:1;min-width:190px}.hb-actions{display:flex;gap:7px;flex-wrap:wrap}.hb-global-kpis{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin-bottom:14px}.hb-global-kpis>div{border:1px solid #d6e9f4;border-radius:12px;background:linear-gradient(145deg,#fff,#eff9fc);padding:12px 15px}.hb-global-kpis span{display:block;color:#54738b;font-size:12px}.hb-global-kpis b{display:block;font-size:25px;color:#12547c;margin-top:3px}.hb-two-col{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;align-items:start}.hb-side{border:1px solid #d7eaf4;border-radius:15px;padding:8px;background:#fff;min-width:0;box-shadow:0 3px 12px #0d62800a}.hb-side-head{display:flex;align-items:center;gap:11px;padding:13px 14px;border-radius:12px;color:#fff;background:linear-gradient(105deg,#079c9c,#087b91);margin-bottom:10px}.hb-shrimp .hb-side-head{background:linear-gradient(105deg,#087fbd,#0876c5)}.hb-side-icon{font-size:28px;background:#ffffff25;border:1px solid #ffffff35;border-radius:50%;width:48px;height:48px;display:grid;place-items:center;flex-shrink:0}.hb-side-head h2{font-size:17px;margin:0 0 4px;color:white}.hb-side-head p{font-size:11px;margin:0;color:#e4fbff}.hb-side-head button{margin-left:auto;white-space:nowrap;font-size:11px}.hb-kpis{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:7px;margin-bottom:10px}.hb-kpis>div{padding:10px 8px;border:1px solid #d6ebf7;border-radius:10px;background:#f5fbff;min-width:0}.hb-kpis span{font-size:11px;display:block;color:#17608a}.hb-kpis b{display:block;font-size:23px;margin:3px 0;color:#134f78}.hb-kpis small{font-size:10px;color:#64839a}.hb-kpis .neg{background:#f0fbf6;border-color:#cdeee0}.hb-kpis .neg span,.hb-kpis .neg b{color:#168451}.hb-kpis .pos{background:#fff5f5;border-color:#ffdddd}.hb-kpis .pos span,.hb-kpis .pos b{color:#dc3545}.hb-kpis .pend{background:#f8f5ff;border-color:#e4d9ff}.hb-kpis .pend span,.hb-kpis .pend b{color:#7444bd}.hb-summary-grid{display:grid;grid-template-columns:minmax(0,.9fr) minmax(0,1.1fr);gap:8px}.hb-side .health-panel{padding:10px;margin-bottom:9px;border-color:#d7eaf4}.hb-side .health-panel h3{font-size:14px;color:#15557d}.hb-side .health-donut{width:125px;height:125px}.hb-side .health-donut:after{width:78px;height:78px}.hb-side .health-pathogen-row{display:flex;align-items:center;justify-content:space-between;gap:7px;border-bottom:1px solid #e2eff6;padding:8px 2px;font-size:11px}.hb-side .health-pathogen-row:last-child{border-bottom:0}.hb-side .health-pathogen-row>span:last-child{white-space:nowrap}.hb-side .health-table{min-width:600px;font-size:11px}.hb-side .health-table th,.hb-side .health-table td{padding:8px 7px}.hb-side .health-result{font-size:10px}.hb-side .tablewrap{overflow-x:auto}@media(max-width:1150px){.hb-two-col{grid-template-columns:1fr}.hb-summary-grid{grid-template-columns:1fr 1fr}}@media(max-width:700px){.hb-global-kpis{grid-template-columns:repeat(2,minmax(0,1fr))}.hb-kpis{grid-template-columns:repeat(2,minmax(0,1fr))}.hb-summary-grid{grid-template-columns:1fr}.hb-side-head{flex-wrap:wrap}.hb-side-head button{margin-left:0}.hb-filterbar label,.hb-filterbar label input,.hb-filterbar label select{width:100%}.hb-filterbar>input{width:100%}}
 
+
+
+/* Enhanced Distribution by Generation chart — scoped to Distribution & Deployment */
+#distribution .sbs-dist-generation-wrap{display:flex;flex-direction:column;gap:18px;min-height:220px}
+#distribution .sbs-dist-generation-summary{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:15px 17px;border:1px solid #dce9ff;border-radius:15px;background:linear-gradient(120deg,#f3f7ff 0%,#f8fbff 58%,#f0fbf7 100%)}
+#distribution .sbs-dist-generation-summary>div:first-child{display:flex;flex-direction:column;gap:3px;min-width:0}
+#distribution .sbs-dist-generation-eyebrow{font-size:10px;letter-spacing:1.2px;font-weight:800;color:#6d82a3}
+#distribution .sbs-dist-generation-summary strong{font-size:27px;line-height:1.15;letter-spacing:-.04em;color:#173c72;overflow-wrap:anywhere}
+#distribution .sbs-dist-generation-summary small{font-size:11px;color:#8190a7}
+#distribution .sbs-dist-generation-summary-icon{display:grid;place-items:center;width:48px;height:48px;flex:0 0 48px;border-radius:15px;background:#e2ecff;font-size:24px;box-shadow:inset 0 0 0 1px #d2e1ff}
+#distribution .sbs-dist-generation-list{display:flex;flex-direction:column;gap:16px}
+#distribution .sbs-dist-generation-item{min-width:0}
+#distribution .sbs-dist-generation-item-top{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:8px}
+#distribution .sbs-dist-generation-name{display:flex;align-items:center;gap:9px;min-width:0;font-size:13px;font-weight:700;color:#354965}
+#distribution .sbs-dist-generation-name>span:last-child{overflow-wrap:anywhere}
+#distribution .sbs-dist-generation-rank{display:grid;place-items:center;width:29px;height:27px;flex:0 0 29px;border-radius:9px;background:color-mix(in srgb,var(--gen-color) 12%,white);color:var(--gen-color);font-size:10px;font-weight:850}
+#distribution .sbs-dist-generation-amount{display:flex;align-items:baseline;justify-content:flex-end;gap:8px;white-space:nowrap}
+#distribution .sbs-dist-generation-amount strong{font-size:13px;color:#203754;font-weight:800}
+#distribution .sbs-dist-generation-amount span{font-size:11px;color:#8492a6;min-width:43px;text-align:right}
+#distribution .sbs-dist-generation-track{height:11px;padding:2px;background:#edf2f8;border-radius:999px;overflow:hidden;box-shadow:inset 0 1px 2px #1c35540a}
+#distribution .sbs-dist-generation-fill{height:100%;min-width:0;border-radius:999px;background:linear-gradient(90deg,var(--gen-color),color-mix(in srgb,var(--gen-color) 55%,white));box-shadow:0 2px 7px color-mix(in srgb,var(--gen-color) 22%,transparent);transition:width .45s ease}
+#distribution .sbs-dist-empty{min-height:220px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:22px;color:#7b8ba2}
+#distribution .sbs-dist-empty>span{display:grid;place-items:center;width:52px;height:52px;border-radius:17px;background:#edf4ff;font-size:25px;margin-bottom:10px}
+#distribution .sbs-dist-empty strong{color:#334966;font-size:14px}
+#distribution .sbs-dist-empty p{font-size:12px;margin:5px 0 0}
+@media(max-width:600px){#distribution .sbs-dist-generation-summary{padding:13px}#distribution .sbs-dist-generation-summary strong{font-size:24px}#distribution .sbs-dist-generation-list{gap:14px}#distribution .sbs-dist-generation-item-top{gap:7px}#distribution .sbs-dist-generation-amount{gap:5px}#distribution .sbs-dist-generation-amount span{min-width:38px}}
+
+/* Generation selector and Line A/B visual identity */
+#distribution .sbs-dist-generation-filter{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;padding:14px 18px;margin:0 0 14px;border:1px solid #dce8f5;border-radius:14px;background:linear-gradient(110deg,#f8fbff,#f5fcf9)}
+#distribution .sbs-dist-generation-filter label{display:flex;align-items:center;gap:12px;font-size:13px;font-weight:800;color:#244365}
+#distribution #sbsDistGenerationFilter{min-width:130px;padding:10px 36px 10px 12px;border:1px solid #cbdced;border-radius:10px;background:#fff;color:#173c72;font-weight:800}
+#distribution .sbs-dist-generation-filter-note{font-size:12px;color:#75869a}
+#distribution .sbs-dist-line-legend{display:flex;gap:14px;flex-wrap:wrap;font-size:12px;font-weight:700;color:#53657c}
+#distribution .sbs-dist-line-legend span{display:inline-flex;align-items:center;gap:6px}
+#distribution .sbs-dist-line-legend i{display:inline-block;width:9px;height:9px;border-radius:50%}
+#distribution .sbs-dist-stage-badge{display:inline-block;padding:4px 9px;border-radius:8px;background:color-mix(in srgb,var(--stage-color) 12%,white);color:var(--stage-color);font-size:12px;font-weight:800;white-space:nowrap}
+#distribution .sbs-dist-line-tag{display:block;margin-top:4px;color:var(--line-color);font-size:11px;font-weight:800}
+@media(max-width:600px){#distribution .sbs-dist-generation-filter{align-items:stretch}#distribution .sbs-dist-generation-filter label{align-items:stretch;flex-direction:column;gap:6px;width:100%}#distribution #sbsDistGenerationFilter{width:100%}}
+
+/* Distribution & Deployment visual refresh — scoped to this page */
+#distribution .sbs-dist-metric{position:relative;overflow:hidden;border:1px solid #e7edf5;border-radius:18px;padding:20px 20px 18px;background:linear-gradient(145deg,#fff 0%,#fbfdff 100%);box-shadow:0 5px 18px rgba(24,53,89,.055);min-height:148px;transition:transform .18s ease,box-shadow .18s ease}
+#distribution .sbs-dist-metric:hover{transform:translateY(-2px);box-shadow:0 10px 24px rgba(24,53,89,.10)}
+#distribution .sbs-dist-metric:after{content:"";position:absolute;width:95px;height:95px;border-radius:50%;right:-30px;top:-32px;background:var(--dist-soft);opacity:.75}
+#distribution .sbs-dist-metric-top{display:flex;align-items:center;justify-content:space-between;gap:12px;position:relative;z-index:1}
+#distribution .sbs-dist-icon{display:grid;place-items:center;width:46px;height:46px;border-radius:14px;background:var(--dist-soft);color:var(--dist-color);font-size:22px}
+#distribution .sbs-dist-metric-label{font-size:13px;color:#65758b;font-weight:650;letter-spacing:.01em;margin-top:15px;position:relative;z-index:1}
+#distribution .sbs-dist-metric-value{font-size:clamp(25px,2.2vw,32px);line-height:1.15;font-weight:800;color:#172b4d;margin-top:5px;letter-spacing:-.035em;overflow-wrap:anywhere;position:relative;z-index:1}
+#distribution .sbs-dist-metric-note{font-size:12px;color:#8491a3;margin-top:7px;position:relative;z-index:1}
+#distribution .sbs-dist-metric-trend{color:var(--dist-color);font-size:18px;position:relative;z-index:1}
+#distribution .sectiongrid{gap:18px;align-items:stretch}
+#distribution .sectiongrid>.card{border:1px solid #e6edf5;border-radius:18px;padding:20px;box-shadow:0 5px 18px rgba(24,53,89,.045);min-width:0}
+#distribution .sbs-dist-chart-title{display:flex;align-items:center;gap:10px;margin:0 0 18px;font-size:16px;font-weight:750;color:#1e3353}
+#distribution .sbs-dist-title-icon{display:inline-grid;place-items:center;width:36px;height:36px;border-radius:11px;font-size:18px;background:#eaf1ff}
+#distribution .sbs-dist-bars{display:flex;flex-direction:column;gap:17px}
+#distribution .sbs-dist-bar-label{display:flex;justify-content:space-between;gap:12px;margin-bottom:7px;font-size:13px;color:#52637a}
+#distribution .sbs-dist-bar-label strong{color:#203754;font-weight:750}
+#distribution .sbs-dist-bar-track{height:10px;background:#edf2f8;border-radius:999px;overflow:hidden}
+#distribution .sbs-dist-bar-fill{height:100%;border-radius:999px;background:linear-gradient(90deg,#3978f6,#65a6ff);box-shadow:0 2px 6px #3978f633}
+#distribution .sbs-dist-stage-layout{display:flex;align-items:center;gap:22px;min-height:220px}
+#distribution .sbs-dist-donut{width:154px;height:154px;flex:0 0 154px;border-radius:50%;position:relative;display:grid;place-items:center;background:#edf2f8}
+#distribution .sbs-dist-donut:after{content:"";position:absolute;inset:25px;background:#fff;border-radius:50%;box-shadow:0 0 0 1px #f1f4f8}
+#distribution .sbs-dist-donut-center{position:relative;z-index:1;text-align:center;max-width:100px}
+#distribution .sbs-dist-donut-total{font-size:22px;font-weight:800;letter-spacing:-.04em;color:#1e3353;overflow-wrap:anywhere}
+#distribution .sbs-dist-donut-caption{font-size:11px;color:#8794a7;margin-top:2px}
+#distribution .sbs-dist-legend{display:flex;flex-direction:column;gap:12px;flex:1;min-width:0}
+#distribution .sbs-dist-legend-row{display:grid;grid-template-columns:10px minmax(0,1fr) auto;align-items:center;gap:8px;font-size:12px;color:#627188}
+#distribution .sbs-dist-legend-dot{width:9px;height:9px;border-radius:50%}
+#distribution .sbs-dist-legend-name{overflow-wrap:anywhere}
+#distribution .sbs-dist-legend-value{font-weight:750;color:#243a58;text-align:right}
+#distribution .sbs-dist-legend-pct{font-size:11px;color:#8b98aa;font-weight:500}
+#distribution .sbs-dist-records{border:1px solid #e6edf5;border-radius:18px;padding:20px;box-shadow:0 5px 18px rgba(24,53,89,.045);overflow:hidden}
+#distribution .sbs-dist-records-head{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-bottom:16px}
+#distribution .sbs-dist-records-title{display:flex;align-items:center;gap:10px}
+#distribution .sbs-dist-records-title h3{margin:0;font-size:17px;color:#1e3353}
+#distribution .sbs-dist-records-title p{margin:4px 0 0;font-size:12px;color:#8a97a9}
+#distribution .sbs-dist-tools{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+#distribution .sbs-dist-tools input,#distribution .sbs-dist-tools select{min-height:39px;border:1px solid #dce5f0;border-radius:10px;background:#fff;padding:8px 11px;color:#3b4d65;outline:none}
+#distribution .sbs-dist-tools input:focus,#distribution .sbs-dist-tools select:focus{border-color:#7ba8fa;box-shadow:0 0 0 3px #3978f619}
+#distribution .table-wrap{border:1px solid #edf1f6;border-radius:12px;overflow-x:auto}
+#distribution .table-wrap table{min-width:850px;width:100%;border-collapse:separate;border-spacing:0}
+#distribution .table-wrap th{background:#f7f9fc;color:#748197;font-size:11px;font-weight:750;text-transform:uppercase;letter-spacing:.045em;padding:13px 14px;border-bottom:1px solid #e8edf4;white-space:nowrap}
+#distribution .table-wrap td{padding:14px;border-bottom:1px solid #eff3f7;color:#43536a;font-size:12px;vertical-align:middle}
+#distribution .table-wrap tbody tr:last-child td{border-bottom:0}
+#distribution .table-wrap tbody tr:hover{background:#f9fbff}
+#distribution .dist-pill{display:inline-flex;align-items:center;gap:5px;padding:5px 9px;border-radius:999px;background:#edf4ff;color:#3267bd;font-size:11px;font-weight:700;white-space:nowrap}
+#distribution .dist-actions{white-space:nowrap}
+#distribution .dist-actions .btn{border-radius:8px;padding:6px 9px;font-size:11px;margin-right:4px}
+#distribution #sbsDistCount{padding-top:13px;color:#8996a8;font-size:12px}
+@media(max-width:760px){#distribution .sbs-dist-stage-layout{flex-direction:column;justify-content:center;gap:18px}#distribution .sbs-dist-legend{width:100%}#distribution .sbs-dist-donut{width:142px;height:142px;flex-basis:142px}#distribution .sbs-dist-records{padding:14px}#distribution .sbs-dist-tools{width:100%}#distribution .sbs-dist-tools input,#distribution .sbs-dist-tools select{flex:1;min-width:130px}}
+
 </style>
 <style id="hb-pond-pager-style">.hb-pond-pager{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:12px 8px;color:#55728c;font-size:13px;border-top:1px solid #dceefa}.hb-pond-pager button{border:1px solid #cde5f5;border-radius:8px;background:#fff;color:#0879bd;padding:7px 12px;cursor:pointer}.hb-table td .small{font-size:11px;color:#6888a0;margin-top:3px}</style></head>
 <body>
@@ -262,17 +352,19 @@ button,input,select,textarea{font:inherit}.app{display:flex;min-height:100vh}.si
 <section id="distribution" class="page hidden">
 <div class="top"><div><h1>🚚 Distribution &amp; Deployment</h1><p>Track shrimp seed distribution from source to destination and monitor deployment results.</p></div><button class="btn primary write-only" onclick="sbsDistOpen()">＋ Add Distribution</button></div>
 <div class="grid" id="sbsDistMetrics"></div>
+<div class="card sbs-dist-generation-filter"><label for="sbsDistGenerationFilter"><span>Generation / รุ่นที่ต้องการดู</span><select id="sbsDistGenerationFilter" onchange="sbsDistRender()"><option value="G4">G4</option></select></label><div class="sbs-dist-generation-filter-note">เลือกเฉพาะรุ่นที่ต้องการดู · Line A และ Line B จะแสดงรวมอยู่ภายในรุ่นเดียวกัน โดยค่าเริ่มต้นคือ G4</div></div>
 <div class="section sectiongrid">
 <div class="card"><h3>🧬 Distribution by Generation</h3><div id="sbsDistGeneration" style="min-height:220px"></div></div>
 <div class="card"><h3>🦐 Distribution by Life Stage</h3><div id="sbsDistStages" style="min-height:220px"></div></div></div>
-<div class="card section"><div class="top"><h3>📋 Distribution Records</h3><div class="row-actions"><input id="sbsDistSearch" placeholder="Search ID, recipient..." oninput="sbsDistRender()" style="max-width:250px"><select id="sbsDistStatus" onchange="sbsDistRender()"><option value="">All statuses</option><option>Planned</option><option>Dispatched</option><option>Received</option><option>Deployed</option><option>Monitoring</option><option>Completed</option></select><button class="btn" onclick="sbsDistExport()">⬇ Export CSV</button></div></div>
+<div class="card section sbs-dist-records"><div class="sbs-dist-records-head"><div class="sbs-dist-records-title"><span class="sbs-dist-title-icon" style="background:#e1f8ed">📋</span><div><h3>Distribution Records</h3><p>Manage and track shrimp seed deployment records</p></div></div><div class="sbs-dist-tools"><input id="sbsDistSearch" placeholder="⌕ Search ID, recipient..." oninput="sbsDistRender()" style="max-width:250px"><select id="sbsDistStatus" onchange="sbsDistRender()"><option value="">All statuses</option><option>Planned</option><option>Dispatched</option><option>Received</option><option>Deployed</option><option>Monitoring</option><option>Completed</option></select><button class="btn" onclick="sbsDistExport()">⬇ Export CSV</button></div></div>
 <div class="table-wrap"><table><thead><tr><th>ID</th><th>Date</th><th>Generation</th><th>Life Stage</th><th>Quantity</th><th>Recipient</th><th>Status</th><th>Actions</th></tr></thead><tbody id="sbsDistRows"></tbody></table></div><div id="sbsDistCount" class="small"></div></div>
 </section>
 <div class="modal-backdrop" id="sbsDistModal"><div class="modal"><div class="top"><h2 id="sbsDistModalTitle">Add Distribution</h2><button class="btn" onclick="sbsDistClose()">✕</button></div>
 <form onsubmit="sbsDistSave(event)"><input type="hidden" id="sbsDistId"><div class="form-grid">
 <label>Date<input type="date" id="sbsDistDate" required></label>
-<label>Generation<input id="sbsDistGen" placeholder="e.g. G5" required></label>
-<label>Life Stage<select id="sbsDistStage" onchange="sbsDistToggleOtherStage()"><option>Nauplii</option><option>PL15</option><option>PL20</option><option>Broodstock</option><option>Other</option></select></label>
+<label>Generation<input id="sbsDistGen" placeholder="e.g. G4" required></label>
+<label>Line / ไลน์<select id="sbsDistLine"><option value="A">Line A</option><option value="B">Line B</option><option value="">ไม่ระบุ</option></select></label>
+<label>Life Stage<select id="sbsDistStage" onchange="sbsDistToggleOtherStage()"><option>Nauplii</option><option>PL15</option><option>PL17</option><option>PL20</option><option>Broodstock</option><option>Other</option></select></label>
 <label id="sbsDistStageOtherWrap" style="display:none">Specify Life Stage<input id="sbsDistStageOther" placeholder="Enter life stage details" maxlength="120"></label>
 <label>Quantity<input type="number" min="0" step="any" id="sbsDistQty" required></label>
 <label>Unit<select id="sbsDistUnit"><option>ตัว</option><option>คู่</option><option>ล้านตัว</option></select></label>
@@ -3238,19 +3330,34 @@ document.addEventListener('DOMContentLoaded',()=>{if(!document.getElementById('d
 
 /* Distribution & Deployment - isolated module; keeps authentication flow untouched */
 function sbsDistRecords(){return ls("sbs_distribution_records")||[]}
+// Treat offspring labels for G4 Line A/B as details within G4, never as standalone generations.
+function sbsDistCanonicalGeneration(value){
+ const raw=String(value||"").trim();
+ if(/\bG4\b/i.test(raw)&&/(?:line\s*A|ไลน์\s*A)/i.test(raw))return "G4";
+ if(/\bG4\b/i.test(raw)&&/(?:line\s*B|ไลน์\s*B)/i.test(raw))return "G4";
+ return /^(?:P0|G\d+)$/i.test(raw)?raw.toUpperCase():raw;
+}
+function sbsDistInferLine(r){
+ const explicit=String(r?.line||"").trim().toUpperCase();if(explicit==="A"||explicit==="B")return explicit;
+ const gen=String(r?.generation||"");
+ if(/(?:line\s*A|ไลน์\s*A)/i.test(gen))return "A";
+ if(/(?:line\s*B|ไลน์\s*B)/i.test(gen))return "B";
+ if(r?.stage==="PL17")return "A";if(r?.stage==="PL15")return "B";return "";
+}
 function sbsDistToggleOtherStage(){
  const stage=document.getElementById("sbsDistStage"),wrap=document.getElementById("sbsDistStageOtherWrap"),detail=document.getElementById("sbsDistStageOther");
  if(!stage||!wrap||!detail)return;
  const show=stage.value==="Other";wrap.style.display=show?"":"none";detail.required=show;
  if(!show)detail.value="";
+ const line=document.getElementById("sbsDistLine");if(line&&stage.value==="PL17")line.value="A";else if(line&&stage.value==="PL15")line.value="B";
 }
 function sbsDistOpen(id){
  if(!requireEdit())return;
  const r=id?sbsDistRecords().find(x=>x.id===id):null;
  document.getElementById("sbsDistModalTitle").textContent=r?"Edit Distribution":"Add Distribution";
- ["Id","Date","Gen","Stage","Qty","Unit","Recipient","Province","State","Notes"].forEach(k=>{const el=document.getElementById("sbsDist"+k);if(el)el.value=r?(r[{Id:"id",Date:"date",Gen:"generation",Stage:"stage",Qty:"quantity",Unit:"unit",Recipient:"recipient",Province:"province",State:"status",Notes:"notes"}[k]]??""):""});
+ ["Id","Date","Gen","Line","Stage","Qty","Unit","Recipient","Province","State","Notes"].forEach(k=>{const el=document.getElementById("sbsDist"+k);if(el)el.value=r?(r[{Id:"id",Date:"date",Gen:"generation",Line:"line",Stage:"stage",Qty:"quantity",Unit:"unit",Recipient:"recipient",Province:"province",State:"status",Notes:"notes"}[k]]??(k==="Line"?((r.stage==="PL17"?"A":r.stage==="PL15"?"B":"")):"")): (k==="Gen"?"G4":k==="Line"?"A":"")});
  const stage=document.getElementById("sbsDistStage"),detail=document.getElementById("sbsDistStageOther");
- const knownStages=["Nauplii","PL15","PL20","Broodstock","Other"];
+ const knownStages=["Nauplii","PL15","PL17","PL20","Broodstock","Other"];
  if(r&&!knownStages.includes(r.stage)){stage.value="Other";detail.value=r.stageDetail||r.stage||"";}
  else detail.value=r?(r.stageDetail||""):"";
  sbsDistToggleOtherStage();
@@ -3262,25 +3369,46 @@ function sbsDistSave(e){
  e.preventDefault();if(!requireEdit())return;
  const rows=sbsDistRecords(),id=document.getElementById("sbsDistId").value||("DD-"+new Date().getFullYear()+"-"+String(Date.now()).slice(-6));
  const selectedStage=document.getElementById("sbsDistStage").value,stageDetail=document.getElementById("sbsDistStageOther").value.trim();
- const r={id,date:document.getElementById("sbsDistDate").value,generation:document.getElementById("sbsDistGen").value.trim(),stage:selectedStage,stageDetail:selectedStage==="Other"?stageDetail:"",quantity:Number(document.getElementById("sbsDistQty").value),unit:document.getElementById("sbsDistUnit").value,recipient:document.getElementById("sbsDistRecipient").value.trim(),province:document.getElementById("sbsDistProvince").value.trim(),status:document.getElementById("sbsDistState").value,notes:document.getElementById("sbsDistNotes").value.trim(),updatedAt:new Date().toISOString()};
+ const r={id,date:document.getElementById("sbsDistDate").value,generation:document.getElementById("sbsDistGen").value.trim(),line:document.getElementById("sbsDistLine").value,stage:selectedStage,stageDetail:selectedStage==="Other"?stageDetail:"",quantity:Number(document.getElementById("sbsDistQty").value),unit:document.getElementById("sbsDistUnit").value,recipient:document.getElementById("sbsDistRecipient").value.trim(),province:document.getElementById("sbsDistProvince").value.trim(),status:document.getElementById("sbsDistState").value,notes:document.getElementById("sbsDistNotes").value.trim(),updatedAt:new Date().toISOString()};
  const i=rows.findIndex(x=>x.id===id);if(i>=0)rows[i]=r;else{r.createdAt=r.updatedAt;rows.unshift(r)}ls("sbs_distribution_records",rows);if(typeof logActivity==="function")logActivity(i>=0?"update":"create","distribution",id,null,r);sbsDistClose();sbsDistRender();
 }
 function sbsDistRender(){
- const all=sbsDistRecords(),q=(document.getElementById("sbsDistSearch")?.value||"").toLowerCase(),st=document.getElementById("sbsDistStatus")?.value||"";
- const filtered=all.filter(r=>(!st||r.status===st)&&[r.id,r.recipient,r.generation,r.province].join(" ").toLowerCase().includes(q));
- const total=all.reduce((a,r)=>a+(Number(r.quantity)||0),0),pending=all.filter(r=>!["Completed","Deployed"].includes(r.status)).length,recipients=new Set(all.map(r=>r.recipient).filter(Boolean)).size;
- const metrics=[["Distribution Records",all.length,"รายการ"],["Total Quantity",total.toLocaleString(),"หน่วยตามรายการ"],["Recipients",recipients,"หน่วยงาน/ฟาร์ม"],["Pending Follow-up",pending,"รายการ"]];
- document.getElementById("sbsDistMetrics").innerHTML=metrics.map((m,i)=>`<div class="card"><div class="small">${m[0]}</div><h2>${m[1]}</h2><div class="small">${m[2]}</div></div>`).join("");
- const gens={};all.forEach(r=>gens[r.generation||"Unspecified"]=(gens[r.generation||"Unspecified"]||0)+(Number(r.quantity)||0));
- document.getElementById("sbsDistGeneration").innerHTML=Object.keys(gens).length?Object.entries(gens).sort((a,b)=>a[0].localeCompare(b[0])).map(([k,v])=>`<div style="margin:12px 0"><div style="display:flex;justify-content:space-between"><span>${sbsDistEsc(k)}</span><b>${v.toLocaleString()}</b></div><div style="height:9px;background:#edf2f7;border-radius:8px"><div style="height:9px;width:${Math.max(2,100*v/Math.max(...Object.values(gens),1))}%;background:#2878f0;border-radius:8px"></div></div></div>`).join(""):'<p class="small">No distribution records yet.</p>';
+ const allRecords=sbsDistRecords();
+ const genSelect=document.getElementById("sbsDistGenerationFilter");
+ const generations=[...new Set([...generationKeys(),...allRecords.map(r=>sbsDistCanonicalGeneration(r.generation)).filter(g=>/^(?:P0|G\d+)$/i.test(g)),"G4"].map(g=>String(g).toUpperCase()))].sort((a,b)=>{if(a==="P0")return -1;if(b==="P0")return 1;return (parseInt(a.replace(/^\D+/,""))||0)-(parseInt(b.replace(/^\D+/,""))||0)||a.localeCompare(b)});
+ if(genSelect){const previous=genSelect.value||"G4";genSelect.innerHTML=generations.map(g=>`<option value="${sbsDistEsc(g)}">${sbsDistEsc(g)}</option>`).join("");genSelect.value=generations.includes(previous)?previous:(generations.includes("G4")?"G4":generations[0]||"G4")}
+ const selectedGen=genSelect?.value||"G4";
+ const all=allRecords.filter(r=>sbsDistCanonicalGeneration(r.generation)===selectedGen);
+ const q=(document.getElementById("sbsDistSearch")?.value||"").toLowerCase(),st=document.getElementById("sbsDistStatus")?.value||"";
+ const filtered=all.filter(r=>(!st||r.status===st)&&[r.id,r.recipient,r.generation,r.province,r.line,r.stage].join(" ").toLowerCase().includes(q));
+ const total=all.reduce((a,r)=>a+(Number(r.quantity)||0),0),pending=all.filter(r=>! ["Completed","Deployed"].includes(r.status)).length,recipients=new Set(all.map(r=>r.recipient).filter(Boolean)).size;
+ const metrics=[
+  ["Distribution Records",all.length,"รายการกระจายพันธุ์ในรุ่น "+selectedGen,"📤","#e4eeff","#2563eb","↗"],
+  ["Total Quantity",total.toLocaleString(),"จำนวนกุ้งที่กระจายพันธุ์ในรุ่นนี้","🦐","#ddf8e9","#059669","↗"],
+  ["Recipients",recipients.toLocaleString(),"หน่วยงานและฟาร์มผู้รับในรุ่นนี้","🏢","#f0e6ff","#7c3aed","◎"],
+  ["Pending Follow-up",pending.toLocaleString(),"รายการที่ยังไม่เสร็จสิ้นในรุ่นนี้","☷","#fff0d9","#ea8a08","◷"]
+ ];
+ document.getElementById("sbsDistMetrics").innerHTML=metrics.map(m=>`<div class="card sbs-dist-metric" style="--dist-soft:${m[4]};--dist-color:${m[5]}"><div class="sbs-dist-metric-top"><span class="sbs-dist-icon">${m[3]}</span><span class="sbs-dist-metric-trend">${m[6]}</span></div><div class="sbs-dist-metric-label">${m[0]}</div><div class="sbs-dist-metric-value">${m[1]}</div><div class="sbs-dist-metric-note">${m[2]}</div></div>`).join("");
+ const genTotal=total;
+ const lineStats=[
+  {line:"A",stage:"PL17",color:"#3978f6",label:"Line A · PL17"},
+  {line:"B",stage:"PL15",color:"#13b981",label:"Line B · PL15"}
+ ].map(x=>{const rows=all.filter(r=>sbsDistInferLine(r)===x.line);return {...x,quantity:rows.reduce((sum,r)=>sum+(Number(r.quantity)||0),0),count:rows.length}});
+ const maxLineQty=Math.max(1,...lineStats.map(x=>x.quantity));
+ document.getElementById("sbsDistGeneration").innerHTML=all.length?`<div class="sbs-dist-generation-wrap"><div class="sbs-dist-generation-summary"><div><span class="sbs-dist-generation-eyebrow">${sbsDistEsc(selectedGen)} · TOTAL DISTRIBUTED</span><strong>${genTotal.toLocaleString()}</strong><small>${all.length} distribution record${all.length===1?"":"s"} in this generation · both lines shown together</small></div><div class="sbs-dist-generation-summary-icon">🧬</div></div><div class="sbs-dist-generation-list">${lineStats.map(x=>`<div class="sbs-dist-generation-item"><div class="sbs-dist-generation-item-top"><div class="sbs-dist-generation-name"><span class="sbs-dist-generation-rank" style="--gen-color:${x.color}">${x.line}</span><span>${x.label} · ${sbsDistEsc(selectedGen)}</span></div><div class="sbs-dist-generation-amount"><strong>${x.quantity.toLocaleString()}</strong><span>${genTotal?(100*x.quantity/genTotal).toFixed(1):"0.0"}%</span></div></div><div class="sbs-dist-generation-track"><div class="sbs-dist-generation-fill" style="--gen-color:${x.color};width:${100*x.quantity/maxLineQty}%"></div></div><small>${x.count} record${x.count===1?"":"s"}</small></div>`).join("")}</div><p class="small">Line A (PL17) and Line B (PL15) are displayed together under ${sbsDistEsc(selectedGen)}; neither line is a separate generation.</p></div>`:'<div class="sbs-dist-empty"><span>🧬</span><strong>No distribution records for '+sbsDistEsc(selectedGen)+'</strong><p>Add a distribution record for this generation to see insights.</p></div>';
  const stages={};all.forEach(r=>{const label=r.stage==="Other"&&r.stageDetail?"Other: "+r.stageDetail:(r.stage||"Other");stages[label]=(stages[label]||0)+(Number(r.quantity)||0)});
- document.getElementById("sbsDistStages").innerHTML=Object.keys(stages).length?Object.entries(stages).map(([k,v])=>`<div style="display:flex;justify-content:space-between;padding:10px;border-bottom:1px solid #e5edf5"><span>${sbsDistEsc(k)}</span><b>${v.toLocaleString()}</b></div>`).join(""):'<p class="small">No distribution records yet.</p>';
- document.getElementById("sbsDistRows").innerHTML=filtered.map(r=>`<tr><td>${sbsDistEsc(r.id)}</td><td>${sbsDistEsc(r.date||"")}</td><td>${sbsDistEsc(r.generation||"")}</td><td>${sbsDistEsc(r.stage==="Other"&&r.stageDetail?"Other: "+r.stageDetail:(r.stage||""))}</td><td>${(Number(r.quantity)||0).toLocaleString()} ${sbsDistEsc(r.unit||"")}</td><td>${sbsDistEsc(r.recipient||"")}${r.province?" · "+sbsDistEsc(r.province):""}</td><td><span class="dist-pill">${sbsDistEsc(r.status||"Planned")}</span></td><td class="dist-actions"><button class="btn" onclick="sbsDistOpen('${sbsDistEsc(r.id)}')">Edit</button><button class="btn" onclick="sbsDistDelete('${sbsDistEsc(r.id)}')">Delete</button></td></tr>`).join("")||'<tr><td colspan="8" class="small">No records match your search.</td></tr>';
- document.getElementById("sbsDistCount").textContent=`Showing ${filtered.length} of ${all.length} records`;
+ const stageEntries=Object.entries(stages).sort((a,b)=>b[1]-a[1]),stageTotal=stageEntries.reduce((sum,x)=>sum+x[1],0);
+ const stageColorFor=(label)=>{if(/PL17/i.test(label))return "#3978f6";if(/PL15/i.test(label))return "#13b981";return ({Nauplii:"#8b5cf6",PL20:"#f59e0b",Broodstock:"#ec6688"})[label]||"#64748b"};
+ let offset=0;const gradientParts=stageEntries.map(([k,v])=>{const pct=stageTotal?100*v/stageTotal:0;const part=`${stageColorFor(k)} ${offset}% ${offset+pct}%`;offset+=pct;return part});
+ const donutStyle=stageEntries.length?`conic-gradient(${gradientParts.join(",")})`:"#edf2f8";
+ document.getElementById("sbsDistStages").innerHTML=stageEntries.length?`<div class="sbs-dist-stage-layout"><div class="sbs-dist-donut" style="background:${donutStyle}"><div class="sbs-dist-donut-center"><div class="sbs-dist-donut-total">${stageTotal.toLocaleString()}</div><div class="sbs-dist-donut-caption">${sbsDistEsc(selectedGen)} quantity</div></div></div><div class="sbs-dist-legend">${stageEntries.map(([k,v])=>`<div class="sbs-dist-legend-row"><span class="sbs-dist-legend-dot" style="background:${stageColorFor(k)}"></span><span class="sbs-dist-legend-name">${sbsDistEsc(k)}<br><span class="sbs-dist-legend-pct">${stageTotal?(100*v/stageTotal).toFixed(1):"0.0"}%</span></span><span class="sbs-dist-legend-value">${v.toLocaleString()}</span></div>`).join("")}</div></div>`:'<p class="small">No distribution records for '+sbsDistEsc(selectedGen)+'.</p>';
+ document.getElementById("sbsDistRows").innerHTML=filtered.map(r=>{const line=sbsDistInferLine(r);const lineColor=line==="A"?"#3978f6":line==="B"?"#13b981":"#64748b";return `<tr><td>${sbsDistEsc(r.id)}</td><td>${sbsDistEsc(r.date||"")}</td><td>${sbsDistEsc(sbsDistCanonicalGeneration(r.generation))}</td><td><span class="sbs-dist-stage-badge" style="--stage-color:${stageColorFor(r.stage||"")}">${sbsDistEsc(r.stage==="Other"&&r.stageDetail?"Other: "+r.stageDetail:(r.stage||""))}</span>${line?`<small class="sbs-dist-line-tag" style="--line-color:${lineColor}">Line ${sbsDistEsc(line)}</small>`:""}</td><td>${(Number(r.quantity)||0).toLocaleString()} ${sbsDistEsc(r.unit||"")}</td><td>${sbsDistEsc(r.recipient||"")}${r.province?" · "+sbsDistEsc(r.province):""}</td><td><span class="dist-pill">${sbsDistEsc(r.status||"Planned")}</span></td><td class="dist-actions"><button class="btn" onclick="sbsDistOpen('${sbsDistEsc(r.id)}')">Edit</button><button class="btn" onclick="sbsDistDelete('${sbsDistEsc(r.id)}')">Delete</button></td></tr>`}).join("")||'<tr><td colspan="8" class="small">No records match your search in '+sbsDistEsc(selectedGen)+'.</td></tr>';
+ document.getElementById("sbsDistCount").textContent=`${selectedGen}: Showing ${filtered.length} of ${all.length} records`;
 }
+
 function sbsDistEsc(v){return String(v??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
 function sbsDistDelete(id){if(!requireDelete()||!confirm("Delete distribution record "+id+"?"))return;ls("sbs_distribution_records",sbsDistRecords().filter(r=>r.id!==id));if(typeof logActivity==="function")logActivity("delete","distribution",id,null,null);sbsDistRender()}
-function sbsDistExport(){if(!canExport())return alert("No permission to export data");const rows=sbsDistRecords();const cols=["id","date","generation","stage","quantity","unit","recipient","province","status","notes"];const csv=[cols.join(","),...rows.map(r=>cols.map(k=>'"'+String(r[k]??"").replace(/"/g,'""')+'"').join(","))].join("\r\n");const a=document.createElement("a");a.href=URL.createObjectURL(new Blob(["\ufeff"+csv],{type:"text/csv;charset=utf-8"}));a.download="distribution-records.csv";a.click();URL.revokeObjectURL(a.href);if(typeof logActivity==="function")logActivity("export","distribution","distribution-records.csv",null,{count:rows.length})}
+function sbsDistExport(){if(!canExport())return alert("No permission to export data");const rows=sbsDistRecords();const cols=["id","date","generation","line","stage","quantity","unit","recipient","province","status","notes"];const csv=[cols.join(","),...rows.map(r=>cols.map(k=>'"'+String(r[k]??"").replace(/"/g,'""')+'"').join(","))].join("\r\n");const a=document.createElement("a");a.href=URL.createObjectURL(new Blob(["\ufeff"+csv],{type:"text/csv;charset=utf-8"}));a.download="distribution-records.csv";a.click();URL.revokeObjectURL(a.href);if(typeof logActivity==="function")logActivity("export","distribution","distribution-records.csv",null,{count:rows.length})}
 
 </script>
 
