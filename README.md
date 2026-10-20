@@ -1,19 +1,7 @@
-# shrimp-breeding-system
+# Shrimp Breeding System — Water Quality Sites v14
 
-V5 working build based on the user-customized index.html.
+Based on Water Quality Premium v13. This version adds configurable research centers and pond/tank locations, source filters, and center/type/location fields for new water-quality records. Existing records remain intact and display as legacy/unassigned unless center metadata is present.
 
-## Added
-- Excel/CSV import preview and validation
-- Auto mapping for the real annual breeding spreadsheet format
-- Automatic linking of Generation, Family, Individual and pedigree fields
-- Growth fields: age, wt, tl, cl
-- Breeding fields: sex, mat, status, environment, color score
-- Gencode remains optional
-- Existing UI/layout preserved as the base
+Water Quality Excel export now includes Center and Unit_Type columns. Existing import workflow and original water parameter fields remain in place.
 
-
-## Classical Focus & Thai Online Radio (optional)
-- Added an optional audio dock to the existing single-page app.
-- Classical recordings stream from Wikimedia Commons; credits/licensing links are shown in the player.
-- Thai radio buttons open the station websites in a new tab rather than re-broadcasting/embedding streams without verified permission.
-- No paid API or new server required.
+Validation: ZIP integrity and inline JavaScript syntax checked. Not deployed to GitHub Pages and not browser-tested against Supabase.
