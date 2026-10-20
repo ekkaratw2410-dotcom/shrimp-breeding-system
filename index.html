@@ -674,8 +674,9 @@ async function loadProfile(user){
  if(error)throw error;currentProfile=data;renderUserBar();applyRoleUI();
 }
 function renderUserBar(){
- document.getElementById("userBar").innerHTML=`<span class="userchip">👤 ${esc(currentProfile?.display_name||currentUser?.email)}</span> <span class="userchip">🔐 ${roleLabel(currentProfile?.role)}</span> <button class="btn" onclick="logout()">ออกจากระบบ</button>`;
+ document.getElementById("userBar").innerHTML=`<span class="userchip">👤 ${esc(currentProfile?.display_name||currentUser?.email)}</span> <span class="userchip">🔐 ${roleLabel(currentProfile?.role)}</span> <span class="sbs-sched-wrap"><button class="btn sbs-sched-bell" id="sbsSchedBell" type="button" aria-label="การแจ้งเตือนกำหนดงาน" onclick="sbsToggleSchedulePanel(event)">🔔<span id="sbsSchedBadge" class="sbs-sched-badge hidden">0</span></button><div id="sbsSchedPanel" class="sbs-sched-panel hidden"><div class="sbs-sched-panel-head"><strong>แจ้งเตือนกำหนดงาน</strong><button class="btn" type="button" onclick="sbsRefreshScheduleAlerts()">↻</button></div><div class="sbs-sched-panel-note">แจ้งเฉพาะงานตามวันที่กำหนด: ล่วงหน้า 3 วัน, วันครบกำหนด และหลังครบกำหนด 1 วัน</div><div id="sbsSchedList" class="sbs-sched-list"><div class="sbs-sched-empty">กำลังโหลดกำหนดงาน…</div></div></div></span> <button class="btn" onclick="logout()">ออกจากระบบ</button>`;
  document.getElementById("myRole").textContent=roleLabel(currentProfile?.role);
+ if(typeof sbsRefreshScheduleAlerts === "function") sbsRefreshScheduleAlerts();
 }
 async function logout(){await sbClient.auth.signOut()}
 function applyRoleUI(){
@@ -3627,6 +3628,48 @@ function sbsDeployRender(){
  put('sbsDeployFarmResultStats',[['Farm reports',result.length.toLocaleString()],['Mean reported survival',avg===null?'—':avg.toFixed(1)+'%']]);
 }
 function sbsDeployExportAll(){if(!canExport())return alert('No permission to export data');const lines=[];Object.entries(SBS_DEPLOY_CONFIG).forEach(([type,cfg])=>{lines.push('\n'+cfg.title);const cols=['id',...cfg.fields.map(f=>f[0])];lines.push(cols.map(csv=>'"'+csv.replace(/"/g,'""')+'"').join(','));sbsDeployRecords(type).forEach(r=>lines.push(cols.map(k=>'"'+String(r[k]??'').replace(/"/g,'""')+'"').join(',')))});const a=document.createElement('a');a.href=URL.createObjectURL(new Blob(['\ufeff'+lines.join('\r\n')],{type:'text/csv;charset=utf-8'}));a.download='distribution-deployment-results.csv';a.click();URL.revokeObjectURL(a.href);if(typeof logActivity==='function')logActivity('export','distribution','distribution-deployment-results.csv',null,{})}
+
+</script>
+
+
+
+<script>
+/* ===== Scheduled-work notifications only =====
+   No login/audit/activity-log notifications are included here.
+   Milestones are calculated from future_activities.due_date (fallback start_date).
+*/
+(function(){
+ const css = `
+ #userBar{display:flex;align-items:center;justify-content:flex-end;gap:8px;flex-wrap:wrap;position:relative}
+ .sbs-sched-wrap{position:relative;display:inline-flex;align-items:center}
+ .sbs-sched-bell{position:relative;min-width:40px;padding:8px 10px;font-size:17px}
+ .sbs-sched-badge{position:absolute;top:-7px;right:-7px;min-width:18px;height:18px;padding:0 4px;border-radius:12px;background:#c62828;color:#fff;font-size:11px;line-height:18px;text-align:center;font-weight:700;border:2px solid #fff}
+ .sbs-sched-panel{position:absolute;z-index:1000;top:calc(100% + 9px);right:0;width:min(370px,calc(100vw - 28px));max-height:min(70vh,520px);overflow:auto;background:var(--card,#fff);color:var(--text,#183044);border:1px solid var(--line,#dce5ec);border-radius:14px;box-shadow:0 14px 38px #102a4330;padding:14px}
+ .sbs-sched-panel-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:8px}
+ .sbs-sched-panel-note{font-size:12px;line-height:1.5;color:var(--muted,#647381);margin-bottom:10px}
+ .sbs-sched-item{padding:11px 0;border-top:1px solid var(--line,#e4ebf0)}
+ .sbs-sched-item:first-child{border-top:0}
+ .sbs-sched-item-title{font-weight:700;font-size:13px;line-height:1.45;margin-bottom:4px;overflow-wrap:anywhere}
+ .sbs-sched-item-meta{font-size:12px;color:var(--muted,#647381);line-height:1.5}
+ .sbs-sched-tag{display:inline-block;border-radius:20px;padding:3px 8px;font-size:11px;font-weight:700;margin-bottom:5px;background:#e9f2ff;color:#225c9b}
+ .sbs-sched-tag.today{background:#fff0cf;color:#875600}.sbs-sched-tag.overdue{background:#ffe6e3;color:#a52d23}
+ .sbs-sched-empty{font-size:13px;color:var(--muted,#647381);padding:12px 2px;line-height:1.5}
+ @media(max-width:600px){#userBar{gap:6px}.sbs-sched-panel{right:-54px}}
+ `;
+ const style=document.createElement('style');style.id='sbsScheduledNotificationStyles';style.textContent=css;document.head.appendChild(style);
+ let lastFetchAt=0, cachedItems=[];
+ function localISODate(d){return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')}
+ function dateDiff(dateStr){if(!dateStr)return null;const p=String(dateStr).slice(0,10).split('-').map(Number);if(p.length!==3||!p[0]||!p[1]||!p[2])return null;const due=new Date(p[0],p[1]-1,p[2]);const now=new Date();now.setHours(0,0,0,0);return Math.round((due-now)/86400000)}
+ function thDate(s){if(!s)return 'ไม่ระบุวันที่';const p=String(s).slice(0,10).split('-').map(Number);if(p.length!==3||!p[0])return s;return new Date(p[0],p[1]-1,p[2]).toLocaleDateString('th-TH',{day:'numeric',month:'short',year:'numeric'})}
+ function escapeText(v){return String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+ function milestone(x){const date=x.due_date; if(!date)return null; const diff=dateDiff(date); if(diff===3)return {date,kind:'soon',label:'อีก 3 วัน',cls:''}; if(diff===0)return {date,kind:'today',label:'ครบกำหนดวันนี้',cls:'today'}; if(diff===-1)return {date,kind:'overdue',label:'เลยกำหนด 1 วัน',cls:'overdue'}; return null}
+ function getAlerts(){return cachedItems.filter(x=>!['completed','cancelled'].includes(String(x.status||'').trim().toLowerCase())).map(x=>({x,m:milestone(x)})).filter(v=>v.m).sort((a,b)=>String(a.m.date).localeCompare(String(b.m.date)))}
+ function paint(){const list=document.getElementById('sbsSchedList'),badge=document.getElementById('sbsSchedBadge');if(!list||!badge)return;const alerts=getAlerts();badge.textContent=alerts.length>99?'99+':String(alerts.length);badge.classList.toggle('hidden',alerts.length===0);if(!alerts.length){list.innerHTML='<div class="sbs-sched-empty">วันนี้ไม่มีงานที่ถึง 3 วันก่อนกำหนด ถึงกำหนด หรือเลยกำหนด 1 วัน</div>';return}list.innerHTML=alerts.map(({x,m})=>{const title=x.activity||x.description||x.activity_code||'กิจกรรมไม่มีชื่อ';const meta=[x.generation?('รุ่น '+x.generation):'',x.responsible?('ผู้รับผิดชอบ '+x.responsible):'',('กำหนด '+thDate(m.date))].filter(Boolean).join(' · ');return `<div class="sbs-sched-item"><span class="sbs-sched-tag ${m.cls}">${m.label}</span><div class="sbs-sched-item-title">${escapeText(title)}</div><div class="sbs-sched-item-meta">${escapeText(meta)}</div></div>`}).join('')}
+ window.sbsToggleSchedulePanel=function(ev){ev?.stopPropagation();const panel=document.getElementById('sbsSchedPanel');if(!panel)return;panel.classList.toggle('hidden');if(!panel.classList.contains('hidden'))window.sbsRefreshScheduleAlerts(true)};
+ window.sbsRefreshScheduleAlerts=async function(force){const list=document.getElementById('sbsSchedList');if(typeof currentUser==='undefined'||!currentUser||typeof sbClient==='undefined'||!sbClient){if(list)list.innerHTML='<div class="sbs-sched-empty">เข้าสู่ระบบเพื่อดูงานตามกำหนด</div>';return}if(!force&&Date.now()-lastFetchAt<60000){paint();return}if(list)list.innerHTML='<div class="sbs-sched-empty">กำลังตรวจสอบ Future Activities…</div>';try{const {data,error}=await sbClient.from('future_activities').select('*').order('due_date',{ascending:true,nullsFirst:false});if(error)throw error;cachedItems=Array.isArray(data)?data:[];lastFetchAt=Date.now();console.info('Scheduled notifications: loaded Future Activities rows =',cachedItems.length);paint()}catch(err){console.error('Scheduled notification load error:',err);if(list)list.innerHTML='<div class="sbs-sched-empty">อ่านข้อมูล Future Activities ไม่สำเร็จ: '+escapeText(err?.message||String(err))+'</div>';const badge=document.getElementById('sbsSchedBadge');if(badge){badge.textContent='!';badge.classList.remove('hidden')}}};
+ document.addEventListener('click',function(ev){const panel=document.getElementById('sbsSchedPanel'),bell=document.getElementById('sbsSchedBell');if(panel&&!panel.classList.contains('hidden')&&!panel.contains(ev.target)&&!bell?.contains(ev.target))panel.classList.add('hidden')});
+ setInterval(()=>{if(typeof currentUser!=='undefined'&&currentUser)window.sbsRefreshScheduleAlerts()},60000);
+})();
 
 </script>
 
