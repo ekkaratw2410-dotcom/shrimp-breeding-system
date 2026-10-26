@@ -3397,6 +3397,70 @@ let dashboardAreaMap = null;
 let dashboardAreaMarkers = [];
 let dashboardSelectedCoordinate = null;
 let dashboardSelectionMarker = null;
+const dashboardAreaWeatherCache = new Map();
+async function loadDashboardAreaWeather(boxId,lat,lon){
+  const box=document.getElementById(boxId); if(!box)return;
+  const key=`${lat.toFixed(4)},${lon.toFixed(4)}`;
+  const cached=dashboardAreaWeatherCache.get(key);
+  if(cached && Date.now()-cached.time<10*60*1000){box.innerHTML=cached.html;return;}
+  box.innerHTML='กำลังโหลดข้อมูลอากาศและระดับน้ำทะเลจริง…';
+  try{
+    const url=`https://api.open-meteo.com/v1/forecast?latitude=${encodeURIComponent(lat)}&longitude=${encodeURIComponent(lon)}&current=temperature_2m,precipitation,wind_speed_10m&hourly=precipitation_probability,precipitation&forecast_days=1&timezone=auto`;
+    const response=await fetch(url);
+    if(!response.ok)throw new Error('weather request failed');
+    const data=await response.json();
+    const current=data.current||{},hourly=data.hourly||{};
+    let idx=0;
+    if(Array.isArray(hourly.time)&&current.time){
+      const target=String(current.time).slice(0,13);
+      const found=hourly.time.findIndex(t=>String(t).slice(0,13)===target);
+      if(found>=0)idx=found;
+    }
+    const chance=Array.isArray(hourly.precipitation_probability)?hourly.precipitation_probability[idx]:null;
+    const rain=Array.isArray(hourly.precipitation)?hourly.precipitation[idx]:current.precipitation;
+    const temp=Number.isFinite(Number(current.temperature_2m))?`${Number(current.temperature_2m).toFixed(1)} °C`:'ไม่มีข้อมูล';
+    const rainChance=chance!==null&&chance!==undefined&&Number.isFinite(Number(chance))?`${Number(chance)}%`:'ไม่มีข้อมูล';
+    const rainAmount=rain!==null&&rain!==undefined&&Number.isFinite(Number(rain))?`${Number(rain).toFixed(1)} มม.`:'ไม่มีข้อมูล';
+    const wind=Number.isFinite(Number(current.wind_speed_10m))?`${Number(current.wind_speed_10m).toFixed(1)} กม./ชม.`:'ไม่มีข้อมูล';
+    let tideHtml='<div style="font-size:10px;color:#64748b;padding:4px 1px">ข้อมูลระดับน้ำทะเลยังไม่พร้อมสำหรับพิกัดนี้</div>';
+    try{
+      const tideUrl=`https://marine-api.open-meteo.com/v1/marine?latitude=${encodeURIComponent(lat)}&longitude=${encodeURIComponent(lon)}&hourly=sea_level_height_msl&forecast_days=3&timezone=auto`;
+      const tideResponse=await fetch(tideUrl);
+      if(tideResponse.ok){
+        const tideData=await tideResponse.json();
+        const times=tideData.hourly&&tideData.hourly.time;
+        const levels=tideData.hourly&&tideData.hourly.sea_level_height_msl;
+        if(Array.isArray(times)&&Array.isArray(levels)&&times.length===levels.length&&times.length>=3){
+          const now=Date.now();
+          const points=[];
+          for(let i=0;i<times.length;i++){
+            const value=levels[i],stamp=Date.parse(times[i]);
+            if(value!==null&&value!==undefined&&Number.isFinite(Number(value))&&Number.isFinite(stamp)&&stamp>=now-60*60*1000)
+              points.push({time:times[i],stamp,level:Number(value),index:i});
+          }
+          const extrema=[];
+          for(let i=1;i<points.length-1;i++){
+            const prev=points[i-1].level,cur=points[i].level,next=points[i+1].level;
+            if(cur>prev&&cur>=next)extrema.push({...points[i],type:'high'});
+            else if(cur<prev&&cur<=next)extrema.push({...points[i],type:'low'});
+          }
+          const high=extrema.find(x=>x.type==='high');
+          const low=extrema.find(x=>x.type==='low');
+          const fmt=x=>x?`${x.time.slice(5,10).split('-').reverse().join('/')} ${x.time.slice(11,16)} · ${x.level.toFixed(2)} ม.`:'ไม่มีข้อมูล';
+          if(high||low){
+            tideHtml=`<div style="display:grid;grid-template-columns:1fr 1fr;gap:5px"><div style="background:#ecfeff;border-radius:6px;padding:4px"><div style="font-size:10px;color:#0e7490">🌊 น้ำขึ้นสูงสุดถัดไป</div><b style="font-size:10px;color:#164e63">${fmt(high)}</b></div><div style="background:#f0f9ff;border-radius:6px;padding:4px"><div style="font-size:10px;color:#0369a1">↘ น้ำลงต่ำสุดถัดไป</div><b style="font-size:10px;color:#0c4a6e">${fmt(low)}</b></div></div><div style="font-size:9px;color:#64748b;margin-top:4px">ระดับทะเลเทียบ MSL · คาดการณ์รายชั่วโมง</div>`;
+          }
+        }
+      }
+    }catch(tideErr){ /* weather data remains available if marine forecast is unavailable */ }
+    const resultHtml=`<div style="display:grid;grid-template-columns:1fr 1fr;gap:5px"><div style="background:#f1f5f9;border-radius:6px;padding:5px"><div style="font-size:10px;color:#64748b">🌡️ อุณหภูมิ</div><b style="font-size:12px">${temp}</b></div><div style="background:#f1f5f9;border-radius:6px;padding:5px"><div style="font-size:10px;color:#64748b">🌧️ โอกาสฝนตก</div><b style="font-size:12px">${rainChance}</b></div><div style="background:#f1f5f9;border-radius:6px;padding:5px"><div style="font-size:10px;color:#64748b">💧 ปริมาณน้ำฝน</div><b style="font-size:12px">${rainAmount}</b></div><div style="background:#f1f5f9;border-radius:6px;padding:5px"><div style="font-size:10px;color:#64748b">💨 ความเร็วลม</div><b style="font-size:12px">${wind}</b></div></div><div style="font-size:9px;color:#64748b;margin-top:5px">อุณหภูมิ/ลมเป็นค่าปัจจุบัน · โอกาสฝนและฝนเป็นค่ารายชั่วโมง</div><div style="border-top:1px solid #dce5ee;margin-top:6px;padding-top:5px"><div style="font-size:11px;font-weight:700;color:#18324a;margin-bottom:4px">🌊 น้ำขึ้น–น้ำลง</div>${tideHtml}</div>`;
+    dashboardAreaWeatherCache.set(key,{time:Date.now(),html:resultHtml});
+    const liveBox=document.getElementById(boxId);if(liveBox)liveBox.innerHTML=resultHtml;
+  }catch(err){
+    const liveBox=document.getElementById(boxId);
+    if(liveBox)liveBox.innerHTML='<span style="color:#b45309">ไม่สามารถโหลดข้อมูลอากาศได้ในขณะนี้ กรุณาลองเปิดหมุดอีกครั้งเมื่อต่ออินเทอร์เน็ต</span>';
+  }
+}
 function dashboardAreas(){ return ls('sbs_dashboard_areas') || []; }
 function parseDashboardCoordinate(raw){
   if(!raw)return null;
@@ -3470,7 +3534,9 @@ function renderDashboardAreas(){
     dashboardAreaMarkers.forEach(m=>m.remove()); dashboardAreaMarkers=[];
     areas.forEach((a,i)=>{
       const marker=L.marker([Number(a.lat),Number(a.lon)]).addTo(dashboardAreaMap);
-      marker.bindPopup(`<b>${esc(a.name)}</b>${a.notes?`<br>${esc(a.notes)}`:''}<br><small>${Number(a.lat).toFixed(5)}, ${Number(a.lon).toFixed(5)}</small>`);
+      const weatherBoxId=`area-weather-${i}`;
+      marker.bindPopup(`<div style="min-width:190px;max-width:245px;font-family:Segoe UI,Tahoma,sans-serif;color:#18324a"><div style="font-weight:700;font-size:13px;margin-bottom:3px">📍 ${esc(a.name)}</div>${a.notes?`<div style="font-size:11px;color:#64748b;margin-bottom:4px">${esc(a.notes)}</div>`:''}<div style="font-size:9px;color:#64748b;margin-bottom:6px">${Number(a.lat).toFixed(5)}, ${Number(a.lon).toFixed(5)}</div><div style="border-top:1px solid #dce5ee;padding-top:6px"><div style="font-weight:700;font-size:12px;margin-bottom:5px">🌦️ พยากรณ์อากาศ</div><div id="${weatherBoxId}" style="font-size:11px;color:#64748b">กำลังโหลดข้อมูลอากาศจริง…</div><div style="font-size:9px;color:#94a3b8;margin-top:5px">ข้อมูลจาก Open-Meteo · ตามพิกัดหมุด</div></div></div>`,{maxWidth:270});
+      marker.on('popupopen',()=>loadDashboardAreaWeather(weatherBoxId,Number(a.lat),Number(a.lon)));
       dashboardAreaMarkers.push(marker);
     });
     if(areas.length===1)dashboardAreaMap.setView([Number(areas[0].lat),Number(areas[0].lon)],9);
